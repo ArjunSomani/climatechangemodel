@@ -17,9 +17,14 @@ started yet.
 - **Vercel**: https://climatechangemodel.vercel.app — auto-deploys `web/`
   on every push to `main` (project's Root Directory is set to `web`,
   since the Next.js app doesn't live at the repo root).
-- **Neon** (Postgres, via Vercel Marketplace) and **Vercel Blob** (object
-  storage): not wired up yet — deferred to Phase 1, when there's an
-  actual library catalog / result blobs to store.
+- **Neon** (Postgres, via Vercel Marketplace): provisioned and connected
+  to the Vercel project as `climatechangemodel-db`, free plan. Will hold
+  the library catalog metadata once Phase 1 builds it.
+- **Vercel Blob**: private store `climatechangemodel-blob` (region
+  `iad1`), free tier. Will hold pre-computed library result JSON.
+- Both write their connection env vars to `web/.env.local` via
+  `vercel env pull` (already gitignored); nothing schema'd or used yet
+  — that's Phase 1 work.
 - No backend host yet. v1 is library-browsing only (no on-demand runs),
   so the Python engine only needs to run offline/in CI to pre-generate
   library results, not as an always-on service. A Python-capable host

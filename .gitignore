@@ -22,3 +22,6 @@ engine/data/eia_parquet/
 
 # OS cruft
 .DS_Store
+
+# Claude Code local session state
+.claude/
