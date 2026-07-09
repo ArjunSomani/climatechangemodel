@@ -7,12 +7,30 @@ locally at `vendor/optimize-original/`, gitignored, for reference).
 
 See `PRD.md`-equivalent brief (not checked in here) for the full product
 spec. Current status: **Phase 0 — Foundations** (engine refactor + golden
-parity + data conversion). No API/frontend yet.
+parity + data conversion) done. `web/` is a placeholder Next.js app
+deployed to prove out hosting; Phase 1 (the actual read-only site) not
+started yet.
+
+## Hosting
+
+- **GitHub**: https://github.com/arjunthegodly/climatechangemodel (private)
+- **Vercel**: https://climatechangemodel.vercel.app — auto-deploys `web/`
+  on every push to `main` (project's Root Directory is set to `web`,
+  since the Next.js app doesn't live at the repo root).
+- **Neon** (Postgres, via Vercel Marketplace) and **Vercel Blob** (object
+  storage): not wired up yet — deferred to Phase 1, when there's an
+  actual library catalog / result blobs to store.
+- No backend host yet. v1 is library-browsing only (no on-demand runs),
+  so the Python engine only needs to run offline/in CI to pre-generate
+  library results, not as an always-on service. A Python-capable host
+  (Render, most likely, for its free background-worker tier) is deferred
+  to Phase 3, when on-demand runs need a real job queue.
 
 ## Layout
 
 ```
 engine/                  Python optimization engine
+web/                     Next.js frontend (placeholder for now)
   optimize_engine/        run_scenario(config) -> ScenarioResult
     core.py                unmodified port of Optimize.py's numeric logic
     schemas.py              ScenarioConfig / ScenarioResult (Pydantic)
