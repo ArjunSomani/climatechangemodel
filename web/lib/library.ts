@@ -65,3 +65,10 @@ export async function getLibraryCase(
     result,
   };
 }
+
+export async function getLibraryCases(
+  caseIds: string[]
+): Promise<LibraryCaseDetail[]> {
+  const details = await Promise.all(caseIds.map((id) => getLibraryCase(id)));
+  return details.filter((d): d is LibraryCaseDetail => d !== null);
+}

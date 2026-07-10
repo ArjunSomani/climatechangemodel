@@ -43,6 +43,12 @@ export default function RootLayout({
             >
               Library
             </Link>
+            <Link
+              href="/compare"
+              className="text-sm text-zinc-600 hover:text-black dark:text-zinc-400 dark:hover:text-zinc-50"
+            >
+              Compare
+            </Link>
           </nav>
         </header>
         <main className="flex flex-1 flex-col">{children}</main>

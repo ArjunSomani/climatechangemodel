@@ -13,6 +13,7 @@ import {
 import { SOURCES } from "@/lib/sources";
 import { formatEnergyIn, pickEnergyUnit, type EnergyUnit } from "@/lib/format";
 import type { YearRecord } from "@/lib/library";
+import { useForceResizeOnMount } from "@/lib/useForceResizeOnMount";
 
 interface TooltipPayloadEntry {
   dataKey: string;
@@ -86,6 +87,8 @@ function EnergyMixTooltip({
 }
 
 export function EnergyMixChart({ data }: { data: YearRecord[] }) {
+  useForceResizeOnMount();
+
   const maxStackedMwh = Math.max(
     ...data.map((row) => SOURCES.reduce((sum, s) => sum + (row[`${s.key}_MWh`] ?? 0), 0))
   );

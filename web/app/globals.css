@@ -20,6 +20,17 @@
   --series-gas: #008300;
   --series-coal: #4a3aa7;
   --series-battery: #e34948;
+
+  /* full 8-slot categorical palette for charts whose series are something
+     other than energy sources (e.g. Compare's per-case lines) */
+  --compare-1: #2a78d6;
+  --compare-2: #1baf7a;
+  --compare-3: #eda100;
+  --compare-4: #008300;
+  --compare-5: #4a3aa7;
+  --compare-6: #e34948;
+  --compare-7: #e87ba4;
+  --compare-8: #eb6834;
 }
 
 @theme inline {
@@ -48,6 +59,15 @@
     --series-gas: #008300;
     --series-coal: #9085e9;
     --series-battery: #e66767;
+
+    --compare-1: #3987e5;
+    --compare-2: #199e70;
+    --compare-3: #c98500;
+    --compare-4: #008300;
+    --compare-5: #9085e9;
+    --compare-6: #e66767;
+    --compare-7: #d55181;
+    --compare-8: #d95926;
   }
 }
 
