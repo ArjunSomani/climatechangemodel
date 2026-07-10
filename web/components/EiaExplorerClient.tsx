@@ -8,10 +8,18 @@ import type { EiaRegionData } from "@/lib/eiaExplorer";
 
 const DEFAULT_VISIBLE: EiaSourceKey[] = ["Solar", "Wind", "Nuclear", "Gas", "Coal"];
 
-export function EiaExplorerClient({ data }: { data: EiaRegionData }) {
+export function EiaExplorerClient({
+  data,
+  dateRange,
+}: {
+  data: EiaRegionData;
+  dateRange: [string, string];
+}) {
   const [visible, setVisible] = useState<Set<EiaSourceKey>>(
     new Set(DEFAULT_VISIBLE)
   );
+  const startYear = new Date(dateRange[0]).getFullYear();
+  const endYear = new Date(dateRange[1]).getFullYear();
 
   function toggle(key: EiaSourceKey) {
     setVisible((prev) => {
@@ -56,7 +64,7 @@ export function EiaExplorerClient({ data }: { data: EiaRegionData }) {
           Typical day
         </h2>
         <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-          Average capacity used, by hour of day, across all five years.
+          Average capacity used, by hour of day, across {endYear - startYear + 1} years.
         </p>
         <div className="mt-4 rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
           <EiaTypicalDayChart data={data.typical_day} visibleSources={visibleList} />
@@ -65,7 +73,7 @@ export function EiaExplorerClient({ data }: { data: EiaRegionData }) {
 
       <section className="mt-10">
         <h2 className="flex items-center gap-2 text-lg font-medium"><span className="h-3 w-1 rounded-full bg-accent" aria-hidden />
-          Weekly average, 2020&ndash;2024
+          Weekly average, {startYear}&ndash;{endYear}
         </h2>
         <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
           Same data, week by week, showing the seasonal pattern and any

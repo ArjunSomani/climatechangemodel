@@ -46,7 +46,15 @@ export default async function DataExplorerPage({
 
       {data ? (
         <div className="mt-8">
-          <EiaExplorerClient data={data} />
+          <EiaExplorerClient
+            data={data}
+            dateRange={
+              index?.date_range ?? [
+                `${Math.min(...data.yearly_max_mw.map((r) => r.year))}-01-01`,
+                `${Math.max(...data.yearly_max_mw.map((r) => r.year))}-12-31`,
+              ]
+            }
+          />
         </div>
       ) : (
         <p className="mt-8 text-zinc-500 dark:text-zinc-400">

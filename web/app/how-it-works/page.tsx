@@ -21,8 +21,8 @@ export default function HowItWorksPage() {
         <p>
           Everything starts from real hourly electricity generation data from
           the US Energy Information Administration (EIA) — January 2020
-          through December 2024, five full years, across 13 US regions.
-          That&rsquo;s about 570,000 hourly readings, broken down by source:
+          through December 2025, six full years, across 13 US regions.
+          That&rsquo;s about 684,000 hourly readings, broken down by source:
           solar, wind, nuclear, gas, coal, hydro, oil, and &ldquo;other.&rdquo;
         </p>
         <p>

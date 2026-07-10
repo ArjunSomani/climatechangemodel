@@ -42,7 +42,7 @@ export default function MethodologyPage() {
             <strong>Historical supply is treated as demand.</strong>{" "}The EIA
             data records what was generated, not what was needed; the model
             assumes those were equal (the grid didn&rsquo;t experience
-            unrecorded shortfalls in 2020&ndash;2024).
+            unrecorded shortfalls in 2020&ndash;2025).
           </li>
           <li>
             <strong>No transmission between regions.</strong>{" "}Each of the 13
@@ -68,7 +68,7 @@ export default function MethodologyPage() {
           </li>
           <li>
             <strong>Historical weather repeats.</strong>{" "}Each simulated
-            year reuses the same 2020&ndash;2024 hourly capacity-factor
+            year reuses the same 2020&ndash;2025 hourly capacity-factor
             patterns for solar and wind. The model doesn&rsquo;t project
             future weather, climate change effects on renewable output, or
             extreme-weather grid stress.
@@ -92,7 +92,7 @@ export default function MethodologyPage() {
           <li>
             <strong>Hourly generation data</strong>: US Energy Information
             Administration (EIA) API, per-region hourly fuel-type generation,
-            January 2020&ndash;December 2024.
+            January 2020&ndash;December 2025.
           </li>
           <li>
             <strong>Capital costs</strong>: EIA Annual Energy Outlook 2025
