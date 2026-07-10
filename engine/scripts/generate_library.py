@@ -198,7 +198,13 @@ def main() -> None:
     skipped = 0
     with psycopg.connect(env['DATABASE_URL']) as conn:
         with conn.cursor() as cur:
-            cur.execute('SELECT case_id FROM library_cases')
+            # A case_id existing isn't enough -- if the EIA data (or specs)
+            # backing it has since been refreshed, its stored result is
+            # stale (wrong first_year/baseline) and must be regenerated,
+            # not skipped. Only skip cases whose recorded versions still
+            # match what we'd generate right now.
+            cur.execute('SELECT case_id FROM library_cases WHERE eia_version = %s AND specs_version = %s',
+                        (eia_version, specs_version))
             existing_case_ids = {row[0] for row in cur.fetchall()}
 
         for g in GROUPS:
