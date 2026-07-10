@@ -196,51 +196,56 @@ def main() -> None:
 
     total = 0
     skipped = 0
+
+    # A case_id existing isn't enough -- if the EIA data (or specs) backing
+    # it has since been refreshed, its stored result is stale (wrong
+    # first_year/baseline) and must be regenerated, not skipped. Only skip
+    # cases whose recorded versions still match what we'd generate right now.
     with psycopg.connect(env['DATABASE_URL']) as conn:
         with conn.cursor() as cur:
-            # A case_id existing isn't enough -- if the EIA data (or specs)
-            # backing it has since been refreshed, its stored result is
-            # stale (wrong first_year/baseline) and must be regenerated,
-            # not skipped. Only skip cases whose recorded versions still
-            # match what we'd generate right now.
             cur.execute('SELECT case_id FROM library_cases WHERE eia_version = %s AND specs_version = %s',
                         (eia_version, specs_version))
             existing_case_ids = {row[0] for row in cur.fetchall()}
 
-        for g in GROUPS:
-            group_slug = g.group.lower()
-            variant_slug = g.variant.lower()
-            for co2_initial, co2_yearly, co2_regime in g.co2_scenarios:
-                regime_slug = co2_regime.lower()
-                case_id = (f'{group_slug}/{variant_slug}/{regime_slug}/'
-                           f'co2_{co2_initial}_{co2_yearly}/{g.region}')
+    for g in GROUPS:
+        group_slug = g.group.lower()
+        variant_slug = g.variant.lower()
+        for co2_initial, co2_yearly, co2_regime in g.co2_scenarios:
+            regime_slug = co2_regime.lower()
+            case_id = (f'{group_slug}/{variant_slug}/{regime_slug}/'
+                       f'co2_{co2_initial}_{co2_yearly}/{g.region}')
 
-                if case_id in existing_case_ids:
-                    print(f'--- {case_id} (skip, already exists) ---')
-                    skipped += 1
-                    continue
+            if case_id in existing_case_ids:
+                print(f'--- {case_id} (skip, already exists) ---')
+                skipped += 1
+                continue
 
-                print(f'--- {case_id} ---')
+            print(f'--- {case_id} ---')
 
-                config = ScenarioConfig(
-                    region=g.region,
-                    sub_dir=case_id.replace('/', '-'),
-                    years=YEARS,
-                    co2_price=TweakPair(initial=co2_initial, yearly=co2_yearly),
-                    interest=TweakPair(initial=g.interest[0], yearly=g.interest[1]),
-                    demand=TweakPair(initial=g.demand[0], yearly=g.demand[1]),
-                    sources=_build_sources(g.source_overrides),
-                )
+            config = ScenarioConfig(
+                region=g.region,
+                sub_dir=case_id.replace('/', '-'),
+                years=YEARS,
+                co2_price=TweakPair(initial=co2_initial, yearly=co2_yearly),
+                interest=TweakPair(initial=g.interest[0], yearly=g.interest[1]),
+                demand=TweakPair(initial=g.demand[0], yearly=g.demand[1]),
+                sources=_build_sources(g.source_overrides),
+            )
 
-                result = run_scenario(
-                    config,
-                    progress_cb=lambda r, year, years: print(f'  {r} year {year}/{years}'),
-                )
-                region_result = result.regions[0]
+            result = run_scenario(
+                config,
+                progress_cb=lambda r, year, years: print(f'  {r} year {year}/{years}'),
+            )
+            region_result = result.regions[0]
 
-                blob_url = _upload_blob(case_id, region_result.years, env['BLOB_READ_WRITE_TOKEN'])
-                print(f'  uploaded -> {blob_url}')
+            blob_url = _upload_blob(case_id, region_result.years, env['BLOB_READ_WRITE_TOKEN'])
+            print(f'  uploaded -> {blob_url}')
 
+            # A fresh connection per case, opened only after the (slow, DB-free)
+            # scenario computation -- a single connection held open across the
+            # whole ~100min run gets dropped by Neon partway through
+            # ("server closed the connection unexpectedly").
+            with psycopg.connect(env['DATABASE_URL']) as conn:
                 with conn.cursor() as cur:
                     cur.execute(UPSERT_SQL, {
                         'case_id': case_id,
@@ -258,8 +263,8 @@ def main() -> None:
                         'eia_version': eia_version,
                     })
                 conn.commit()
-                print('  catalog row upserted')
-                total += 1
+            print('  catalog row upserted')
+            total += 1
 
     print(f'Done: {total} generated, {skipped} skipped (already existed)')
 
