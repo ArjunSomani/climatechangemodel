@@ -12,7 +12,7 @@ export function CasePicker({ cases }: { cases: LibraryCaseSummary[] }) {
   const groups = useMemo(() => {
     const byGroup = new Map<string, LibraryCaseSummary[]>();
     for (const c of cases) {
-      const key = `${c.group_name} / ${c.variant}`;
+      const key = `${c.group_name.replace(/_/g, " ")} / ${c.variant.replace(/_/g, " ")}`;
       if (!byGroup.has(key)) byGroup.set(key, []);
       byGroup.get(key)!.push(c);
     }

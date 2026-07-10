@@ -4,9 +4,14 @@
 import { SOURCES } from "@/lib/sources";
 import type { LibraryCaseSummary, YearRecord } from "@/lib/library";
 
+function humanize(s: string): string {
+  return s.replace(/_/g, " ");
+}
+
 export function caseLabel(c: LibraryCaseSummary): string {
-  const variantPart = c.variant !== "Default" ? ` ${c.variant}` : "";
-  return `${c.region} · ${c.group_name}${variantPart} · $${c.co2_initial}/MT`;
+  const variantPart =
+    c.variant !== "Default" ? ` ${humanize(c.variant)}` : "";
+  return `${c.region} · ${humanize(c.group_name)}${variantPart} · $${c.co2_initial}/MT`;
 }
 
 export function totalCO2MT(record: YearRecord): number {
