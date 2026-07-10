@@ -22,9 +22,7 @@ export default async function DataExplorerPage({
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-16">
-      <h1 className="text-2xl font-semibold tracking-tight text-black dark:text-zinc-50">
-        Data Explorer
-      </h1>
+      <h1 className="text-3xl font-semibold tracking-tight">Data Explorer</h1>
       <p className="mt-2 text-zinc-600 dark:text-zinc-400">
         The raw EIA hourly generation data behind every scenario &mdash;
         aggregated so it&rsquo;s actually readable.
@@ -37,7 +35,7 @@ export default async function DataExplorerPage({
             href={`/data-explorer?region=${r}`}
             className={`rounded-full border px-3 py-1 text-sm ${
               r === region
-                ? "border-black bg-black text-white dark:border-white dark:bg-white dark:text-black"
+                ? "border-accent bg-accent text-accent-foreground"
                 : "border-zinc-300 text-zinc-600 hover:border-zinc-500 dark:border-zinc-700 dark:text-zinc-400"
             }`}
           >

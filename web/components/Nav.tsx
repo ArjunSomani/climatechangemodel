@@ -25,7 +25,7 @@ export function Nav() {
       <div className="mx-auto flex max-w-4xl items-center justify-between px-6 py-4">
         <Link
           href="/"
-          className="font-semibold text-black dark:text-zinc-50"
+          className="font-display text-lg font-semibold tracking-tight"
           onClick={() => setOpen(false)}
         >
           Optimize
@@ -39,7 +39,7 @@ export function Nav() {
               href={href}
               className={
                 isActive(pathname, href)
-                  ? "text-sm font-medium text-black dark:text-zinc-50"
+                  ? "text-sm font-medium text-accent"
                   : "text-sm text-zinc-600 hover:text-black dark:text-zinc-400 dark:hover:text-zinc-50"
               }
             >
@@ -85,7 +85,7 @@ export function Nav() {
                   onClick={() => setOpen(false)}
                   className={
                     isActive(pathname, href)
-                      ? "block rounded px-2 py-2 text-sm font-medium text-black dark:text-zinc-50"
+                      ? "block rounded px-2 py-2 text-sm font-medium text-accent"
                       : "block rounded px-2 py-2 text-sm text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-900"
                   }
                 >

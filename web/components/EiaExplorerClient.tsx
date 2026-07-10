@@ -52,7 +52,7 @@ export function EiaExplorerClient({ data }: { data: EiaRegionData }) {
       </div>
 
       <section className="mt-8">
-        <h2 className="text-lg font-medium text-black dark:text-zinc-50">
+        <h2 className="flex items-center gap-2 text-lg font-medium"><span className="h-3 w-1 rounded-full bg-accent" aria-hidden />
           Typical day
         </h2>
         <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
@@ -64,7 +64,7 @@ export function EiaExplorerClient({ data }: { data: EiaRegionData }) {
       </section>
 
       <section className="mt-10">
-        <h2 className="text-lg font-medium text-black dark:text-zinc-50">
+        <h2 className="flex items-center gap-2 text-lg font-medium"><span className="h-3 w-1 rounded-full bg-accent" aria-hidden />
           Weekly average, 2020&ndash;2024
         </h2>
         <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
@@ -77,7 +77,7 @@ export function EiaExplorerClient({ data }: { data: EiaRegionData }) {
       </section>
 
       <section className="mt-10 overflow-x-auto">
-        <h2 className="text-lg font-medium text-black dark:text-zinc-50">
+        <h2 className="flex items-center gap-2 text-lg font-medium"><span className="h-3 w-1 rounded-full bg-accent" aria-hidden />
           Yearly max MW
         </h2>
         <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">

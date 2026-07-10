@@ -24,9 +24,7 @@ export default async function ComparePage({
     const allCases = await listLibraryCases();
     return (
       <div className="mx-auto max-w-4xl px-6 py-16">
-        <h1 className="text-2xl font-semibold tracking-tight text-black dark:text-zinc-50">
-          Compare scenarios
-        </h1>
+        <h1 className="text-3xl font-semibold tracking-tight">Compare scenarios</h1>
         <p className="mt-2 text-zinc-600 dark:text-zinc-400">
           {caseIds.length === 1
             ? "Pick at least one more case to compare."
@@ -43,14 +41,11 @@ export default async function ComparePage({
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-16">
-      <Link
-        href="/compare"
-        className="text-sm text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
-      >
+      <Link href="/compare" className="text-sm text-zinc-500 hover:text-accent dark:text-zinc-400">
         ← Pick different cases
       </Link>
 
-      <h1 className="mt-2 text-2xl font-semibold tracking-tight text-black dark:text-zinc-50">
+      <h1 className="mt-2 text-3xl font-semibold tracking-tight">
         Comparing {cases.length} scenarios
       </h1>
 
@@ -97,7 +92,8 @@ export default async function ComparePage({
       </section>
 
       <section className="mt-10">
-        <h2 className="text-lg font-medium text-black dark:text-zinc-50">
+        <h2 className="flex items-center gap-2 text-lg font-medium">
+          <span className="h-3 w-1 rounded-full bg-accent" aria-hidden />
           CO₂ emissions over time
         </h2>
         <div className="mt-4 rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
@@ -106,7 +102,8 @@ export default async function ComparePage({
       </section>
 
       <section className="mt-10">
-        <h2 className="text-lg font-medium text-black dark:text-zinc-50">
+        <h2 className="flex items-center gap-2 text-lg font-medium">
+          <span className="h-3 w-1 rounded-full bg-accent" aria-hidden />
           Energy mix per scenario
         </h2>
         <div className="mt-4 grid gap-6 sm:grid-cols-2">

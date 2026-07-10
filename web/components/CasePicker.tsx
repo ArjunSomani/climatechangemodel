@@ -1,92 +1,82 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { LibraryCaseSummary } from "@/lib/library";
 import { caseLabel } from "@/lib/metrics";
+import { ScenarioPicker } from "@/components/ScenarioPicker";
 
 export function CasePicker({ cases }: { cases: LibraryCaseSummary[] }) {
   const router = useRouter();
-  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [current, setCurrent] = useState<LibraryCaseSummary | null>(null);
+  const [added, setAdded] = useState<LibraryCaseSummary[]>([]);
 
-  const groups = useMemo(() => {
-    const byGroup = new Map<string, LibraryCaseSummary[]>();
-    for (const c of cases) {
-      const key = `${c.group_name.replace(/_/g, " ")} / ${c.variant.replace(/_/g, " ")}`;
-      if (!byGroup.has(key)) byGroup.set(key, []);
-      byGroup.get(key)!.push(c);
-    }
-    return byGroup;
-  }, [cases]);
+  function addCurrent() {
+    if (!current) return;
+    setAdded((prev) =>
+      prev.some((c) => c.case_id === current.case_id) ? prev : [...prev, current]
+    );
+  }
 
-  function toggle(caseId: string) {
-    setSelected((prev) => {
-      const next = new Set(prev);
-      if (next.has(caseId)) next.delete(caseId);
-      else next.add(caseId);
-      return next;
-    });
+  function remove(caseId: string) {
+    setAdded((prev) => prev.filter((c) => c.case_id !== caseId));
   }
 
   function goCompare() {
-    const query = encodeURIComponent(Array.from(selected).join(","));
+    const query = encodeURIComponent(added.map((c) => c.case_id).join(","));
     router.push(`/compare?cases=${query}`);
   }
+
+  const alreadyAdded = current && added.some((c) => c.case_id === current.case_id);
 
   return (
     <div>
       <p className="text-sm text-zinc-600 dark:text-zinc-400">
-        Pick 2 or more cases to compare.
+        Configure a scenario, add it to the comparison, and repeat for
+        anything else you want to compare.
       </p>
 
-      <div className="mt-6 space-y-6">
-        {Array.from(groups.entries()).map(([groupKey, groupCases]) => (
-          <div key={groupKey}>
-            <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
-              {groupKey}
-            </h3>
-            <div className="mt-2 grid gap-2 sm:grid-cols-2">
-              {groupCases.map((c) => (
-                <label
-                  key={c.case_id}
-                  className="flex items-center gap-2 rounded-md border border-zinc-200 px-3 py-2 text-sm hover:border-zinc-400 dark:border-zinc-800 dark:hover:border-zinc-600"
-                >
-                  <input
-                    type="checkbox"
-                    checked={selected.has(c.case_id)}
-                    onChange={() => toggle(c.case_id)}
-                  />
-                  {caseLabel(c)}
-                </label>
-              ))}
-            </div>
-          </div>
-        ))}
+      <div className="mt-6 rounded-lg border border-zinc-200 p-5 dark:border-zinc-800">
+        <ScenarioPicker cases={cases} onChange={setCurrent} />
+        <button
+          onClick={addCurrent}
+          disabled={!current || !!alreadyAdded}
+          className="mt-4 rounded-full bg-accent px-5 py-2 text-sm font-medium text-accent-foreground disabled:opacity-30"
+        >
+          {alreadyAdded ? "Already added" : "Add to comparison"}
+        </button>
       </div>
 
-      {/* Reachable from anywhere in a long list -- the list can run to
-          dozens of cases, so the action can't live only at the top.
-          sticky (not fixed) so it naturally gives way to the site
-          footer at the end of the list instead of covering it. */}
-      {selected.size > 0 && (
+      {added.length > 0 && (
         <div className="sticky bottom-0 -mx-6 mt-6 border-t border-zinc-200 bg-white/95 px-6 backdrop-blur dark:border-zinc-800 dark:bg-black/95">
-          <div className="mx-auto flex max-w-4xl items-center justify-between py-4">
-            <span className="text-sm text-zinc-600 dark:text-zinc-400">
-              {selected.size} selected
-            </span>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setSelected(new Set())}
-                className="text-sm text-zinc-500 hover:text-black dark:text-zinc-400 dark:hover:text-zinc-50"
-              >
-                Clear
-              </button>
+          <div className="mx-auto max-w-4xl py-4">
+            <div className="flex flex-wrap gap-2">
+              {added.map((c) => (
+                <span
+                  key={c.case_id}
+                  className="inline-flex items-center gap-2 rounded-full border border-zinc-300 py-1 pr-1 pl-3 text-sm dark:border-zinc-700"
+                >
+                  {caseLabel(c)}
+                  <button
+                    onClick={() => remove(c.case_id)}
+                    aria-label={`Remove ${caseLabel(c)}`}
+                    className="flex h-5 w-5 items-center justify-center rounded-full text-zinc-500 hover:bg-zinc-200 dark:hover:bg-zinc-800"
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
+            <div className="mt-3 flex items-center justify-between">
+              <span className="text-sm text-zinc-600 dark:text-zinc-400">
+                {added.length} selected
+              </span>
               <button
                 onClick={goCompare}
-                disabled={selected.size < 2}
+                disabled={added.length < 2}
                 className="rounded-full bg-black px-5 py-2 text-sm font-medium text-white disabled:opacity-30 dark:bg-white dark:text-black"
               >
-                Compare selected ({selected.size})
+                Compare selected ({added.length})
               </button>
             </div>
           </div>

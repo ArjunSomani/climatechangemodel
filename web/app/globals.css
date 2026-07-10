@@ -1,8 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* warm near-white/near-black rather than stark #fff/#000, matching
+     the chart surface tokens below for one consistent palette */
+  --background: #fcfcfb;
+  --foreground: #17140f;
+
+  /* energy-toned accent -- used only in UI chrome (links, CTAs, active
+     states), never in charts, so it never competes with the data
+     palette's meaning */
+  --accent: #b5450c;
+  --accent-foreground: #fff8f2;
 
   /* dataviz tokens (light) -- see references/palette.md in the dataviz skill */
   --chart-surface: #fcfcfb;
@@ -42,14 +50,20 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-fraunces);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #100e0b;
+    --foreground: #f3f1ea;
+
+    --accent: #ec7c3d;
+    --accent-foreground: #1a0f06;
 
     --chart-surface: #1a1a19;
     --chart-page: #0d0d0d;
@@ -81,8 +95,27 @@
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  body {
+    background: var(--background);
+    color: var(--foreground);
+  }
+
+  /* Layered (not plain CSS) so a utility class like font-sans on a
+     specific h2 (e.g. a small uppercase kicker label) can still win --
+     unlayered CSS always beats layered CSS regardless of specificity. */
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+    letter-spacing: -0.01em;
+  }
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+a {
+  text-underline-offset: 3px;
 }

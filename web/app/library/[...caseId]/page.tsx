@@ -22,18 +22,21 @@ export default async function LibraryCasePage({
     (sum, s) => sum + (lastYear[`${s.key}_CO2_MT`] ?? 0),
     0
   );
+  const variantPart =
+    detail.variant !== "Default" ? ` ${detail.variant.replace(/_/g, " ")}` : "";
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-16">
       <Link
         href="/library"
-        className="text-sm text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
+        className="text-sm text-zinc-500 hover:text-accent dark:text-zinc-400"
       >
         ← Library
       </Link>
 
-      <h1 className="mt-2 text-2xl font-semibold tracking-tight text-black dark:text-zinc-50">
-        {detail.group_name} — CO₂ price ${detail.co2_initial}/MT
+      <h1 className="mt-2 text-3xl font-semibold tracking-tight">
+        {detail.group_name.replace(/_/g, " ")}
+        {variantPart} — CO₂ price ${detail.co2_initial}/MT
       </h1>
       <p className="mt-1 text-zinc-600 dark:text-zinc-400">
         {detail.region} · {detail.years} years · {detail.co2_regime.replace("_", " ")}
@@ -46,24 +49,28 @@ export default async function LibraryCasePage({
         <Stat label="Years modeled" value={String(detail.years)} />
       </div>
 
-      <section className="mt-10">
-        <h2 className="text-lg font-medium text-black dark:text-zinc-50">
-          Energy mix over time
-        </h2>
-        <div className="mt-4 rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
-          <EnergyMixChart data={detail.result} />
-        </div>
-      </section>
+      <Section title="Energy mix over time">
+        <EnergyMixChart data={detail.result} />
+      </Section>
 
-      <section className="mt-10">
-        <h2 className="text-lg font-medium text-black dark:text-zinc-50">
-          Year-by-year data
-        </h2>
-        <div className="mt-4 rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
-          <YearTable data={detail.result} />
-        </div>
-      </section>
+      <Section title="Year-by-year data">
+        <YearTable data={detail.result} />
+      </Section>
     </div>
+  );
+}
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="mt-10">
+      <h2 className="flex items-center gap-2 text-lg font-medium">
+        <span className="h-3 w-1 rounded-full bg-accent" aria-hidden />
+        {title}
+      </h2>
+      <div className="mt-4 rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
+        {children}
+      </div>
+    </section>
   );
 }
 
@@ -71,9 +78,7 @@ function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
       <div className="text-xs text-zinc-500 dark:text-zinc-400">{label}</div>
-      <div className="mt-1 text-xl font-semibold text-black dark:text-zinc-50">
-        {value}
-      </div>
+      <div className="font-display mt-1 text-2xl font-medium">{value}</div>
     </div>
   );
 }

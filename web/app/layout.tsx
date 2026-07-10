@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Fraunces, Geist, Geist_Mono } from "next/font/google";
 import { Nav } from "@/components/Nav";
 import "./globals.css";
 
@@ -12,6 +12,15 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+// Display serif for headings only -- gives the site an editorial,
+// energy-and-climate-storytelling feel instead of generic app chrome.
+// Body copy and UI stay on Geist for legibility at small sizes.
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
+  subsets: ["latin"],
+  axes: ["opsz", "SOFT", "WONK"],
 });
 
 export const metadata: Metadata = {
@@ -27,9 +36,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col font-sans">
         <Nav />
         <main className="flex min-w-0 flex-1 flex-col">
           <div className="min-w-0">{children}</div>
@@ -39,20 +48,14 @@ export default function RootLayout({
             <div className="flex flex-wrap gap-x-4 gap-y-1">
               <a
                 href="https://github.com/cliffgold/Optimize"
-                className="hover:text-black dark:hover:text-zinc-50"
+                className="hover:text-accent"
               >
                 GitHub
               </a>
-              <Link
-                href="/methodology"
-                className="hover:text-black dark:hover:text-zinc-50"
-              >
+              <Link href="/methodology" className="hover:text-accent">
                 Methodology
               </Link>
-              <Link
-                href="/data-explorer"
-                className="hover:text-black dark:hover:text-zinc-50"
-              >
+              <Link href="/data-explorer" className="hover:text-accent">
                 Data sources
               </Link>
             </div>

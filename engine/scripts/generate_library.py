@@ -6,11 +6,12 @@ into Neon Postgres (library_cases, see setup_library_schema.py).
 
 Deliberately small relative to the full PRD library (10 CO2 prices x 13
 regions x several variant groups -- PRD §5.5: a full Case is ~1h40m).
-GROUPS below isolates one knob at a time (interest, demand, per-source
-build rate/capital, CO2 regime) against a CAL/Default baseline, plus
-Default itself across 3 regions -- enough for Compare to show what
-each knob actually does. Extend GROUPS to grow it further; it's
-idempotent (upserts by case_id), ~45-60s per case.
+GROUPS is the full cross product of every (group, variant) template x
+every region x all 4 constant CO2 levels (134 cases total), so the
+frontend's dropdown pickers (region -> group -> variant -> CO2) never
+hit a dead combination. Extend REGIONS or VARIANT_TEMPLATES to grow it
+further; it's idempotent (upserts by case_id, skips existing case_ids),
+~45-60s per case.
 
 Requires `vercel` CLI to be linked in web/ (already the case) -- shells
 out to `vercel blob put` rather than using Blob's REST API directly,
@@ -60,30 +61,39 @@ class CaseGroup:
     demand: tuple[float, float] = (1.02, 1)
 
 
+# Every region x every variant x all 4 constant CO2 levels, so the
+# frontend's dropdown pickers never hit a dead combination. Increasing_CO2
+# stays a CAL/Default-only bonus rather than doubling this again --
+# ~98 new cases at ~45-60s each already runs to over an hour.
+REGIONS = ['CAL', 'TEX', 'NY']
+
+# (group, variant, source_overrides, interest, demand)
+VARIANT_TEMPLATES: list[tuple[str, str, dict, tuple[float, float], tuple[float, float]]] = [
+    ('Default', 'Default', {}, (0.12, 1), (1.02, 1)),
+    ('Cheap_Nuclear', 'Half_Cap', {'Nuclear': {'capital': (0.5, 1)}}, (0.12, 1), (1.02, 1)),
+    ('Cheap_Nuclear', '3_Qtr_Cap', {'Nuclear': {'capital': (0.75, 1)}}, (0.12, 1), (1.02, 1)),
+    ('Cheap_Renewable', 'Half_Cap',
+     {'Solar': {'capital': (0.5, 1)}, 'Wind': {'capital': (0.5, 1)}}, (0.12, 1), (1.02, 1)),
+    ('Cheap_Renewable', '3_Qtr_Cap',
+     {'Solar': {'capital': (0.75, 1)}, 'Wind': {'capital': (0.75, 1)}}, (0.12, 1), (1.02, 1)),
+    ('Fast_Build', 'Double_All',
+     {s: {'max_pct': (2, 1)} for s in ['Solar', 'Wind', 'Nuclear', 'Gas', 'Coal']}, (0.12, 1), (1.02, 1)),
+    ('Fast_Build', 'Quad_All',
+     {s: {'max_pct': (4, 1)} for s in ['Solar', 'Wind', 'Nuclear', 'Gas', 'Coal']}, (0.12, 1), (1.02, 1)),
+    ('Interest_Rate', '3pct_Interest', {}, (0.03, 1), (1.02, 1)),
+    ('Interest_Rate', '6pct_Interest', {}, (0.06, 1), (1.02, 1)),
+    ('Demand', '1pct_Growth', {}, (0.12, 1), (1.01, 1)),
+    ('Demand', '3pct_Growth', {}, (0.12, 1), (1.03, 1)),
+]
+
 GROUPS = [
-    CaseGroup('Default', 'Default', 'CAL', CONSTANT_CO2 + INCREASING_CO2),
-    CaseGroup('Default', 'Default', 'TEX', CONSTANT_CO2),
-    CaseGroup('Default', 'Default', 'NY', CONSTANT_CO2),
-
-    # --- Per-source knobs ---
-    CaseGroup('Cheap_Nuclear', 'Half_Cap', 'CAL', CONSTANT_CO2,
-              source_overrides={'Nuclear': {'capital': (0.5, 1)}}),
-    CaseGroup('Cheap_Nuclear', '3_Qtr_Cap', 'CAL', CONSTANT_CO2_ENDS,
-              source_overrides={'Nuclear': {'capital': (0.75, 1)}}),
-    CaseGroup('Cheap_Renewable', 'Half_Cap', 'CAL', CONSTANT_CO2_ENDS,
-              source_overrides={'Solar': {'capital': (0.5, 1)}, 'Wind': {'capital': (0.5, 1)}}),
-    CaseGroup('Cheap_Renewable', '3_Qtr_Cap', 'CAL', CONSTANT_CO2_ENDS,
-              source_overrides={'Solar': {'capital': (0.75, 1)}, 'Wind': {'capital': (0.75, 1)}}),
-    CaseGroup('Fast_Build', 'Double_All', 'CAL', CONSTANT_CO2_ENDS,
-              source_overrides={s: {'max_pct': (2, 1)} for s in ['Solar', 'Wind', 'Nuclear', 'Gas', 'Coal']}),
-    CaseGroup('Fast_Build', 'Quad_All', 'CAL', CONSTANT_CO2_ENDS,
-              source_overrides={s: {'max_pct': (4, 1)} for s in ['Solar', 'Wind', 'Nuclear', 'Gas', 'Coal']}),
-
-    # --- Global knobs ---
-    CaseGroup('Interest_Rate', '3pct_Interest', 'CAL', CONSTANT_CO2_ENDS, interest=(0.03, 1)),
-    CaseGroup('Interest_Rate', '6pct_Interest', 'CAL', CONSTANT_CO2_ENDS, interest=(0.06, 1)),
-    CaseGroup('Demand', '1pct_Growth', 'CAL', CONSTANT_CO2_ENDS, demand=(1.01, 1)),
-    CaseGroup('Demand', '3pct_Growth', 'CAL', CONSTANT_CO2_ENDS, demand=(1.03, 1)),
+    CaseGroup(
+        group, variant, region,
+        CONSTANT_CO2 + (INCREASING_CO2 if (group, variant, region) == ('Default', 'Default', 'CAL') else []),
+        source_overrides=overrides, interest=interest, demand=demand,
+    )
+    for (group, variant, overrides, interest, demand) in VARIANT_TEMPLATES
+    for region in REGIONS
 ]
 
 
