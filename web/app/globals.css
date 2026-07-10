@@ -3,6 +3,23 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* dataviz tokens (light) -- see references/palette.md in the dataviz skill */
+  --chart-surface: #fcfcfb;
+  --chart-page: #f9f9f7;
+  --ink-primary: #0b0b0b;
+  --ink-secondary: #52514e;
+  --ink-muted: #898781;
+  --chart-gridline: #e1e0d9;
+  --chart-baseline: #c3c2b7;
+
+  /* categorical slots 1-6, fixed order: Solar, Wind, Nuclear, Gas, Coal, Battery */
+  --series-solar: #2a78d6;
+  --series-wind: #1baf7a;
+  --series-nuclear: #eda100;
+  --series-gas: #008300;
+  --series-coal: #4a3aa7;
+  --series-battery: #e34948;
 }
 
 @theme inline {
@@ -16,6 +33,21 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+
+    --chart-surface: #1a1a19;
+    --chart-page: #0d0d0d;
+    --ink-primary: #ffffff;
+    --ink-secondary: #c3c2b7;
+    --ink-muted: #898781;
+    --chart-gridline: #2c2c2a;
+    --chart-baseline: #383835;
+
+    --series-solar: #3987e5;
+    --series-wind: #199e70;
+    --series-nuclear: #c98500;
+    --series-gas: #008300;
+    --series-coal: #9085e9;
+    --series-battery: #e66767;
   }
 }
 
