@@ -11,7 +11,11 @@ function humanize(s: string): string {
 export function caseLabel(c: LibraryCaseSummary): string {
   const variantPart =
     c.variant !== "Default" ? ` ${humanize(c.variant)}` : "";
-  return `${c.region} · ${humanize(c.group_name)}${variantPart} · $${c.co2_initial}/MT`;
+  const co2Part =
+    c.co2_regime === "Increasing_CO2"
+      ? `+$${c.co2_initial}/yr to $${c.co2_yearly}`
+      : `$${c.co2_initial}/MT`;
+  return `${c.region} · ${humanize(c.group_name)}${variantPart} · ${co2Part}`;
 }
 
 export function totalCO2MT(record: YearRecord): number {

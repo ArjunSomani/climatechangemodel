@@ -6,10 +6,11 @@ into Neon Postgres (library_cases, see setup_library_schema.py).
 
 Deliberately small relative to the full PRD library (10 CO2 prices x 13
 regions x several variant groups -- PRD §5.5: a full Case is ~1h40m).
-CASE_DEFS crossed with CO2_LEVELS below covers 3 regions on the Default
-variant plus a Cheap_Nuclear variant for CAL, enough for the Compare
-view to have something real to show. Extend either list to grow it
-further the same way; it's idempotent (upserts by case_id).
+GROUPS below isolates one knob at a time (interest, demand, per-source
+build rate/capital, CO2 regime) against a CAL/Default baseline, plus
+Default itself across 3 regions -- enough for Compare to show what
+each knob actually does. Extend GROUPS to grow it further; it's
+idempotent (upserts by case_id), ~45-60s per case.
 
 Requires `vercel` CLI to be linked in web/ (already the case) -- shells
 out to `vercel blob put` rather than using Blob's REST API directly,
@@ -20,6 +21,7 @@ import importlib.metadata
 import json
 import subprocess
 import tempfile
+from dataclasses import dataclass, field
 from pathlib import Path
 
 import psycopg
@@ -32,22 +34,56 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 WEB_DIR = REPO_ROOT / 'web'
 ENGINE_DIR = REPO_ROOT / 'engine'
 
-CO2_REGIME = 'Constant_CO2'
 YEARS = 27
 
-# (co2_initial, co2_yearly) -- matches the real sample cases shipped in
-# vendor/optimize-original/Samples/CO2-0 thru 500/Results_CO2-*-0_US.xlsm
-CO2_LEVELS = [(0, 0), (100, 0), (200, 0), (500, 0)]
+# (co2_initial, co2_yearly) under Constant_CO2 -- matches the real sample
+# cases shipped in vendor/optimize-original/Samples/CO2-0 thru 500/.
+CONSTANT_CO2 = [(0, 0, 'Constant_CO2'), (100, 0, 'Constant_CO2'),
+                (200, 0, 'Constant_CO2'), (500, 0, 'Constant_CO2')]
+# A cheaper spread for knob-isolation cases -- just enough to show the
+# knob's effect at low and high carbon prices without re-running all 4.
+CONSTANT_CO2_ENDS = [(0, 0, 'Constant_CO2'), (500, 0, 'Constant_CO2')]
+# Increasing_CO2: co2_initial is the $/yr step, co2_yearly is the cap it
+# climbs to (see fig_tweakxs) -- distinct semantics from Constant_CO2,
+# where co2_yearly=0 means "cap already reached, stays flat".
+INCREASING_CO2 = [(15, 300, 'Increasing_CO2'), (30, 500, 'Increasing_CO2')]
 
-# Each entry: (group, variant, region, source_overrides). source_overrides
-# maps SOURCE name -> field -> (initial, yearly), applied on top of the
-# all-1s default from ScenarioConfig's SourceTweaks.
-CASE_DEFS = [
-    ('Default', 'Default', 'CAL', {}),
-    ('Default', 'Default', 'TEX', {}),
-    ('Default', 'Default', 'NY', {}),
-    # Matches the source repo's "Half_Cap" naming (Library/Cheap_Nuclear/Half_Cap/).
-    ('Cheap_Nuclear', 'Half_Cap', 'CAL', {'Nuclear': {'capital': (0.5, 1)}}),
+
+@dataclass
+class CaseGroup:
+    group: str
+    variant: str
+    region: str
+    co2_scenarios: list[tuple[float, float, str]]
+    source_overrides: dict = field(default_factory=dict)
+    interest: tuple[float, float] = (0.12, 1)
+    demand: tuple[float, float] = (1.02, 1)
+
+
+GROUPS = [
+    CaseGroup('Default', 'Default', 'CAL', CONSTANT_CO2 + INCREASING_CO2),
+    CaseGroup('Default', 'Default', 'TEX', CONSTANT_CO2),
+    CaseGroup('Default', 'Default', 'NY', CONSTANT_CO2),
+
+    # --- Per-source knobs ---
+    CaseGroup('Cheap_Nuclear', 'Half_Cap', 'CAL', CONSTANT_CO2,
+              source_overrides={'Nuclear': {'capital': (0.5, 1)}}),
+    CaseGroup('Cheap_Nuclear', '3_Qtr_Cap', 'CAL', CONSTANT_CO2_ENDS,
+              source_overrides={'Nuclear': {'capital': (0.75, 1)}}),
+    CaseGroup('Cheap_Renewable', 'Half_Cap', 'CAL', CONSTANT_CO2_ENDS,
+              source_overrides={'Solar': {'capital': (0.5, 1)}, 'Wind': {'capital': (0.5, 1)}}),
+    CaseGroup('Cheap_Renewable', '3_Qtr_Cap', 'CAL', CONSTANT_CO2_ENDS,
+              source_overrides={'Solar': {'capital': (0.75, 1)}, 'Wind': {'capital': (0.75, 1)}}),
+    CaseGroup('Fast_Build', 'Double_All', 'CAL', CONSTANT_CO2_ENDS,
+              source_overrides={s: {'max_pct': (2, 1)} for s in ['Solar', 'Wind', 'Nuclear', 'Gas', 'Coal']}),
+    CaseGroup('Fast_Build', 'Quad_All', 'CAL', CONSTANT_CO2_ENDS,
+              source_overrides={s: {'max_pct': (4, 1)} for s in ['Solar', 'Wind', 'Nuclear', 'Gas', 'Coal']}),
+
+    # --- Global knobs ---
+    CaseGroup('Interest_Rate', '3pct_Interest', 'CAL', CONSTANT_CO2_ENDS, interest=(0.03, 1)),
+    CaseGroup('Interest_Rate', '6pct_Interest', 'CAL', CONSTANT_CO2_ENDS, interest=(0.06, 1)),
+    CaseGroup('Demand', '1pct_Growth', 'CAL', CONSTANT_CO2_ENDS, demand=(1.01, 1)),
+    CaseGroup('Demand', '3pct_Growth', 'CAL', CONSTANT_CO2_ENDS, demand=(1.03, 1)),
 ]
 
 
@@ -136,8 +172,8 @@ def _build_sources(overrides: dict) -> dict:
     sources = {}
     for name in SOURCES:
         tweaks = SourceTweaks()
-        for field, (initial, yearly) in overrides.get(name, {}).items():
-            setattr(tweaks, field, TweakPair(initial=initial, yearly=yearly))
+        for f, (initial, yearly) in overrides.get(name, {}).items():
+            setattr(tweaks, f, TweakPair(initial=initial, yearly=yearly))
         sources[name] = tweaks
     return sources
 
@@ -149,22 +185,35 @@ def main() -> None:
     eia_version = _eia_version()
 
     total = 0
+    skipped = 0
     with psycopg.connect(env['DATABASE_URL']) as conn:
-        for group, variant, region, overrides in CASE_DEFS:
-            group_slug = group.lower()
-            variant_slug = variant.lower()
-            for co2_initial, co2_yearly in CO2_LEVELS:
-                case_id = f'{group_slug}/{variant_slug}/constant_co2/co2_{co2_initial}_{co2_yearly}/{region}'
+        with conn.cursor() as cur:
+            cur.execute('SELECT case_id FROM library_cases')
+            existing_case_ids = {row[0] for row in cur.fetchall()}
+
+        for g in GROUPS:
+            group_slug = g.group.lower()
+            variant_slug = g.variant.lower()
+            for co2_initial, co2_yearly, co2_regime in g.co2_scenarios:
+                regime_slug = co2_regime.lower()
+                case_id = (f'{group_slug}/{variant_slug}/{regime_slug}/'
+                           f'co2_{co2_initial}_{co2_yearly}/{g.region}')
+
+                if case_id in existing_case_ids:
+                    print(f'--- {case_id} (skip, already exists) ---')
+                    skipped += 1
+                    continue
+
                 print(f'--- {case_id} ---')
 
                 config = ScenarioConfig(
-                    region=region,
+                    region=g.region,
                     sub_dir=case_id.replace('/', '-'),
                     years=YEARS,
                     co2_price=TweakPair(initial=co2_initial, yearly=co2_yearly),
-                    interest=TweakPair(initial=0.12, yearly=1),
-                    demand=TweakPair(initial=1.02, yearly=1),
-                    sources=_build_sources(overrides),
+                    interest=TweakPair(initial=g.interest[0], yearly=g.interest[1]),
+                    demand=TweakPair(initial=g.demand[0], yearly=g.demand[1]),
+                    sources=_build_sources(g.source_overrides),
                 )
 
                 result = run_scenario(
@@ -179,12 +228,12 @@ def main() -> None:
                 with conn.cursor() as cur:
                     cur.execute(UPSERT_SQL, {
                         'case_id': case_id,
-                        'group_name': group,
-                        'variant': variant,
-                        'co2_regime': CO2_REGIME,
+                        'group_name': g.group,
+                        'variant': g.variant,
+                        'co2_regime': co2_regime,
                         'co2_initial': co2_initial,
                         'co2_yearly': co2_yearly,
-                        'region': region,
+                        'region': g.region,
                         'years': YEARS,
                         'config': json.dumps(config.model_dump()),
                         'result_blob_url': blob_url,
@@ -196,7 +245,7 @@ def main() -> None:
                 print('  catalog row upserted')
                 total += 1
 
-    print(f'Done: {total} cases')
+    print(f'Done: {total} generated, {skipped} skipped (already existed)')
 
 
 if __name__ == '__main__':
