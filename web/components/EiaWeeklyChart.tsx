@@ -31,7 +31,8 @@ export function EiaWeeklyChart({
         <XAxis
           dataKey="date"
           type="category"
-          interval={25}
+          interval="preserveStartEnd"
+          minTickGap={40}
           tick={{ fill: "var(--ink-muted)", fontSize: 12 }}
           axisLine={{ stroke: "var(--chart-baseline)" }}
           tickLine={false}

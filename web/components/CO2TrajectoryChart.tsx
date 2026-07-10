@@ -11,7 +11,7 @@ import {
   YAxis,
 } from "recharts";
 import type { LibraryCaseDetail } from "@/lib/library";
-import { totalCO2MT } from "@/lib/metrics";
+import { caseLabel, totalCO2MT } from "@/lib/metrics";
 import { useForceResizeOnMount } from "@/lib/useForceResizeOnMount";
 
 // Same 8-slot categorical palette as the energy-mix chart, but a
@@ -103,9 +103,7 @@ export function CO2TrajectoryChart({ cases }: { cases: LibraryCaseDetail[] }) {
     return row;
   });
 
-  const labels = Object.fromEntries(
-    cases.map((c) => [c.case_id, `${c.region} · $${c.co2_initial}/MT`])
-  );
+  const labels = Object.fromEntries(cases.map((c) => [c.case_id, caseLabel(c)]));
 
   return (
     <ResponsiveContainer width="100%" height={340}>

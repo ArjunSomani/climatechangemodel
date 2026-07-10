@@ -17,6 +17,13 @@ export default async function LibraryPage() {
     if (!byGroup.has(c.group_name)) byGroup.set(c.group_name, []);
     byGroup.get(c.group_name)!.push(c);
   }
+  // Default is the baseline every other variant is measured against --
+  // lead with it rather than burying it alphabetically mid-list.
+  const orderedGroups = Array.from(byGroup.entries()).sort(([a], [b]) => {
+    if (a === "Default") return -1;
+    if (b === "Default") return 1;
+    return a.localeCompare(b);
+  });
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-16">
@@ -28,7 +35,7 @@ export default async function LibraryPage() {
       </p>
 
       <div className="mt-8 space-y-10">
-        {Array.from(byGroup.entries()).map(([groupName, groupCases]) => (
+        {orderedGroups.map(([groupName, groupCases]) => (
           <div key={groupName}>
             <h2 className="text-sm font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
               {groupName.replace(/_/g, " ")}
