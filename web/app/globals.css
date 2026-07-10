@@ -31,6 +31,12 @@
   --compare-6: #e34948;
   --compare-7: #e87ba4;
   --compare-8: #eb6834;
+
+  /* muted, not-optimized EIA sources (PRD Appendix A) -- 3 grayscale
+     steps, deliberately de-emphasized rather than given bright slots */
+  --eia-hydro: #a8a6a0;
+  --eia-oil: #78766f;
+  --eia-other: #4a4944;
 }
 
 @theme inline {
@@ -68,6 +74,10 @@
     --compare-6: #e66767;
     --compare-7: #d55181;
     --compare-8: #d95926;
+
+    --eia-hydro: #6b6a64;
+    --eia-oil: #918f88;
+    --eia-other: #b8b6af;
   }
 }
 

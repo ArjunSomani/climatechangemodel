@@ -37,18 +37,21 @@ export default function RootLayout({
             >
               Optimize
             </Link>
-            <Link
-              href="/library"
-              className="text-sm text-zinc-600 hover:text-black dark:text-zinc-400 dark:hover:text-zinc-50"
-            >
-              Library
-            </Link>
-            <Link
-              href="/compare"
-              className="text-sm text-zinc-600 hover:text-black dark:text-zinc-400 dark:hover:text-zinc-50"
-            >
-              Compare
-            </Link>
+            {[
+              ["/how-it-works", "How it works"],
+              ["/library", "Library"],
+              ["/compare", "Compare"],
+              ["/data-explorer", "Data Explorer"],
+              ["/methodology", "Methodology"],
+            ].map(([href, label]) => (
+              <Link
+                key={href}
+                href={href}
+                className="text-sm text-zinc-600 hover:text-black dark:text-zinc-400 dark:hover:text-zinc-50"
+              >
+                {label}
+              </Link>
+            ))}
           </nav>
         </header>
         <main className="flex flex-1 flex-col">{children}</main>
