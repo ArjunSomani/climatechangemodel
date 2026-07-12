@@ -50,11 +50,24 @@ WHERE id = %(id)s;
 
 
 def _env() -> dict:
+    import os
     from pathlib import Path
-    web_env_file = Path(__file__).resolve().parent.parent.parent / 'web' / '.env.local'
-    env = dotenv_values(web_env_file)
-    if not env.get('DATABASE_URL') or not env.get('BLOB_READ_WRITE_TOKEN'):
-        raise RuntimeError('web/.env.local is missing DATABASE_URL or BLOB_READ_WRITE_TOKEN')
+
+    # On Render, DATABASE_URL/BLOB_READ_WRITE_TOKEN are set as real env vars
+    # in the service's dashboard. Locally, fall back to web/.env.local
+    # (pulled via `vercel env pull`) so the worker also runs from a laptop.
+    env = {
+        'DATABASE_URL': os.environ.get('DATABASE_URL'),
+        'BLOB_READ_WRITE_TOKEN': os.environ.get('BLOB_READ_WRITE_TOKEN'),
+    }
+    if not env['DATABASE_URL'] or not env['BLOB_READ_WRITE_TOKEN']:
+        web_env_file = Path(__file__).resolve().parent.parent.parent / 'web' / '.env.local'
+        local_env = dotenv_values(web_env_file)
+        env['DATABASE_URL'] = env['DATABASE_URL'] or local_env.get('DATABASE_URL')
+        env['BLOB_READ_WRITE_TOKEN'] = env['BLOB_READ_WRITE_TOKEN'] or local_env.get('BLOB_READ_WRITE_TOKEN')
+
+    if not env['DATABASE_URL'] or not env['BLOB_READ_WRITE_TOKEN']:
+        raise RuntimeError('DATABASE_URL / BLOB_READ_WRITE_TOKEN not set in env or web/.env.local')
     return env
 
 

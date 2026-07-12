@@ -9,12 +9,14 @@ __pycache__/
 *.egg-info/
 .pytest_cache/
 
-# Bulky EIA source data + derived Parquet store. Regenerable from vendor/
-# (see engine/scripts/convert_eia_to_parquet.py) or, later, from the
-# scheduled EIA ingestion job (PRD §9). Specs.csv/Regions.csv are small
-# and authoritative, so those ARE committed.
+# Raw EIA hourly CSVs -- bulky, regenerable from vendor/ (see
+# engine/scripts/convert_eia_to_parquet.py) or refresh_eia_data.py.
+# The derived eia_parquet/ store IS committed (unlike this), since
+# run_worker.py's Render deploy needs it at runtime and
+# refresh_eia_data.py is incremental-only (can't bootstrap from an
+# empty checkout) -- see engine/data/eia_parquet/meta.json for the
+# version it was generated under.
 engine/data/eia_hourly/
-engine/data/eia_parquet/
 
 # Env / secrets
 .env

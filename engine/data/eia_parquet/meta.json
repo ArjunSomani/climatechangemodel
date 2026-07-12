@@ -1,0 +1,78 @@
+{
+  "version": "20260710T035737Z",
+  "generated_at": "2026-07-10T03:57:37.206718+00:00",
+  "regions": [
+    "CAL",
+    "CAR",
+    "CENT",
+    "FLA",
+    "MIDA",
+    "MIDW",
+    "NE",
+    "NW",
+    "NY",
+    "SE",
+    "SW",
+    "TEN",
+    "TEX"
+  ],
+  "date_range": [
+    "2020-01-01T00:00:00",
+    "2025-12-31T23:00:00"
+  ],
+  "hourly_row_count": 683904,
+  "source_file_hashes": {
+    "CAL": {
+      "hourly_capacity_sha256": "666c554081f6f60b0d04c85c81a2f103be78ccf1a6ef1cf372829c173d58a262",
+      "max_mwh_yearly_sha256": "533b817805d7cde4e15ffe83222b0683f5d1d93e6186e79e4c66164f24af2697"
+    },
+    "CAR": {
+      "hourly_capacity_sha256": "c710f57db682ad1029dc54c936377b35ed5c0b5964dc9fa1d680b6a969548ef8",
+      "max_mwh_yearly_sha256": "6d36d38ccb436c7dc7991d9e66424db393d609dcd17c23969c08b5227694ce6f"
+    },
+    "CENT": {
+      "hourly_capacity_sha256": "f500b41d17e764c88adf5d00df5052081aea2614a2512069506095fe8a19c9c0",
+      "max_mwh_yearly_sha256": "8dfc04b2d401f20c940e01b79cd16a821b7216fe9208410e04afb0b4e5c8f46e"
+    },
+    "FLA": {
+      "hourly_capacity_sha256": "f8f6f3754b0944096cba6ce1180466a59a5dbdec6c6123e910704d33153b4aef",
+      "max_mwh_yearly_sha256": "28a53acef11fcb2aea540f0845186c535d496bc9fe2c1d084ac219fc9fe66b75"
+    },
+    "MIDA": {
+      "hourly_capacity_sha256": "562d7c47f26f4d873efeb798ee6ecbb1b3d0b1cde9df5d691f9ac41efd8d24ec",
+      "max_mwh_yearly_sha256": "caa3934afc84544ad78a5cdae7aace4ebc25aef6e9e7cab3dc3bd0eca4f466bf"
+    },
+    "MIDW": {
+      "hourly_capacity_sha256": "487b47fbfb56d9b246ebc82d3c45b6eddff10c6994689f1130424e1cc8108114",
+      "max_mwh_yearly_sha256": "49bd84b209d37db21fa1aa5015c0dcabc89f9b19bba369d94e32a1bb76281e62"
+    },
+    "NE": {
+      "hourly_capacity_sha256": "3656a2e678145b6bea58a4dfbb75a8aba856834d2521bc22c7fc50354fa65265",
+      "max_mwh_yearly_sha256": "e7590ca0b841ca0aaae5e5f6a55accc4ef7d37d77348a30736802e04cd7f6628"
+    },
+    "NW": {
+      "hourly_capacity_sha256": "ff94e79c3db0c55f7650dc8e9631bffa85661e4adc79d182bd9898911c846ba8",
+      "max_mwh_yearly_sha256": "0ae562c09fb09a3e66e02ecbcdb50a706ca678047d174ae784806478b40d2e29"
+    },
+    "NY": {
+      "hourly_capacity_sha256": "b8b1374a23e20f7f1a71768683f49b30baebafa22e45c75553ab325adb03a12c",
+      "max_mwh_yearly_sha256": "181ed9f6ca7dc9c7ebb4250eadf4e9a614a9027b38bfa02183fd0b31bfbcabcc"
+    },
+    "SE": {
+      "hourly_capacity_sha256": "f19d5f5fc0dc9dec5b5ea6fd2822303b6e7179a4f244de42ea7d5bb6a7ee60a7",
+      "max_mwh_yearly_sha256": "2f8ccedfebced1c1455b89ba0ec89325a67ca1b2fe4acc6646b38241223c13d1"
+    },
+    "SW": {
+      "hourly_capacity_sha256": "dc0fe37c298557621d24ec7e6b9bf031b274cebfdd02c66976778bdcba2cf961",
+      "max_mwh_yearly_sha256": "954b0e671b92b4f8032fe2bc2617a5a4506ad7177cd408b2afbdf215b515ffa2"
+    },
+    "TEN": {
+      "hourly_capacity_sha256": "24718339aafa7094903eb6346a9c685c4505fafb1ec9dd4336327695182e312b",
+      "max_mwh_yearly_sha256": "9618481bc1fc7a70fdb1d2f64daefd3e9236bb441fbd299389d01404d6b499d3"
+    },
+    "TEX": {
+      "hourly_capacity_sha256": "038bfb88b3fac7d2e10fe5cf678254a72493f473c912a11925f5f9c3f53ba609",
+      "max_mwh_yearly_sha256": "b2c68b9221ef474f93fe469281ced12ab034a1a3beb819187d26aaca27c7423e"
+    }
+  }
+}
