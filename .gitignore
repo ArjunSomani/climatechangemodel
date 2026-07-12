@@ -9,14 +9,15 @@ __pycache__/
 *.egg-info/
 .pytest_cache/
 
-# Raw EIA hourly CSVs -- bulky, regenerable from vendor/ (see
-# engine/scripts/convert_eia_to_parquet.py) or refresh_eia_data.py.
-# The derived eia_parquet/ store IS committed (unlike this), since
-# run_worker.py's Render deploy needs it at runtime and
-# refresh_eia_data.py is incremental-only (can't bootstrap from an
-# empty checkout) -- see engine/data/eia_parquet/meta.json for the
-# version it was generated under.
-engine/data/eia_hourly/
+# engine/data/eia_hourly/ and eia_parquet/ used to be gitignored as
+# "bulky, regenerable" -- but core.py's get_eia_data() reads eia_hourly/
+# CSVs directly at runtime (eia_parquet/ is only a derived aggregate for
+# the Data Explorer frontend + version-stamping), and refresh_eia_data.py
+# is incremental-only (can't bootstrap either from an empty checkout).
+# The custom-run worker (run_worker.py, run via GitHub Actions) needs
+# eia_hourly/ present in a fresh checkout, so both are now committed.
+# See engine/data/eia_parquet/meta.json for the version they were
+# generated under.
 
 # Env / secrets
 .env
