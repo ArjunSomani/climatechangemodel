@@ -13,15 +13,12 @@ hit a dead combination. Extend REGIONS or VARIANT_TEMPLATES to grow it
 further; it's idempotent (upserts by case_id, skips existing case_ids),
 ~45-60s per case.
 
-Requires `vercel` CLI to be linked in web/ (already the case) -- shells
-out to `vercel blob put` rather than using Blob's REST API directly,
-since there's no first-party Python SDK for Vercel Blob.
+Uploads via Vercel Blob's REST API (optimize_engine.blob), shared with
+run_worker.py -- there's no first-party Python SDK for Vercel Blob.
 """
 import hashlib
 import importlib.metadata
 import json
-import subprocess
-import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -29,6 +26,7 @@ import psycopg
 from dotenv import dotenv_values
 
 from optimize_engine import ScenarioConfig, SourceTweaks, TweakPair, run_scenario
+from optimize_engine.blob import upload_json_blob
 from optimize_engine.schemas import SOURCES
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -127,37 +125,7 @@ def _clean_records(records: list[dict]) -> list[dict]:
 
 def _upload_blob(case_id: str, records: list, rw_token: str) -> str:
     records = _clean_records(records)
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
-        json.dump(records, f)
-        tmp_path = f.name
-
-    try:
-        result = subprocess.run(
-            [
-                'vercel', 'blob', 'put', tmp_path,
-                '--access', 'private',
-                '--pathname', f'library/{case_id}.json',
-                '--allow-overwrite', 'true',
-                '--rw-token', rw_token,
-            ],
-            cwd=WEB_DIR,
-            capture_output=True,
-            text=True,
-            timeout=60,
-        )
-    finally:
-        Path(tmp_path).unlink(missing_ok=True)
-
-    if result.returncode != 0:
-        raise RuntimeError(f'vercel blob put failed for {case_id}:\n{result.stdout}\n{result.stderr}')
-
-    # The CLI writes its status lines to stderr (not stdout) outside a TTY.
-    for line in (result.stdout + result.stderr).splitlines():
-        if line.strip().startswith('> Success!'):
-            return line.split('Success!', 1)[1].strip()
-
-    raise RuntimeError(
-        f'Could not parse blob URL from output for {case_id}:\nSTDOUT:{result.stdout}\nSTDERR:{result.stderr}')
+    return upload_json_blob(f'library/{case_id}.json', records, rw_token)
 
 
 UPSERT_SQL = """
