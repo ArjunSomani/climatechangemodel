@@ -1,0 +1,36 @@
+name: Custom run worker
+
+# Free-tier stand-in for an always-on job-queue worker: instead of a
+# long-running process, drain whatever's queued in Neon's `runs` table
+# every few minutes. Safe to overlap with a still-running previous
+# invocation -- run_worker.py's claim query uses `FOR UPDATE SKIP LOCKED`,
+# so two runners can never grab the same row.
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch: {}
+
+concurrency:
+  group: run-worker
+  cancel-in-progress: false
+
+jobs:
+  drain-queue:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: engine
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - run: pip install -e ".[library]"
+
+      - run: python scripts/run_worker.py --once
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}

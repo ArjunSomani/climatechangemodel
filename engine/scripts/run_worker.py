@@ -1,17 +1,27 @@
-"""Background worker for on-demand custom runs (Phase 3).
+"""Worker for on-demand custom runs (Phase 3).
 
-Long-running poll loop: claims one `queued` row from Neon's `runs` table
+Claims one `queued` row at a time from Neon's `runs` table
 (setup_runs_schema.py), executes it through the same run_scenario()
 entrypoint generate_library.py uses, uploads the result to Vercel Blob,
-and writes the outcome back. Deploy as a Render background worker (not
-a web service) -- it never opens an HTTP port.
+and writes the outcome back.
+
+Two run modes:
+  python scripts/run_worker.py         -- long-running poll loop (for an
+                                           always-on host, e.g. a Render
+                                           background worker)
+  python scripts/run_worker.py --once  -- drain the queue (process every
+                                           currently-queued run, then
+                                           exit) for a scheduled/cron
+                                           runner, e.g. GitHub Actions,
+                                           where there's no always-on
+                                           process to poll continuously.
 
 Uses a fresh Postgres connection per iteration rather than holding one
 open across the whole poll loop, since Neon drops idle connections held
 open too long (see generate_library.py's note on the same issue).
 """
+import argparse
 import importlib.metadata
-import json
 import time
 import traceback
 
@@ -102,41 +112,62 @@ def _process_job(run_id: str, config_dict: dict, rw_token: str) -> str:
     return upload_json_blob(f'runs/{run_id}.json', records, rw_token)
 
 
+def _handle_one(run_id: str, config_dict: dict, database_url: str, rw_token: str, engine_version: str) -> None:
+    print(f'--- claimed run {run_id} ---')
+    try:
+        blob_url = _process_job(run_id, config_dict, rw_token)
+    except Exception as exc:
+        print(f'  run {run_id} failed: {exc}')
+        traceback.print_exc()
+        with psycopg.connect(database_url) as conn:
+            with conn.cursor() as cur:
+                cur.execute(ERROR_SQL, {'id': run_id, 'error_message': str(exc)})
+            conn.commit()
+        return
+
+    print(f'  run {run_id} done -> {blob_url}')
+    with psycopg.connect(database_url) as conn:
+        with conn.cursor() as cur:
+            cur.execute(DONE_SQL, {
+                'id': run_id,
+                'result_blob_url': blob_url,
+                'engine_version': engine_version,
+            })
+        conn.commit()
+
+
 def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '--once', action='store_true',
+        help='Drain every currently-queued run, then exit (for a scheduled/cron runner).',
+    )
+    args = parser.parse_args()
+
     env = _env()
     database_url = env['DATABASE_URL']
     rw_token = env['BLOB_READ_WRITE_TOKEN']
     engine_version = importlib.metadata.version('optimize-engine')
-    print(f'run_worker starting (engine {engine_version}), polling every {POLL_INTERVAL_SECONDS}s')
 
+    if args.once:
+        print(f'run_worker starting (engine {engine_version}), draining queue once')
+        while True:
+            job = _claim_job(database_url)
+            if job is None:
+                print('queue empty, exiting')
+                break
+            run_id, config_dict = job
+            _handle_one(run_id, config_dict, database_url, rw_token, engine_version)
+        return
+
+    print(f'run_worker starting (engine {engine_version}), polling every {POLL_INTERVAL_SECONDS}s')
     while True:
         job = _claim_job(database_url)
         if job is None:
             time.sleep(POLL_INTERVAL_SECONDS)
             continue
-
         run_id, config_dict = job
-        print(f'--- claimed run {run_id} ---')
-        try:
-            blob_url = _process_job(run_id, config_dict, rw_token)
-        except Exception as exc:
-            print(f'  run {run_id} failed: {exc}')
-            traceback.print_exc()
-            with psycopg.connect(database_url) as conn:
-                with conn.cursor() as cur:
-                    cur.execute(ERROR_SQL, {'id': run_id, 'error_message': str(exc)})
-                conn.commit()
-            continue
-
-        print(f'  run {run_id} done -> {blob_url}')
-        with psycopg.connect(database_url) as conn:
-            with conn.cursor() as cur:
-                cur.execute(DONE_SQL, {
-                    'id': run_id,
-                    'result_blob_url': blob_url,
-                    'engine_version': engine_version,
-                })
-            conn.commit()
+        _handle_one(run_id, config_dict, database_url, rw_token, engine_version)
 
 
 if __name__ == '__main__':
