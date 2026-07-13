@@ -8,6 +8,7 @@ const LINKS: [string, string][] = [
   ["/how-it-works", "How it works"],
   ["/library", "Library"],
   ["/compare", "Compare"],
+  ["/custom-run", "Custom Run"],
   ["/data-explorer", "Data Explorer"],
   ["/methodology", "Methodology"],
 ];
