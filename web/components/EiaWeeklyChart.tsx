@@ -25,6 +25,12 @@ export function EiaWeeklyChart({
   const shown = EIA_SOURCES.filter((s) => visibleSources.includes(s.key));
 
   return (
+    <div
+      role="img"
+      aria-label={`Line chart of weekly average capacity used over time, one line per source: ${shown
+        .map((s) => s.label)
+        .join(", ")}.`}
+    >
     <ResponsiveContainer width="100%" height={320}>
       <LineChart data={data} margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
         <CartesianGrid strokeDasharray="0" stroke="var(--chart-gridline)" vertical={false} />
@@ -71,5 +77,6 @@ export function EiaWeeklyChart({
         ))}
       </LineChart>
     </ResponsiveContainer>
+    </div>
   );
 }

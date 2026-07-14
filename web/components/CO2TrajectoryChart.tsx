@@ -106,6 +106,12 @@ export function CO2TrajectoryChart({ cases }: { cases: LibraryCaseDetail[] }) {
   const labels = Object.fromEntries(cases.map((c) => [c.case_id, caseLabel(c)]));
 
   return (
+    <div
+      role="img"
+      aria-label={`Line chart of CO₂ emissions in metric tons over time, one line per compared scenario: ${cases
+        .map((c) => caseLabel(c))
+        .join("; ")}.`}
+    >
     <ResponsiveContainer width="100%" height={340}>
       <LineChart data={data} margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
         <CartesianGrid strokeDasharray="0" stroke="var(--chart-gridline)" vertical={false} />
@@ -143,5 +149,6 @@ export function CO2TrajectoryChart({ cases }: { cases: LibraryCaseDetail[] }) {
         ))}
       </LineChart>
     </ResponsiveContainer>
+    </div>
   );
 }

@@ -39,12 +39,13 @@ export function EiaExplorerClient({
         {EIA_SOURCES.map((s) => (
           <label
             key={s.key}
-            className="flex items-center gap-1.5 text-sm text-zinc-700 dark:text-zinc-300"
+            className="flex min-h-11 cursor-pointer items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300"
           >
             <input
               type="checkbox"
               checked={visible.has(s.key)}
               onChange={() => toggle(s.key)}
+              className="h-4 w-4 accent-accent"
             />
             <span
               style={{

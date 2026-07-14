@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -20,6 +20,16 @@ function isActive(pathname: string, href: string): boolean {
 export function Nav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+
+  // Close the mobile menu on Escape so keyboard users aren't stuck in it.
+  useEffect(() => {
+    if (!open) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open]);
 
   return (
     <header className="border-b border-zinc-200 dark:border-zinc-800">
@@ -54,8 +64,9 @@ export function Nav() {
           type="button"
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
+          aria-controls="mobile-nav"
           onClick={() => setOpen((v) => !v)}
-          className="flex h-8 w-8 items-center justify-center sm:hidden"
+          className="-mr-2.5 flex h-11 w-11 items-center justify-center sm:hidden"
         >
           <svg
             width="20"
@@ -77,7 +88,10 @@ export function Nav() {
 
       {/* Mobile menu panel */}
       {open && (
-        <nav className="border-t border-zinc-200 px-6 py-3 sm:hidden dark:border-zinc-800">
+        <nav
+          id="mobile-nav"
+          className="border-t border-zinc-200 px-6 py-3 sm:hidden dark:border-zinc-800"
+        >
           <ul className="flex flex-col gap-1">
             {LINKS.map(([href, label]) => (
               <li key={href}>
@@ -86,8 +100,8 @@ export function Nav() {
                   onClick={() => setOpen(false)}
                   className={
                     isActive(pathname, href)
-                      ? "block rounded px-2 py-2 text-sm font-medium text-accent"
-                      : "block rounded px-2 py-2 text-sm text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-900"
+                      ? "flex min-h-11 items-center rounded px-2 py-2 text-base font-medium text-accent"
+                      : "flex min-h-11 items-center rounded px-2 py-2 text-base text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-900"
                   }
                 >
                   {label}

@@ -33,7 +33,7 @@ export default async function DataExplorerPage({
           <Link
             key={r}
             href={`/data-explorer?region=${r}`}
-            className={`rounded-full border px-3 py-1 text-sm ${
+            className={`inline-flex min-h-11 items-center rounded-full border px-4 py-2 text-sm ${
               r === region
                 ? "border-accent bg-accent text-accent-foreground"
                 : "border-zinc-300 text-zinc-600 hover:border-zinc-500 dark:border-zinc-700 dark:text-zinc-400"
@@ -63,7 +63,7 @@ export default async function DataExplorerPage({
       )}
 
       {index && (
-        <p className="mt-12 text-xs text-zinc-400 dark:text-zinc-500">
+        <p className="mt-12 text-xs text-zinc-500 dark:text-zinc-400">
           Source: US Energy Information Administration, hourly generation by
           fuel type, {new Date(index.date_range[0]).toLocaleDateString()}
           {" – "}

@@ -11,8 +11,10 @@ import {
   type TweakPairInput,
 } from "@/lib/scenarioConfig";
 
+// text-base (16px) on mobile prevents iOS Safari from zooming the page when a
+// field is focused; drop back to the denser text-sm from the sm breakpoint up.
 const inputClass =
-  "w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-black";
+  "w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-base sm:text-sm dark:border-zinc-700 dark:bg-black";
 const selectClass = inputClass;
 
 function Icon({
@@ -250,7 +252,7 @@ export default function CustomRunPage() {
         <button
           type="submit"
           disabled={submitting}
-          className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+          className="min-h-11 rounded-md bg-accent px-5 py-2.5 text-sm font-medium text-white disabled:opacity-50"
         >
           {submitting ? "Starting run…" : "Run scenario"}
         </button>
