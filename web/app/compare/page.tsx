@@ -5,6 +5,9 @@ import { CasePicker } from "@/components/CasePicker";
 import { CO2TrajectoryChart } from "@/components/CO2TrajectoryChart";
 import { EnergyMixChart } from "@/components/EnergyMixChart";
 import { formatEnergy } from "@/lib/format";
+import { Term } from "@/components/Term";
+import { NewHereBanner } from "@/components/NewHereBanner";
+import { AssumptionsBadges } from "@/components/AssumptionsBadges";
 
 export const metadata = {
   title: "Compare — Optimize",
@@ -30,6 +33,9 @@ export default async function ComparePage({
             ? "Pick at least one more case to compare."
             : "Select cases from the library to compare their outcomes side by side."}
         </p>
+        <div className="mt-6">
+          <NewHereBanner />
+        </div>
         <div className="mt-8">
           <CasePicker cases={allCases} />
         </div>
@@ -49,9 +55,12 @@ export default async function ComparePage({
         Comparing {cases.length} scenarios
       </h1>
       <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-        Numbers below are all from the last simulated year. Hover a column
-        header for what it means.
+        Numbers below are all from the last simulated year. Tap or hover a
+        column header for what it means.
       </p>
+      <div className="mt-4">
+        <AssumptionsBadges />
+      </div>
 
       <section className="mt-8 overflow-x-auto">
         <table style={{ borderCollapse: "collapse", width: "100%", fontSize: 13 }}>
@@ -60,23 +69,20 @@ export default async function ComparePage({
               <th className="px-3 py-2 text-left font-semibold text-zinc-500 dark:text-zinc-400">
                 Scenario
               </th>
-              <th
-                className="cursor-help px-3 py-2 text-left font-semibold text-zinc-500 underline decoration-dotted dark:text-zinc-400"
-                title="Total carbon dioxide emitted by the grid in the final year, in metric tons (MT)."
-              >
-                CO₂ emitted
+              <th className="px-3 py-2 text-left font-semibold text-zinc-500 dark:text-zinc-400">
+                <Term definition="Total carbon dioxide emitted by the grid in the final year, in metric tons (MT).">
+                  CO₂ emitted
+                </Term>
               </th>
-              <th
-                className="cursor-help px-3 py-2 text-left font-semibold text-zinc-500 underline decoration-dotted dark:text-zinc-400"
-                title="Total electricity the region needed in the final year, in megawatt-hours (MWh)."
-              >
-                Electricity used
+              <th className="px-3 py-2 text-left font-semibold text-zinc-500 dark:text-zinc-400">
+                <Term definition="Total electricity the region needed in the final year, in megawatt-hours (MWh).">
+                  Electricity used
+                </Term>
               </th>
-              <th
-                className="cursor-help px-3 py-2 text-left font-semibold text-zinc-500 underline decoration-dotted dark:text-zinc-400"
-                title="Demand that went unmet in the final year, after every source and the battery were tapped. Ideally zero."
-              >
-                Unmet demand (outage)
+              <th className="px-3 py-2 text-left font-semibold text-zinc-500 dark:text-zinc-400">
+                <Term definition="Demand that went unmet in the final year, after every source and the battery were tapped. Ideally zero.">
+                  Unmet demand (outage)
+                </Term>
               </th>
             </tr>
           </thead>

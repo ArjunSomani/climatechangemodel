@@ -61,6 +61,28 @@ const ICON_MAP = Object.freeze({
   ),
 });
 
+const PRESETS: {
+  label: string;
+  blurb: string;
+  apply: (c: ScenarioConfigInput) => ScenarioConfigInput;
+}[] = [
+  {
+    label: "No carbon price",
+    blurb: "Today's rules — CO₂ pollution is free.",
+    apply: (c) => ({ ...c, co2_price: { initial: 0, yearly: 0 } }),
+  },
+  {
+    label: "$100/ton carbon price",
+    blurb: "A flat, moderate price on carbon pollution.",
+    apply: (c) => ({ ...c, co2_price: { initial: 100, yearly: 0 } }),
+  },
+  {
+    label: "Rising carbon price",
+    blurb: "Starts at $50/ton, climbs $10 every year.",
+    apply: (c) => ({ ...c, co2_price: { initial: 50, yearly: 10 } }),
+  },
+];
+
 export default function CustomRunPage() {
   const router = useRouter();
   const [config, setConfig] = useState<ScenarioConfigInput>(defaultScenarioConfig());
@@ -109,6 +131,29 @@ export default function CustomRunPage() {
         take about a minute; you&apos;ll be redirected to a status page once
         it&apos;s queued.
       </p>
+
+      <div className="mt-6 rounded-xl border border-zinc-200 p-4 dark:border-zinc-800">
+        <p className="text-sm font-medium text-black dark:text-zinc-50">
+          Not sure where to start? Try a preset:
+        </p>
+        <div className="mt-3 grid gap-2 sm:grid-cols-3">
+          {PRESETS.map((p) => (
+            <button
+              key={p.label}
+              type="button"
+              onClick={() => setConfig((c) => p.apply(c))}
+              className="rounded-lg border border-zinc-200 p-3 text-left text-sm hover:border-accent dark:border-zinc-800"
+            >
+              <div className="font-medium text-black dark:text-zinc-50">
+                {p.label}
+              </div>
+              <div className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+                {p.blurb}
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-10">
         <Section title="Scenario basics" icon="map">

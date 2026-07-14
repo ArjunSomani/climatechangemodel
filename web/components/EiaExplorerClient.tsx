@@ -4,6 +4,7 @@ import { useState } from "react";
 import { EIA_SOURCES, type EiaSourceKey } from "@/lib/sources";
 import { EiaTypicalDayChart } from "@/components/EiaTypicalDayChart";
 import { EiaWeeklyChart } from "@/components/EiaWeeklyChart";
+import { Term } from "@/components/Term";
 import type { EiaRegionData } from "@/lib/eiaExplorer";
 
 const DEFAULT_VISIBLE: EiaSourceKey[] = ["Solar", "Wind", "Nuclear", "Gas", "Coal"];
@@ -89,9 +90,9 @@ export function EiaExplorerClient({
           Peak capacity by year
         </h2>
         <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-          The highest hourly output ever recorded for each source, per year,
-          in megawatts (MW) &mdash; this is what the model treats as that
-          source&rsquo;s starting capacity.
+          The highest hourly output ever recorded for each source, per year
+          &mdash; this is what the model treats as that source&rsquo;s
+          starting capacity.
         </p>
         <table style={{ borderCollapse: "collapse", width: "100%", fontSize: 13, marginTop: 16 }}>
           <thead>
@@ -104,7 +105,9 @@ export function EiaExplorerClient({
                   key={s.key}
                   className="px-3 py-2 text-left font-semibold text-zinc-500 dark:text-zinc-400"
                 >
-                  {s.label} (MW)
+                  <Term definition="Megawatts (MW): how big the power plant fleet is, at its peak, that year.">
+                    {s.label} (MW)
+                  </Term>
                 </th>
               ))}
             </tr>

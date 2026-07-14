@@ -1,5 +1,7 @@
 import { listLibraryCases } from "@/lib/library";
 import { LibraryPickerClient } from "@/components/LibraryPickerClient";
+import { NewHereBanner } from "@/components/NewHereBanner";
+import { AssumptionsBadges } from "@/components/AssumptionsBadges";
 
 export const metadata = {
   title: "Library — Optimize",
@@ -18,6 +20,13 @@ export default async function LibraryPage() {
       <p className="mt-2 text-zinc-600 dark:text-zinc-400">
         Narrow down by region, scenario, and CO₂ price to find a run.
       </p>
+      <div className="mt-4">
+        <AssumptionsBadges />
+      </div>
+
+      <div className="mt-6">
+        <NewHereBanner />
+      </div>
 
       <div className="mt-8">
         {cases.length > 0 ? (

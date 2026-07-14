@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { NewHereBanner } from "@/components/NewHereBanner";
 
 export const metadata = {
   title: "Methodology — Optimize",
@@ -16,13 +16,8 @@ export default function MethodologyPage() {
         down, and where the numbers come from.
       </p>
 
-      <div className="mt-6 rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
-        New here? The{" "}
-        <Link href="/how-it-works" className="underline">
-          How it works
-        </Link>{" "}
-        page explains the same ideas with pictures and plain language — no
-        jargon required.
+      <div className="mt-6">
+        <NewHereBanner />
       </div>
 
       <Section title="What the optimizer actually does">

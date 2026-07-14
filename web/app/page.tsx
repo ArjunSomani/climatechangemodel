@@ -46,6 +46,13 @@ export default async function Home() {
               How it works
             </Link>
           </div>
+          <p className="mt-4 text-sm text-zinc-500 dark:text-zinc-400">
+            Or{" "}
+            <Link href="/custom-run" className="underline hover:text-accent">
+              try your own scenario
+            </Link>{" "}
+            — pick a carbon price and see what the model builds.
+          </p>
         </div>
       </div>
 
