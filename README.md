@@ -6,13 +6,15 @@ around the optimization engine from
 locally at `vendor/optimize-original/`, gitignored, for reference).
 
 See `PRD.md`-equivalent brief (not checked in here) for the full product
-spec. Current status: **Phase 0-2 done.** Phase 0 (engine refactor +
+spec. Current status: **Phase 0-3 done.** Phase 0 (engine refactor +
 golden parity + data conversion), Phase 1 (read-only site: Landing, How
-It Works, Library, Data Explorer, Methodology), and Phase 2 (Compare) are
-all live in production at https://climatechangemodel.vercel.app. Phase 3
-(on-demand custom runs, needs a job queue + Python-capable host) and
-Phase 4 (admin) are the only phases not started — both intentionally
-deferred, v1 is library-browsing only.
+It Works, Library, Data Explorer, Methodology), Phase 2 (Compare), and
+Phase 3 (on-demand Custom Runs) are all live in production at
+https://climatechangemodel.vercel.app. Custom runs are queued in Neon's
+`runs` table and drained by a GitHub Actions cron worker
+(`engine/scripts/run_worker.py`, see `.github/workflows/run_worker.yml`),
+a free-tier stand-in for an always-on job queue. Phase 4 (admin) is the
+only phase not started.
 
 ## Hosting
 
@@ -24,18 +26,20 @@ deferred, v1 is library-browsing only.
   free plan. Holds the `library_cases` catalog (see
   `engine/scripts/setup_library_schema.py`) — 134 pre-computed scenarios
   as of 2026-07-10, each row versioned by `eia_version`/`specs_version`/
-  `engine_version`.
+  `engine_version` — plus the `runs` queue for on-demand custom runs (see
+  `engine/scripts/setup_runs_schema.py`).
 - **Vercel Blob**: private store `climatechangemodel-blob` (region
   `iad1`), free tier. Holds each case's year-by-year result JSON, fetched
   server-side via `web/app/api/library/[...caseId]`.
 - Both write their connection env vars to `web/.env.local` via
   `vercel env pull` (already gitignored).
-- No backend host yet. v1 is library-browsing only (no on-demand runs),
-  so the Python engine only needs to run offline/locally to pre-generate
-  library results (`engine/scripts/generate_library.py`), not as an
-  always-on service. A Python-capable host (Render, most likely, for its
-  free background-worker tier) is deferred to Phase 3, when on-demand
-  runs need a real job queue.
+- No always-on backend host. The Python engine runs in two offline
+  contexts, both free-tier: locally, to pre-generate library results
+  (`engine/scripts/generate_library.py`), and in GitHub Actions, where a
+  cron-scheduled worker (`engine/scripts/run_worker.py`, every 5 min)
+  drains queued on-demand custom runs from Neon's `runs` table. Neither
+  needs a dedicated Python-capable host; a real always-on job queue is
+  only worth adding if custom-run volume outgrows the 5-minute cadence.
 
 ## Layout
 
@@ -57,7 +61,9 @@ engine/
     convert_eia_to_parquet.py  raw EIA CSVs -> engine/data/eia_parquet/
     generate_eia_explorer_data.py  pre-aggregates parquet -> small per-region JSON blobs
     setup_library_schema.py    creates the Neon library_cases table
+    setup_runs_schema.py       creates the Neon runs queue table (custom runs)
     generate_library.py        runs scenarios, upserts Neon + uploads Vercel Blob
+    run_worker.py              drains queued custom runs (GitHub Actions cron)
 vendor/optimize-original/  pristine clone of cliffgold/Optimize (gitignored)
 web/                      Next.js frontend (live at climatechangemodel.vercel.app)
   app/
@@ -67,9 +73,12 @@ web/                      Next.js frontend (live at climatechangemodel.vercel.ap
     compare/                 Compare
     data-explorer/           Data Explorer (raw EIA data, aggregated)
     methodology/             Methodology (assumptions/limitations/versioning)
+    custom-run/, custom-run/[id]/  Custom Run form + per-run status page
     api/library/[...caseId]  server-side fetch of a case's result blob
+    api/runs/, api/runs/[id]  enqueue a custom run / poll its status
   lib/
     db.ts, library.ts          server-only (import pg/@vercel/blob) -- see note below
+    runs.ts                    server-only custom-run queue helpers (enqueue/poll)
     eiaExplorer.ts, metrics.ts, regions.ts, sources.ts, format.ts   shared helpers
   components/                 ScenarioPicker, CasePicker, charts, Nav, etc.
 ```

@@ -9,6 +9,20 @@ const TEASER_CASE_ID = "default/default/constant_co2/co2_500_0/CAL";
 export default async function Home() {
   const teaser = await getLibraryCase(TEASER_CASE_ID);
 
+  // Derive the horizon from the teaser run so the copy never goes stale as the
+  // underlying EIA data is refreshed each year (the first simulated year tracks
+  // the last complete year of data).
+  const resultYears = teaser?.result ?? [];
+  const firstYear = resultYears.length
+    ? Math.round(resultYears[0].Year)
+    : null;
+  const lastYear = resultYears.length
+    ? Math.round(resultYears[resultYears.length - 1].Year)
+    : null;
+  const spanLabel =
+    firstYear && lastYear ? `${firstYear}–${lastYear}` : "27-year horizon";
+  const spanYears = resultYears.length || 27;
+
   return (
     <div>
       <div className="relative overflow-hidden">
@@ -22,15 +36,15 @@ export default async function Home() {
         />
         <div className="mx-auto max-w-4xl px-6 pt-20 pb-4 text-center">
           <p className="text-xs font-semibold tracking-[0.2em] text-accent uppercase">
-            Hourly grid optimization · 2024–2051
+            Hourly grid optimization · {spanLabel}
           </p>
           <h1 className="font-display mt-4 text-4xl leading-[1.1] font-semibold tracking-tight text-balance sm:text-5xl">
             The cheapest way to decarbonize the US electricity grid
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-lg text-zinc-600 dark:text-zinc-400">
             An hourly optimizer picks the lowest-cost mix of solar, wind,
-            nuclear, gas, coal, and storage to meet demand every hour, for 27
-            years, under whatever policy scenario you throw at it.
+            nuclear, gas, coal, and storage to meet demand every hour, for{" "}
+            {spanYears} years, under whatever policy scenario you throw at it.
           </p>
           <div className="mt-8 flex items-center justify-center gap-4">
             <Link
