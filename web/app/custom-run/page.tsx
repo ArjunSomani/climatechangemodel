@@ -15,6 +15,52 @@ const inputClass =
   "w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-black";
 const selectClass = inputClass;
 
+function Icon({
+  path,
+  className,
+}: {
+  path: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.6}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden
+    >
+      {path}
+    </svg>
+  );
+}
+
+const ICON_MAP = Object.freeze({
+  map: (
+    <>
+      <path d="M9 3 3 5.5v15L9 18l6 2.5 6-2.5v-15L15 5.5 9 3Z" />
+      <path d="M9 3v15M15 5.5v15" />
+    </>
+  ),
+  sliders: (
+    <>
+      <path d="M4 6h9M17 6h3M4 12h3M9 12h11M4 18h13M19 18h1" />
+      <circle cx="13" cy="6" r="2" fill="currentColor" stroke="none" />
+      <circle cx="7" cy="12" r="2" fill="currentColor" stroke="none" />
+      <circle cx="17" cy="18" r="2" fill="currentColor" stroke="none" />
+    </>
+  ),
+  tune: (
+    <>
+      <rect x="3" y="4" width="18" height="16" rx="2" />
+      <path d="M8 4v6M16 4v3" />
+    </>
+  ),
+});
+
 export default function CustomRunPage() {
   const router = useRouter();
   const [config, setConfig] = useState<ScenarioConfigInput>(defaultScenarioConfig());
@@ -65,7 +111,7 @@ export default function CustomRunPage() {
       </p>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-10">
-        <Section title="Scenario basics">
+        <Section title="Scenario basics" icon="map">
           <div className="grid gap-3 sm:grid-cols-3">
             <Field label="Region">
               <select
@@ -96,8 +142,12 @@ export default function CustomRunPage() {
           </div>
         </Section>
 
-        <Section title="CO₂ price, interest, and demand">
-          <div className="grid gap-4 sm:grid-cols-3">
+        <Section title="CO₂ price, interest, and demand" icon="sliders">
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+            Each knob has an <strong>initial</strong> value (year 0) and a{" "}
+            <strong>yearly</strong> change applied every year after that.
+          </p>
+          <div className="mt-4 grid gap-4 sm:grid-cols-3">
             <TweakPairFields
               label="CO₂ price ($/MT)"
               value={config.co2_price}
@@ -116,18 +166,37 @@ export default function CustomRunPage() {
           </div>
         </Section>
 
-        <Section title="Per-source tweaks">
-          <div className="space-y-8">
-            {SOURCES.map((s) => (
-              <SourceTweaksFields
-                key={s.key}
-                label={s.label}
-                value={config.sources[s.key]}
-                onChange={(next) => updateSourceTweaks(s.key, next)}
-              />
-            ))}
+        <details className="group rounded-lg border border-zinc-200 dark:border-zinc-800">
+          <summary className="flex cursor-pointer list-none items-center gap-2 px-4 py-3 text-lg font-medium marker:content-none">
+            <Icon
+              path={ICON_MAP.tune}
+              className="h-4 w-4 text-orange-600 dark:text-orange-400"
+            />
+            Advanced: per-source cost assumptions
+            <span className="ml-auto text-xs font-normal text-zinc-500 transition group-open:rotate-180 dark:text-zinc-400">
+              ▾
+            </span>
+          </summary>
+          <div className="border-t border-zinc-200 px-4 py-4 dark:border-zinc-800">
+            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+              The defaults here are real-world cost figures — capital cost to
+              build, fixed and variable costs to run, plant lifetime, and the
+              maximum share of the grid a source can grow to in a year. Leave
+              these alone unless you want to test a specific assumption (e.g.
+              &ldquo;what if nuclear were 30% cheaper to build?&rdquo;).
+            </p>
+            <div className="mt-4 space-y-8">
+              {SOURCES.map((s) => (
+                <SourceTweaksFields
+                  key={s.key}
+                  label={s.label}
+                  value={config.sources[s.key]}
+                  onChange={(next) => updateSourceTweaks(s.key, next)}
+                />
+              ))}
+            </div>
           </div>
-        </Section>
+        </details>
 
         {error && (
           <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
@@ -219,11 +288,22 @@ function SourceTweaksFields({
   );
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({
+  title,
+  icon,
+  children,
+}: {
+  title: string;
+  icon: keyof typeof ICON_MAP;
+  children: React.ReactNode;
+}) {
   return (
     <section>
       <h2 className="flex items-center gap-2 text-lg font-medium">
-        <span className="h-3 w-1 rounded-full bg-accent" aria-hidden />
+        <Icon
+          path={ICON_MAP[icon]}
+          className="h-4 w-4 text-orange-600 dark:text-orange-400"
+        />
         {title}
       </h2>
       <div className="mt-4">{children}</div>
