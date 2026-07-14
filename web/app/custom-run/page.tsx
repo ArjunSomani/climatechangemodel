@@ -170,7 +170,7 @@ export default function CustomRunPage() {
           <summary className="flex cursor-pointer list-none items-center gap-2 px-4 py-3 text-lg font-medium marker:content-none">
             <Icon
               path={ICON_MAP.tune}
-              className="h-4 w-4 text-orange-600 dark:text-orange-400"
+              className="h-4 w-4 text-accent"
             />
             Advanced: per-source cost assumptions
             <span className="ml-auto text-xs font-normal text-zinc-500 transition group-open:rotate-180 dark:text-zinc-400">
@@ -302,7 +302,7 @@ function Section({
       <h2 className="flex items-center gap-2 text-lg font-medium">
         <Icon
           path={ICON_MAP[icon]}
-          className="h-4 w-4 text-orange-600 dark:text-orange-400"
+          className="h-4 w-4 text-accent"
         />
         {title}
       </h2>

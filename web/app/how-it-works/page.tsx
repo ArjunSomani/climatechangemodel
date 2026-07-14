@@ -205,7 +205,7 @@ export default function HowItWorksPage() {
             key={s.label}
             className="flex w-20 flex-col items-center gap-2 rounded-xl bg-white px-2 py-3 shadow-sm dark:bg-zinc-800"
           >
-            <Icon name={s.icon} className="h-7 w-7 text-orange-600 dark:text-orange-400" />
+            <Icon name={s.icon} className="h-7 w-7 text-accent" />
             <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
               {s.label}
             </span>
@@ -238,7 +238,7 @@ export default function HowItWorksPage() {
               key={k.title}
               className="rounded-xl border border-zinc-200 p-4 dark:border-zinc-800"
             >
-              <Icon name={k.icon} className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+              <Icon name={k.icon} className="h-6 w-6 text-accent" />
               <div className="mt-2 font-medium text-black dark:text-zinc-50">
                 {k.title}
               </div>
@@ -255,7 +255,7 @@ export default function HowItWorksPage() {
           {STEPS.map((step, i) => (
             <div key={step.title} className="flex gap-4">
               <div className="flex flex-col items-center">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-orange-600 text-white dark:bg-orange-500">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground">
                   <Icon name={step.icon} className="h-5 w-5" />
                 </div>
                 {i < STEPS.length - 1 && (

@@ -48,6 +48,10 @@ export default async function ComparePage({
       <h1 className="mt-2 text-3xl font-semibold tracking-tight">
         Comparing {cases.length} scenarios
       </h1>
+      <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+        Numbers below are all from the last simulated year. Hover a column
+        header for what it means.
+      </p>
 
       <section className="mt-8 overflow-x-auto">
         <table style={{ borderCollapse: "collapse", width: "100%", fontSize: 13 }}>
@@ -56,14 +60,23 @@ export default async function ComparePage({
               <th className="px-3 py-2 text-left font-semibold text-zinc-500 dark:text-zinc-400">
                 Scenario
               </th>
-              <th className="px-3 py-2 text-left font-semibold text-zinc-500 dark:text-zinc-400">
-                Final-year CO₂
+              <th
+                className="cursor-help px-3 py-2 text-left font-semibold text-zinc-500 underline decoration-dotted dark:text-zinc-400"
+                title="Total carbon dioxide emitted by the grid in the final year, in metric tons (MT)."
+              >
+                CO₂ emitted
               </th>
-              <th className="px-3 py-2 text-left font-semibold text-zinc-500 dark:text-zinc-400">
-                Final-year demand
+              <th
+                className="cursor-help px-3 py-2 text-left font-semibold text-zinc-500 underline decoration-dotted dark:text-zinc-400"
+                title="Total electricity the region needed in the final year, in megawatt-hours (MWh)."
+              >
+                Electricity used
               </th>
-              <th className="px-3 py-2 text-left font-semibold text-zinc-500 dark:text-zinc-400">
-                Final-year outage
+              <th
+                className="cursor-help px-3 py-2 text-left font-semibold text-zinc-500 underline decoration-dotted dark:text-zinc-400"
+                title="Demand that went unmet in the final year, after every source and the battery were tapped. Ideally zero."
+              >
+                Unmet demand (outage)
               </th>
             </tr>
           </thead>
