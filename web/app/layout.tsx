@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import { Fraunces, Geist, Geist_Mono } from "next/font/google";
 import { Nav } from "@/components/Nav";
@@ -26,6 +26,13 @@ const fraunces = Fraunces({
 export const metadata: Metadata = {
   title: "Optimize — Grid Decarbonization Scenarios",
   description: "Explore US electricity-grid decarbonization scenarios.",
+};
+
+// Explicit viewport so mobile scales to device width. No maximum-scale /
+// user-scalable=no -- pinch-zoom must stay available for accessibility.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({

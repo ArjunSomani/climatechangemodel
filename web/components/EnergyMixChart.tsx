@@ -95,6 +95,10 @@ export function EnergyMixChart({ data }: { data: YearRecord[] }) {
   const unit = pickEnergyUnit(maxStackedMwh);
 
   return (
+    <div
+      role="img"
+      aria-label="Stacked area chart of the yearly electricity generation mix by source (solar, wind, nuclear, gas, coal, battery). The full year-by-year figures are available in the data table on this page."
+    >
     <ResponsiveContainer width="100%" height={360}>
       <AreaChart data={data} margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
         <CartesianGrid
@@ -143,5 +147,6 @@ export function EnergyMixChart({ data }: { data: YearRecord[] }) {
         ))}
       </AreaChart>
     </ResponsiveContainer>
+    </div>
   );
 }

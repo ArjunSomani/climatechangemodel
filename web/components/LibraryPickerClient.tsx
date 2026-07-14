@@ -13,7 +13,7 @@ export function LibraryPickerClient({ cases }: { cases: LibraryCaseSummary[] }) 
       <ScenarioPicker cases={cases} onChange={setSelected} />
 
       {selected && (
-        <div className="mt-6 flex items-center justify-between rounded-lg border border-zinc-200 p-5 dark:border-zinc-800">
+        <div className="mt-6 flex flex-col gap-4 rounded-lg border border-zinc-200 p-5 sm:flex-row sm:items-center sm:justify-between dark:border-zinc-800">
           <div>
             <div className="text-sm text-zinc-500 dark:text-zinc-400">
               {selected.region} · {selected.years} years ·{" "}
@@ -30,7 +30,7 @@ export function LibraryPickerClient({ cases }: { cases: LibraryCaseSummary[] }) 
           </div>
           <Link
             href={`/library/${selected.case_id}`}
-            className="shrink-0 rounded-full bg-accent px-5 py-2 text-sm font-medium text-accent-foreground transition-opacity hover:opacity-90"
+            className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-opacity hover:opacity-90"
           >
             View results →
           </Link>

@@ -41,7 +41,7 @@ export function CasePicker({ cases }: { cases: LibraryCaseSummary[] }) {
         <button
           onClick={addCurrent}
           disabled={!current || !!alreadyAdded}
-          className="mt-4 rounded-full bg-accent px-5 py-2 text-sm font-medium text-accent-foreground disabled:opacity-30"
+          className="mt-4 min-h-11 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground disabled:opacity-30"
         >
           {alreadyAdded ? "Already added" : "Add to comparison"}
         </button>
@@ -54,13 +54,13 @@ export function CasePicker({ cases }: { cases: LibraryCaseSummary[] }) {
               {added.map((c) => (
                 <span
                   key={c.case_id}
-                  className="inline-flex items-center gap-2 rounded-full border border-zinc-300 py-1 pr-1 pl-3 text-sm dark:border-zinc-700"
+                  className="inline-flex items-center gap-1 rounded-full border border-zinc-300 py-1 pr-1 pl-3 text-sm dark:border-zinc-700"
                 >
                   {caseLabel(c)}
                   <button
                     onClick={() => remove(c.case_id)}
                     aria-label={`Remove ${caseLabel(c)}`}
-                    className="flex h-5 w-5 items-center justify-center rounded-full text-zinc-500 hover:bg-zinc-200 dark:hover:bg-zinc-800"
+                    className="flex h-6 w-6 items-center justify-center rounded-full text-lg leading-none text-zinc-500 hover:bg-zinc-200 dark:hover:bg-zinc-800"
                   >
                     ×
                   </button>
@@ -74,7 +74,7 @@ export function CasePicker({ cases }: { cases: LibraryCaseSummary[] }) {
               <button
                 onClick={goCompare}
                 disabled={added.length < 2}
-                className="rounded-full bg-black px-5 py-2 text-sm font-medium text-white disabled:opacity-30 dark:bg-white dark:text-black"
+                className="min-h-11 rounded-full bg-black px-5 py-2.5 text-sm font-medium text-white disabled:opacity-30 dark:bg-white dark:text-black"
               >
                 Compare selected ({added.length})
               </button>

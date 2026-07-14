@@ -55,7 +55,7 @@ export default function CustomRunStatusPage({
             <div className="animate-indeterminate h-full w-1/3 rounded-full bg-accent" />
           </div>
           {elapsed > 0 && (
-            <p className="mt-2 text-xs text-zinc-400 dark:text-zinc-500">
+            <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
               {elapsed}s elapsed
             </p>
           )}

@@ -13,8 +13,10 @@ function co2Label(c: LibraryCaseSummary): string {
     : `$${c.co2_initial}/MT (constant)`;
 }
 
+// text-base (16px) on mobile prevents iOS Safari from zooming the page when a
+// select is focused; drop back to the denser text-sm from the sm breakpoint up.
 const selectClass =
-  "w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-black";
+  "w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-base sm:text-sm dark:border-zinc-700 dark:bg-black";
 
 export function ScenarioPicker({
   cases,

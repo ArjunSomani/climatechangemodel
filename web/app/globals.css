@@ -133,3 +133,13 @@
 a {
   text-underline-offset: 3px;
 }
+
+/* A single, consistent keyboard-focus ring in the accent color for every
+   interactive element -- the UA default is inconsistent across the many
+   rounded-full buttons and pill links. :focus-visible keeps it keyboard-only
+   so mouse/touch taps don't show a ring. */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
