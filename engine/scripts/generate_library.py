@@ -141,6 +141,7 @@ INSERT INTO library_cases (
     %(region)s, %(years)s, %(config)s, %(result_blob_url)s, %(engine_version)s, %(specs_version)s, %(eia_version)s
 )
 ON CONFLICT (case_id) DO UPDATE SET
+    years = EXCLUDED.years,
     config = EXCLUDED.config,
     result_blob_url = EXCLUDED.result_blob_url,
     engine_version = EXCLUDED.engine_version,
