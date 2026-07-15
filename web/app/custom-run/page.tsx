@@ -129,9 +129,9 @@ export default function CustomRunPage() {
     <div className="mx-auto max-w-4xl px-6 py-16">
       <h1 className="text-3xl font-semibold tracking-tight">Custom run</h1>
       <p className="mt-1 text-zinc-600 dark:text-zinc-400">
-        Configure a scenario and run it through the engine. Runs typically
-        take about a minute; you&apos;ll be redirected to a status page once
-        it&apos;s queued.
+        Configure a scenario and run it through the engine. A worker picks
+        the run off the queue within a few minutes, then it computes in about
+        a minute; you&apos;ll be redirected to a live status page to watch it.
       </p>
 
       <div className="mt-6 rounded-xl border border-zinc-200 p-4 dark:border-zinc-800">

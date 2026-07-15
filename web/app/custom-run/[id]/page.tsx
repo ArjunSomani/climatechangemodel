@@ -6,6 +6,19 @@ import { EnergyMixChart } from "@/components/EnergyMixChart";
 import { YearTable } from "@/components/YearTable";
 import { useRunStatus } from "@/lib/useRunStatus";
 
+// The queue worker runs on a wall-clock cron (`*/5 * * * *` in
+// run_worker.yml), so it fires at :00, :05, :10 … -- not five minutes after
+// you submit. Point at the next such mark. Every standard UTC offset is a
+// multiple of 5 minutes, so the viewer's local 5-minute marks line up with
+// the cron's. GitHub can still run a scheduled job late under load, so treat
+// this as "no earlier than", not a guarantee.
+function nextQueueCheck(): string {
+  const next = new Date();
+  next.setSeconds(0, 0);
+  next.setMinutes(next.getMinutes() + (5 - (next.getMinutes() % 5)));
+  return next.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+}
+
 function useElapsedSeconds(active: boolean): number {
   const [elapsed, setElapsed] = useState(0);
   useEffect(() => {
@@ -26,6 +39,16 @@ export default function CustomRunStatusPage({
   const { status, errorMessage, result } = useRunStatus(id);
   const pending = status === "loading" || status === "queued" || status === "running";
   const elapsed = useElapsedSeconds(pending);
+
+  // Two very different waits: a worker drains the queue on a wall-clock
+  // 5-minute cron (engine/scripts/run_worker.py via run_worker.yml), then the
+  // engine itself computes a single scenario in roughly a minute. Estimate the
+  // phase the run is actually in so the number next to "elapsed" isn't
+  // misleading -- while queued, point at the next real 5-minute mark.
+  const estimateText =
+    status === "queued"
+      ? `The queue is checked every 5 minutes on the clock, so the next check is around ${nextQueueCheck()} — GitHub sometimes runs it a little late.`
+      : "This usually finishes in about a minute.";
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-16">
@@ -48,17 +71,18 @@ export default function CustomRunStatusPage({
             <p className="text-zinc-600 dark:text-zinc-400">
               {status === "queued"
                 ? "Queued — waiting for a worker to pick this up…"
-                : "Running the scenario through the engine — this typically takes about a minute…"}
+                : "Running the scenario through the engine…"}
             </p>
           </div>
           <div className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
             <div className="animate-indeterminate h-full w-1/3 rounded-full bg-accent" />
           </div>
-          {elapsed > 0 && (
-            <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
-              {elapsed}s elapsed
-            </p>
-          )}
+          <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
+            {elapsed > 0 && (
+              <span className="tabular-nums">{elapsed}s elapsed · </span>
+            )}
+            {estimateText}
+          </p>
         </div>
       )}
 
