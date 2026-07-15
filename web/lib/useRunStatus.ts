@@ -3,12 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import type { YearRecord } from "@/lib/library";
 import type { RunStatus } from "@/lib/runs";
+import type { ScenarioConfigInput } from "@/lib/scenarioConfig";
 
 const POLL_INTERVAL_MS = 3000;
 
 export interface RunStatusState {
   status: RunStatus | "loading";
   errorMessage: string | null;
+  config: ScenarioConfigInput | null;
   result: YearRecord[] | null;
 }
 
@@ -18,6 +20,7 @@ export function useRunStatus(runId: string): RunStatusState {
   const [state, setState] = useState<RunStatusState>({
     status: "loading",
     errorMessage: null,
+    config: null,
     result: null,
   });
   const stopped = useRef(false);
@@ -33,6 +36,7 @@ export function useRunStatus(runId: string): RunStatusState {
           setState({
             status: "error",
             errorMessage: body.error ?? "Run not found",
+            config: null,
             result: null,
           });
           return;

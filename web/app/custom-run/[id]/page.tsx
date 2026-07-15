@@ -4,6 +4,7 @@ import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { EnergyMixChart } from "@/components/EnergyMixChart";
 import { YearTable } from "@/components/YearTable";
+import { RunDownload } from "@/components/RunDownload";
 import { useRunStatus } from "@/lib/useRunStatus";
 
 // The queue worker runs on a wall-clock cron (`*/5 * * * *` in
@@ -36,7 +37,7 @@ export default function CustomRunStatusPage({
   params,
 }: PageProps<"/custom-run/[id]">) {
   const { id } = use(params);
-  const { status, errorMessage, result } = useRunStatus(id);
+  const { status, errorMessage, config, result } = useRunStatus(id);
   const pending = status === "loading" || status === "queued" || status === "running";
   const elapsed = useElapsedSeconds(pending);
 
@@ -97,6 +98,13 @@ export default function CustomRunStatusPage({
 
       {status === "done" && result && (
         <>
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <span className="text-sm text-zinc-500 dark:text-zinc-400">
+              Save this run:
+            </span>
+            <RunDownload runId={id} config={config} result={result} />
+          </div>
+
           <Section title="Energy mix over time">
             <EnergyMixChart data={result} />
           </Section>

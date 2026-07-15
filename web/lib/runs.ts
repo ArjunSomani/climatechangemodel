@@ -45,6 +45,7 @@ export async function insertRun(config: ScenarioConfigInput): Promise<string> {
 export interface RunStatusDetail {
   status: RunStatus;
   errorMessage: string | null;
+  config: ScenarioConfigInput | null;
   result: YearRecord[] | null;
 }
 
@@ -54,14 +55,24 @@ export async function getRunStatus(id: string): Promise<RunStatusDetail | null> 
   if (!row) return null;
 
   if (row.status !== "done" || !row.result_blob_url) {
-    return { status: row.status, errorMessage: row.error_message, result: null };
+    return {
+      status: row.status,
+      errorMessage: row.error_message,
+      config: row.config,
+      result: null,
+    };
   }
 
   const blobResult = await get(row.result_blob_url, { access: "private" });
   if (!blobResult || blobResult.statusCode !== 200) {
-    return { status: "error", errorMessage: "Result blob unavailable", result: null };
+    return {
+      status: "error",
+      errorMessage: "Result blob unavailable",
+      config: row.config,
+      result: null,
+    };
   }
 
   const result: YearRecord[] = JSON.parse(await new Response(blobResult.stream).text());
-  return { status: "done", errorMessage: null, result };
+  return { status: "done", errorMessage: null, config: row.config, result };
 }
