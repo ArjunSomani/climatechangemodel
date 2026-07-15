@@ -33,7 +33,11 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 WEB_DIR = REPO_ROOT / 'web'
 ENGINE_DIR = REPO_ROOT / 'engine'
 
-YEARS = 27
+# Projected-year span. The engine writes a base-year row (year 0 = the last
+# complete year of EIA data) plus YEARS projected rows, so the library's last
+# simulated year is first_year + YEARS. With data through 2025 that lands on
+# 2050 -- a clean 25-year horizon.
+YEARS = 25
 
 # (co2_initial, co2_yearly) under Constant_CO2 -- matches the real sample
 # cases shipped in vendor/optimize-original/Samples/CO2-0 thru 500/.
@@ -166,13 +170,16 @@ def main() -> None:
     skipped = 0
 
     # A case_id existing isn't enough -- if the EIA data (or specs) backing
-    # it has since been refreshed, its stored result is stale (wrong
-    # first_year/baseline) and must be regenerated, not skipped. Only skip
-    # cases whose recorded versions still match what we'd generate right now.
+    # it has since been refreshed, or the projected-year span (YEARS) has
+    # changed, its stored result is stale (wrong first_year/baseline or wrong
+    # horizon) and must be regenerated, not skipped. Only skip cases whose
+    # recorded versions AND horizon still match what we'd generate right now.
     with psycopg.connect(env['DATABASE_URL']) as conn:
         with conn.cursor() as cur:
-            cur.execute('SELECT case_id FROM library_cases WHERE eia_version = %s AND specs_version = %s',
-                        (eia_version, specs_version))
+            cur.execute(
+                'SELECT case_id FROM library_cases '
+                'WHERE eia_version = %s AND specs_version = %s AND years = %s',
+                (eia_version, specs_version, YEARS))
             existing_case_ids = {row[0] for row in cur.fetchall()}
 
     for g in GROUPS:

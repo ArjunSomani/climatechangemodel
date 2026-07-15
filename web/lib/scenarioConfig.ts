@@ -43,7 +43,7 @@ export function defaultSourceTweaks(): SourceTweaksInput {
 export function defaultScenarioConfig(): ScenarioConfigInput {
   return {
     region: "CAL",
-    years: 27,
+    years: 25,
     co2_price: defaultTweakPair(0, 0),
     interest: defaultTweakPair(0.12),
     demand: defaultTweakPair(1.02),

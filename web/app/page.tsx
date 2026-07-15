@@ -20,8 +20,12 @@ export default async function Home() {
     ? Math.round(resultYears[resultYears.length - 1].Year)
     : null;
   const spanLabel =
-    firstYear && lastYear ? `${firstYear}–${lastYear}` : "27-year horizon";
-  const spanYears = resultYears.length || 27;
+    firstYear && lastYear ? `${firstYear}–${lastYear}` : "25-year horizon";
+  // Projected-year span: the run starts with a base-year row (the last complete
+  // year of data), then projects forward, so the span is one less than the row
+  // count -- e.g. 2025 base + 2026–2050 projected = a 25-year span.
+  const spanYears =
+    firstYear && lastYear ? lastYear - firstYear : 25;
 
   return (
     <div>

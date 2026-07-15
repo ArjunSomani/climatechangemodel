@@ -194,7 +194,7 @@ export default function HowItWorksPage() {
         How it works
       </h1>
       <p className="mt-4 text-lg text-zinc-600 dark:text-zinc-400">
-        Every year, for 27 years, the model asks one question: what&rsquo;s
+        Every year, for 25 years, the model asks one question: what&rsquo;s
         the cheapest mix of power sources that still keeps the lights on,
         every hour?
       </p>
