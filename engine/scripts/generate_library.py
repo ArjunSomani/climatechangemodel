@@ -7,7 +7,7 @@ into Neon Postgres (library_cases, see setup_library_schema.py).
 Deliberately small relative to the full PRD library (10 CO2 prices x 13
 regions x several variant groups -- PRD §5.5: a full Case is ~1h40m).
 GROUPS is the full cross product of every (group, variant) template x
-every region x all 4 constant CO2 levels (134 cases total), so the
+every region x all 4 constant CO2 levels (574 cases total), so the
 frontend's dropdown pickers (region -> group -> variant -> CO2) never
 hit a dead combination. Extend REGIONS or VARIANT_TEMPLATES to grow it
 further; it's idempotent (upserts by case_id, skips existing case_ids),
@@ -63,11 +63,15 @@ class CaseGroup:
     demand: tuple[float, float] = (1.02, 1)
 
 
-# Every region x every variant x all 4 constant CO2 levels, so the
+# All 13 EIA regions x every variant x all 4 constant CO2 levels, so the
 # frontend's dropdown pickers never hit a dead combination. Increasing_CO2
-# stays a CAL/Default-only bonus rather than doubling this again --
-# ~98 new cases at ~45-60s each already runs to over an hour.
-REGIONS = ['CAL', 'TEX', 'NY']
+# stays a CAL/Default-only bonus rather than multiplying this further.
+# 11 variants x 13 regions x 4 CO2 + 2 Increasing_CO2 = 574 cases. A full
+# regen from empty is several hours (~45-60s each), but it's idempotent and
+# resumable -- unchanged cases are skipped, so adding regions only computes
+# the new ones.
+REGIONS = ['CAL', 'CAR', 'CENT', 'FLA', 'MIDA', 'MIDW', 'NE', 'NW', 'NY',
+           'SE', 'SW', 'TEN', 'TEX']
 
 # (group, variant, source_overrides, interest, demand)
 VARIANT_TEMPLATES: list[tuple[str, str, dict, tuple[float, float], tuple[float, float]]] = [
