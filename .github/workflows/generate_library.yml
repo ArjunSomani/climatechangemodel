@@ -1,0 +1,62 @@
+name: Generate library
+
+# MANUAL ONLY -- never on a schedule. On a private repo, GitHub-hosted Actions
+# minutes are metered against the account's monthly free allowance, so this
+# runs only when you dispatch it. Populates the pre-computed scenario library
+# (engine/scripts/generate_library.py) on GitHub's runners, which already hold
+# the DATABASE_URL / BLOB_READ_WRITE_TOKEN secrets (shared with run_worker.yml)
+# -- no local credentials needed.
+#
+# The generator is idempotent and resumable: it skips cases already current in
+# Neon and only computes new/changed ones. `max_cases` caps how many new cases
+# one run computes so it stays comfortably under the hosted runner's hard
+# 6-hour job limit; re-dispatch until a run reports 0 generated.
+on:
+  workflow_dispatch:
+    inputs:
+      regions:
+        description: "Comma-separated region subset (blank = all 13)"
+        required: false
+        default: ""
+      max_cases:
+        description: "Max new cases to compute this run (keeps it under the 6h cap; re-dispatch to continue)"
+        required: false
+        default: "200"
+
+# Never let two population runs write the library concurrently.
+concurrency:
+  group: generate-library
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    # Under the hosted-runner 6h hard cap. `max_cases` is the real guard; this
+    # is a backstop so a run can't silently burn minutes if something wedges.
+    timeout-minutes: 330
+    defaults:
+      run:
+        working-directory: engine
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: engine/pyproject.toml
+
+      - run: pip install -e ".[library]"
+
+      - name: Generate library cases
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
+          REGIONS: ${{ inputs.regions }}
+          MAX_CASES: ${{ inputs.max_cases }}
+        run: |
+          args=(--max-cases "$MAX_CASES")
+          if [ -n "$REGIONS" ]; then
+            args+=(--regions "$REGIONS")
+          fi
+          python scripts/generate_library.py "${args[@]}"

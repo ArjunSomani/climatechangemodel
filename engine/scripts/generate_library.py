@@ -16,9 +16,11 @@ further; it's idempotent (upserts by case_id, skips existing case_ids),
 Uploads via Vercel Blob's REST API (optimize_engine.blob), shared with
 run_worker.py -- there's no first-party Python SDK for Vercel Blob.
 """
+import argparse
 import hashlib
 import importlib.metadata
 import json
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -104,9 +106,22 @@ GROUPS = [
 
 
 def _env() -> dict:
-    env = dotenv_values(WEB_DIR / '.env.local')
-    if not env.get('DATABASE_URL') or not env.get('BLOB_READ_WRITE_TOKEN'):
-        raise RuntimeError('web/.env.local is missing DATABASE_URL or BLOB_READ_WRITE_TOKEN')
+    # Prefer real env vars (GitHub Actions / Render set DATABASE_URL and
+    # BLOB_READ_WRITE_TOKEN as secrets); fall back to web/.env.local (pulled
+    # via `vercel env pull`) so it also runs from a laptop. Mirrors
+    # run_worker.py's _env().
+    env = {
+        'DATABASE_URL': os.environ.get('DATABASE_URL'),
+        'BLOB_READ_WRITE_TOKEN': os.environ.get('BLOB_READ_WRITE_TOKEN'),
+    }
+    if not env['DATABASE_URL'] or not env['BLOB_READ_WRITE_TOKEN']:
+        local_env = dotenv_values(WEB_DIR / '.env.local')
+        env['DATABASE_URL'] = env['DATABASE_URL'] or local_env.get('DATABASE_URL')
+        env['BLOB_READ_WRITE_TOKEN'] = (
+            env['BLOB_READ_WRITE_TOKEN'] or local_env.get('BLOB_READ_WRITE_TOKEN'))
+    if not env['DATABASE_URL'] or not env['BLOB_READ_WRITE_TOKEN']:
+        raise RuntimeError(
+            'DATABASE_URL / BLOB_READ_WRITE_TOKEN not set in env or web/.env.local')
     return env
 
 
@@ -166,13 +181,33 @@ def _build_sources(overrides: dict) -> dict:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(
+        description='Generate the pre-computed scenario library.')
+    parser.add_argument(
+        '--regions',
+        help='Comma-separated region subset to generate (default: all regions).')
+    parser.add_argument(
+        '--max-cases', type=int, default=None,
+        help='Stop after computing this many new cases this run (skipped cases '
+             'do not count). The run is idempotent and resumable, so re-invoke '
+             'to continue -- use this to keep a single GitHub Actions run under '
+             'the hosted runner 6-hour job cap.')
+    args = parser.parse_args()
+
+    wanted_regions = (
+        {r.strip() for r in args.regions.split(',') if r.strip()}
+        if args.regions else None)
+
     env = _env()
     engine_version = importlib.metadata.version('optimize-engine')
     specs_version = _specs_version()
     eia_version = _eia_version()
 
+    groups = [g for g in GROUPS if wanted_regions is None or g.region in wanted_regions]
+
     total = 0
     skipped = 0
+    reached_limit = False
 
     # A case_id existing isn't enough -- if the EIA data (or specs) backing
     # it has since been refreshed, or the projected-year span (YEARS) has
@@ -187,7 +222,9 @@ def main() -> None:
                 (eia_version, specs_version, YEARS))
             existing_case_ids = {row[0] for row in cur.fetchall()}
 
-    for g in GROUPS:
+    for g in groups:
+        if reached_limit:
+            break
         group_slug = g.group.lower()
         variant_slug = g.variant.lower()
         for co2_initial, co2_yearly, co2_regime in g.co2_scenarios:
@@ -199,6 +236,12 @@ def main() -> None:
                 print(f'--- {case_id} (skip, already exists) ---')
                 skipped += 1
                 continue
+
+            if args.max_cases is not None and total >= args.max_cases:
+                print(f'Reached --max-cases={args.max_cases}; stopping early '
+                      f'(resumable -- re-run to continue).')
+                reached_limit = True
+                break
 
             print(f'--- {case_id} ---')
 
@@ -246,7 +289,8 @@ def main() -> None:
             print('  catalog row upserted')
             total += 1
 
-    print(f'Done: {total} generated, {skipped} skipped (already existed)')
+    tail = ' -- more remain, re-run to continue' if reached_limit else ''
+    print(f'Done: {total} generated, {skipped} skipped (already existed){tail}')
 
 
 if __name__ == '__main__':
