@@ -24,8 +24,9 @@ only phase not started.
   since the Next.js app doesn't live at the repo root).
 - **Neon** (Postgres, via Vercel Marketplace): `climatechangemodel-db`,
   free plan. Holds the `library_cases` catalog (see
-  `engine/scripts/setup_library_schema.py`) — 134 pre-computed scenarios
-  as of 2026-07-10, each row versioned by `eia_version`/`specs_version`/
+  `engine/scripts/setup_library_schema.py`) — 574 pre-computed scenarios
+  (all 13 regions) as of 2026-07-17, each row versioned by
+  `eia_version`/`specs_version`/
   `engine_version` — plus the `runs` queue for on-demand custom runs (see
   `engine/scripts/setup_runs_schema.py`).
 - **Vercel Blob**: private store `climatechangemodel-blob` (region
