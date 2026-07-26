@@ -1,15 +1,69 @@
 @import "tailwindcss";
 
+/* Theme is attribute-driven (data-theme on <html>), not prefers-color-scheme,
+   so the in-app light/dark toggle can override the OS setting. Dark is the
+   default: unthemed :root below is the dark palette, and the dark: Tailwind
+   variant activates whenever data-theme="dark" is present (set on <html> for
+   SSR and confirmed by the pre-paint script in layout.tsx). */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 :root {
+  /* --- Dark palette (default) --- */
+  --background: #100e0b;
+  --foreground: #f3f1ea;
+
+  /* energy-toned accent -- used only in UI chrome (links, CTAs, active
+     states), never in charts, so it never competes with the data
+     palette's meaning */
+  --accent: #ec7c3d;
+  --accent-foreground: #1a0f06;
+
+  /* dataviz tokens (dark) -- see references/palette.md in the dataviz skill */
+  --chart-surface: #1a1a19;
+  --chart-page: #0d0d0d;
+  --ink-primary: #ffffff;
+  --ink-secondary: #c3c2b7;
+  --ink-muted: #898781;
+  --chart-gridline: #2c2c2a;
+  --chart-baseline: #383835;
+
+  /* categorical slots 1-6, fixed order: Solar, Wind, Nuclear, Gas, Coal, Battery */
+  --series-solar: #3987e5;
+  --series-wind: #199e70;
+  --series-nuclear: #c98500;
+  --series-gas: #008300;
+  --series-coal: #9085e9;
+  --series-battery: #e66767;
+
+  /* full 8-slot categorical palette for charts whose series are something
+     other than energy sources (e.g. Compare's per-case lines) */
+  --compare-1: #3987e5;
+  --compare-2: #199e70;
+  --compare-3: #c98500;
+  --compare-4: #008300;
+  --compare-5: #9085e9;
+  --compare-6: #e66767;
+  --compare-7: #d55181;
+  --compare-8: #d95926;
+
+  /* muted, not-optimized EIA sources (PRD Appendix A) -- 3 grayscale
+     steps, deliberately de-emphasized rather than given bright slots */
+  --eia-hydro: #6b6a64;
+  --eia-oil: #918f88;
+  --eia-other: #b8b6af;
+}
+
+:root[data-theme="light"] {
+  /* --- Light palette --- */
   /* warm near-white/near-black rather than stark #fff/#000, matching
      the chart surface tokens below for one consistent palette */
   --background: #fcfcfb;
   --foreground: #17140f;
 
-  /* energy-toned accent -- used only in UI chrome (links, CTAs, active
-     states), never in charts, so it never competes with the data
-     palette's meaning */
-  --accent: #b5450c;
+  /* lighter, brighter orange than the dark burnt-rust so highlights read as
+     genuinely orange on the near-white surface; ~4.35:1 on --background, so
+     accent link/label text stays legible */
+  --accent: #c9520f;
   --accent-foreground: #fff8f2;
 
   /* dataviz tokens (light) -- see references/palette.md in the dataviz skill */
@@ -21,7 +75,6 @@
   --chart-gridline: #e1e0d9;
   --chart-baseline: #c3c2b7;
 
-  /* categorical slots 1-6, fixed order: Solar, Wind, Nuclear, Gas, Coal, Battery */
   --series-solar: #2a78d6;
   --series-wind: #1baf7a;
   --series-nuclear: #eda100;
@@ -29,8 +82,6 @@
   --series-coal: #4a3aa7;
   --series-battery: #e34948;
 
-  /* full 8-slot categorical palette for charts whose series are something
-     other than energy sources (e.g. Compare's per-case lines) */
   --compare-1: #2a78d6;
   --compare-2: #1baf7a;
   --compare-3: #eda100;
@@ -40,8 +91,6 @@
   --compare-7: #e87ba4;
   --compare-8: #eb6834;
 
-  /* muted, not-optimized EIA sources (PRD Appendix A) -- 3 grayscale
-     steps, deliberately de-emphasized rather than given bright slots */
   --eia-hydro: #a8a6a0;
   --eia-oil: #78766f;
   --eia-other: #4a4944;
@@ -55,44 +104,6 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-display: var(--font-fraunces);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #100e0b;
-    --foreground: #f3f1ea;
-
-    --accent: #ec7c3d;
-    --accent-foreground: #1a0f06;
-
-    --chart-surface: #1a1a19;
-    --chart-page: #0d0d0d;
-    --ink-primary: #ffffff;
-    --ink-secondary: #c3c2b7;
-    --ink-muted: #898781;
-    --chart-gridline: #2c2c2a;
-    --chart-baseline: #383835;
-
-    --series-solar: #3987e5;
-    --series-wind: #199e70;
-    --series-nuclear: #c98500;
-    --series-gas: #008300;
-    --series-coal: #9085e9;
-    --series-battery: #e66767;
-
-    --compare-1: #3987e5;
-    --compare-2: #199e70;
-    --compare-3: #c98500;
-    --compare-4: #008300;
-    --compare-5: #9085e9;
-    --compare-6: #e66767;
-    --compare-7: #d55181;
-    --compare-8: #d95926;
-
-    --eia-hydro: #6b6a64;
-    --eia-oil: #918f88;
-    --eia-other: #b8b6af;
-  }
 }
 
 @layer base {

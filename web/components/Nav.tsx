@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const LINKS: [string, string][] = [
   ["/how-it-works", "How it works"],
@@ -42,48 +43,52 @@ export function Nav() {
           Optimize
         </Link>
 
-        {/* Desktop nav */}
-        <nav className="hidden items-center gap-6 sm:flex">
-          {LINKS.map(([href, label]) => (
-            <Link
-              key={href}
-              href={href}
-              className={
-                isActive(pathname, href)
-                  ? "text-sm font-medium text-accent"
-                  : "text-sm text-zinc-600 hover:text-black dark:text-zinc-400 dark:hover:text-zinc-50"
-              }
-            >
-              {label}
-            </Link>
-          ))}
-        </nav>
+        <div className="flex items-center gap-2 sm:gap-6">
+          {/* Desktop nav */}
+          <nav className="hidden items-center gap-6 sm:flex">
+            {LINKS.map(([href, label]) => (
+              <Link
+                key={href}
+                href={href}
+                className={
+                  isActive(pathname, href)
+                    ? "text-sm font-medium text-accent"
+                    : "text-sm text-zinc-600 hover:text-black dark:text-zinc-400 dark:hover:text-zinc-50"
+                }
+              >
+                {label}
+              </Link>
+            ))}
+          </nav>
 
-        {/* Mobile hamburger */}
-        <button
-          type="button"
-          aria-label={open ? "Close menu" : "Open menu"}
-          aria-expanded={open}
-          aria-controls="mobile-nav"
-          onClick={() => setOpen((v) => !v)}
-          className="-mr-2.5 flex h-11 w-11 items-center justify-center sm:hidden"
-        >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 20 20"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            className="text-black dark:text-zinc-50"
+          <ThemeToggle />
+
+          {/* Mobile hamburger */}
+          <button
+            type="button"
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            aria-controls="mobile-nav"
+            onClick={() => setOpen((v) => !v)}
+            className="-mr-2.5 flex h-11 w-11 items-center justify-center sm:hidden"
           >
-            {open ? (
-              <path strokeLinecap="round" d="M4 4l12 12M16 4L4 16" />
-            ) : (
-              <path strokeLinecap="round" d="M3 5h14M3 10h14M3 15h14" />
-            )}
-          </svg>
-        </button>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              className="text-black dark:text-zinc-50"
+            >
+              {open ? (
+                <path strokeLinecap="round" d="M4 4l12 12M16 4L4 16" />
+              ) : (
+                <path strokeLinecap="round" d="M3 5h14M3 10h14M3 15h14" />
+              )}
+            </svg>
+          </button>
+        </div>
       </div>
 
       {/* Mobile menu panel */}

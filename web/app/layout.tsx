@@ -43,9 +43,22 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      // Dark is the default theme; the pre-paint script below rewrites this to
+      // the visitor's saved preference before first paint, so React's SSR value
+      // and the client value can legitimately differ -- hence suppressHydrationWarning.
+      data-theme="dark"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans">
+        {/* Apply the stored theme before anything paints so a light-mode visitor
+            never sees a dark flash. Runs synchronously as the first body node. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){try{var t=localStorage.getItem('theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');}catch(e){}})();",
+          }}
+        />
         <Nav />
         <main className="flex min-w-0 flex-1 flex-col">
           <div className="min-w-0">{children}</div>
