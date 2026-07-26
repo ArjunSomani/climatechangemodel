@@ -122,6 +122,32 @@
   }
 }
 
+/* Cross-fade the whole page when the theme flips. The transition is scoped to
+   a .theme-transition class that ThemeToggle adds only for the duration of the
+   switch, so it animates the light<->dark change without slowing down every
+   hover/focus color change. 2s per the requested fade length. */
+:root.theme-transition,
+:root.theme-transition *,
+:root.theme-transition *::before,
+:root.theme-transition *::after {
+  transition:
+    background-color 2s ease,
+    border-color 2s ease,
+    color 2s ease,
+    fill 2s ease,
+    stroke 2s ease,
+    outline-color 2s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root.theme-transition,
+  :root.theme-transition *,
+  :root.theme-transition *::before,
+  :root.theme-transition *::after {
+    transition: none;
+  }
+}
+
 ::selection {
   background: var(--accent);
   color: var(--accent-foreground);

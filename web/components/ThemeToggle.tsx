@@ -26,12 +26,29 @@ function getServerSnapshot(): Theme {
   return "dark";
 }
 
+// Length of the light<->dark cross-fade; must match the transition duration in
+// globals.css so the .theme-transition class is removed exactly when the fade ends.
+const FADE_MS = 2000;
+let fadeTimer: ReturnType<typeof setTimeout> | undefined;
+
 export function ThemeToggle() {
   const theme = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   const toggle = useCallback(() => {
     const next: Theme = getSnapshot() === "light" ? "dark" : "light";
-    document.documentElement.setAttribute("data-theme", next);
+    const root = document.documentElement;
+
+    const animate = !window.matchMedia("(prefers-reduced-motion: reduce)")
+      .matches;
+    if (animate) {
+      root.classList.add("theme-transition");
+      // Force a reflow so the browser commits the current colors *with* the
+      // transition enabled before the attribute flips -- otherwise the color
+      // change is batched into the same frame and there's nothing to animate.
+      void root.offsetHeight;
+    }
+
+    root.setAttribute("data-theme", next);
     try {
       localStorage.setItem("theme", next);
     } catch {
@@ -39,6 +56,16 @@ export function ThemeToggle() {
       // session, it just won't be remembered.
     }
     listeners.forEach((l) => l());
+
+    if (animate) {
+      // Re-arm on rapid toggles so the class is only pulled once the last
+      // fade has finished.
+      clearTimeout(fadeTimer);
+      fadeTimer = setTimeout(
+        () => root.classList.remove("theme-transition"),
+        FADE_MS,
+      );
+    }
   }, []);
 
   const isDark = theme === "dark";
