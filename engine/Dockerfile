@@ -9,7 +9,7 @@ WORKDIR /app/engine
 
 COPY pyproject.toml .
 COPY optimize_engine ./optimize_engine
-COPY data/Specs.csv data/Regions.csv ./data/
+COPY data/Specs.csv data/Regions.csv data/mortality.json ./data/
 COPY tests ./tests
 COPY scripts ./scripts
 

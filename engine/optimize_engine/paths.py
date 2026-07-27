@@ -32,6 +32,10 @@ def regions_csv() -> Path:
     return data_dir() / 'Regions.csv'
 
 
+def mortality_json() -> Path:
+    return data_dir() / 'mortality.json'
+
+
 def hourly_capacity_csv(region: str) -> Path:
     return data_dir() / 'eia_hourly' / 'hourly_capacity' / f'{region}_master.csv'
 

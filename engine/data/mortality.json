@@ -1,0 +1,10 @@
+{
+  "coal":    { "low": 24.6, "central": 24.6, "high": 224,  "unit": "deaths/TWh", "modeledShare": 0.95, "source": "owid-safest-sources" },
+  "oil":     { "low": 18.4, "central": 18.4, "high": 52,   "unit": "deaths/TWh", "modeledShare": 0.95, "source": "owid-safest-sources" },
+  "gas":     { "low": 2.8,  "central": 2.8,  "high": 8.5,  "unit": "deaths/TWh", "modeledShare": 0.92, "source": "owid-safest-sources" },
+  "nuclear": { "low": 0.03, "central": 0.03, "high": 0.07, "unit": "deaths/TWh", "modeledShare": 0.90, "source": "owid-safest-sources" },
+  "hydro":   { "low": 0.04, "central": 0.04, "high": 1.6,  "unit": "deaths/TWh", "modeledShare": 0.0,  "source": "owid-safest-sources",
+               "note": "High bound includes the 1975 Banqiao failure; low bound excludes it." },
+  "wind":    { "low": 0.02, "central": 0.02, "high": 0.08, "unit": "deaths/TWh", "modeledShare": 0.0,  "source": "owid-safest-sources" },
+  "solar":   { "low": 0.01, "central": 0.01, "high": 0.06, "unit": "deaths/TWh", "modeledShare": 0.0,  "source": "owid-safest-sources" }
+}

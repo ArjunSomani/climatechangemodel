@@ -52,6 +52,17 @@ class ScenarioConfig(BaseModel):
     demand: TweakPair
     mw_mult: TweakPair = Field(default_factory=lambda: TweakPair(initial=1, yearly=1))
 
+    # Mortality externality price, in $ per death, alongside the carbon price.
+    # Default 0 -> the feature is opt-in and a zero price must reproduce the
+    # current model exactly. This field is intentionally NOT emitted into the
+    # inbox DataFrame by to_inbox_df() yet: at this step deaths are a *reported
+    # output only*, so the engine's built mix cannot depend on this value. The
+    # objective term (mortality_price x deaths) and the corresponding inbox row
+    # are added in a later step; keeping the parameter out of the inbox here is
+    # what guarantees the zero-price regression test passes bit-for-bit.
+    mortality_price: TweakPair = Field(
+        default_factory=lambda: TweakPair(initial=0, yearly=1))
+
     sources: dict[str, SourceTweaks] = Field(
         default_factory=lambda: {s: SourceTweaks() for s in SOURCES})
 
@@ -96,6 +107,16 @@ class RegionResult(BaseModel):
     # PRD §11.4's param_order). Kept as loosely-typed records here since
     # the column set is generated dynamically from nrgs x param_order.
     years: list[dict]
+
+    # Production-based mortality, one row per year, derived from each year's
+    # {Source}_MWh generation via mortality.year_deaths. Deliberately a
+    # SEPARATE field rather than extra keys inside `years`: the golden-parity
+    # contract pins the exact column set of `years`, and deaths are a derived
+    # reporting layer that must not perturb the engine's core output. None when
+    # deaths were not computed. (Consumption-based/regional attribution is a
+    # later step -- see note in service.py; this engine solves each region
+    # independently, with no inter-regional transfer matrix.)
+    deaths: Optional[list[dict]] = None
 
 
 class ScenarioResult(BaseModel):

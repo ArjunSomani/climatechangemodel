@@ -18,7 +18,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from optimize_engine import paths, run_scenario
+from optimize_engine import TweakPair, paths, run_scenario
 from optimize_engine.mailbox import read_inbox_csv
 
 GOLDEN_DIR = Path(__file__).parent / 'golden'
@@ -63,6 +63,7 @@ def frozen_data_dir(tmp_path, monkeypatch):
 
     shutil.copy(src / 'Specs.csv', dst / 'Specs.csv')
     shutil.copy(src / 'Regions.csv', dst / 'Regions.csv')
+    shutil.copy(src / 'mortality.json', dst / 'mortality.json')
 
     for region in GOLDEN_REGIONS:
         cap_src = (src / 'eia_hourly' / 'hourly_capacity' / f'{region}_master.csv')
@@ -106,3 +107,51 @@ def test_matches_original_engine_bit_for_bit(case, frozen_data_dir):
         np.testing.assert_allclose(
             act, exp, atol=1e-6, rtol=0,
             err_msg=f'{case}: column {column!r} diverged from golden output')
+
+
+@pytest.mark.parametrize('case', CASES)
+def test_zero_mortality_price_matches_golden(case, frozen_data_dir):
+    """Feature step 4 -- the regression guard, written before the objective
+    function changes.
+
+    A scenario carrying an explicit mortality_price of zero must reproduce the
+    original engine's output bit-for-bit. This locks in "zero price == current
+    behavior" NOW, so that when the mortality term is added to the objective in
+    a later step, any perturbation of the zero-price path is caught here. It
+    also checks that the derived deaths reporting is attached but does not leak
+    into the pinned `years` column set.
+    """
+    config = read_inbox_csv(GOLDEN_DIR / f'{case}.inbox.csv')
+    # Set the price explicitly to zero (it already defaults to zero) so the
+    # test's intent -- zero-price equivalence -- is unambiguous.
+    config = config.model_copy(
+        update={'mortality_price': TweakPair(initial=0, yearly=1)})
+
+    result = run_scenario(config)
+    region = result.regions[0]
+
+    actual = pd.DataFrame(region.years)
+    expected = _load_golden(case)
+
+    # Same bit-for-bit contract as the golden test: the built mix is unchanged.
+    assert actual.shape == expected.shape
+    assert set(actual.columns) == set(expected.columns)
+    for column in expected.columns:
+        exp = pd.to_numeric(expected[column], errors='coerce').to_numpy(dtype=float)
+        act = pd.to_numeric(actual[column], errors='coerce').to_numpy(dtype=float)
+        if np.isnan(exp).all() and np.isnan(act).all():
+            continue
+        np.testing.assert_allclose(
+            act, exp, atol=1e-6, rtol=0,
+            err_msg=f'{case}: zero-price run diverged from golden output')
+
+    # Deaths are reported (one row per year) but live outside `years`, so they
+    # cannot have perturbed the pinned column set above.
+    assert region.deaths is not None
+    assert len(region.deaths) == len(region.years)
+    for death_row, year_row in zip(region.deaths, region.years):
+        assert death_row['Year'] == year_row['Year']
+        # Aggregate production deaths equal the sum of the per-source rows.
+        by_source = sum(r['deaths_central'] for r in death_row['by_source'])
+        assert death_row['deaths_central'] == pytest.approx(by_source)
+        assert death_row['deaths_central'] >= 0.0

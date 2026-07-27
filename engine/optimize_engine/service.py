@@ -18,8 +18,8 @@ from typing import Callable, Optional
 import numpy as np
 import pandas as pd
 
-from . import core
-from .constants import Fixed_M_MW, Variable_M_MWh, nrgxs
+from . import core, mortality
+from .constants import Fixed_M_MW, Variable_M_MWh, nrgs, nrgxs
 from .schemas import RegionResult, ScenarioConfig, ScenarioResult
 
 ProgressCB = Callable[[str, int, int], None]
@@ -132,10 +132,30 @@ def run_scenario(config: ScenarioConfig, progress_cb: Optional[ProgressCB] = Non
 
     regions = list(core.get_all_regions()) if config.region == 'US' else [config.region]
 
+    coeffs = mortality.load_coefficients()
+
     region_results = []
     for region in regions:
         output_matrix = _do_region(region, inbox, specxs_nrgxs, progress_cb)
         records = output_matrix.round(8).reset_index(drop=True).to_dict(orient='records')
-        region_results.append(RegionResult(region=region, years=records))
+        deaths = _region_deaths(records, coeffs)
+        region_results.append(RegionResult(region=region, years=records, deaths=deaths))
 
     return ScenarioResult(config=config, regions=region_results)
+
+
+def _region_deaths(records: list[dict], coeffs: dict) -> list[dict]:
+    """Production-based deaths per year, derived from each year's generation.
+
+    Purely a function of the {Source}_MWh already in `records` -- it reads the
+    engine's output, never feeds back into it, so it cannot change the built
+    mix. This is the "deaths as a reported output only" layer; the mortality
+    price is not yet in the objective.
+    """
+    deaths = []
+    for record in records:
+        annual_mwh = {source: record.get(f'{source}_MWh', 0.0) for source in nrgs}
+        row = {'Year': record['Year']}
+        row.update(mortality.year_deaths(annual_mwh, coeffs))
+        deaths.append(row)
+    return deaths
