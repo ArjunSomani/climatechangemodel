@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import { Fraunces, Geist, Geist_Mono } from "next/font/google";
 import { Nav } from "@/components/Nav";
+import { PreviewBanner } from "@/components/PreviewBanner";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -59,6 +60,7 @@ export default function RootLayout({
               "(function(){try{var t=localStorage.getItem('theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');}catch(e){}})();",
           }}
         />
+        <PreviewBanner />
         <Nav />
         <main className="flex min-w-0 flex-1 flex-col">
           <div className="min-w-0">{children}</div>
