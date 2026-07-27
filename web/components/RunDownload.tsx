@@ -2,6 +2,7 @@
 
 import type { YearRecord } from "@/lib/library";
 import type { ScenarioConfigInput } from "@/lib/scenarioConfig";
+import { triggerDownload } from "@/lib/download";
 
 // Full year-by-year records as CSV -- raw engine values at full precision
 // (MWh, M$, MT), not the on-screen rounded/formatted numbers, so the export
@@ -19,17 +20,6 @@ function toCsv(rows: YearRecord[]): string {
     cols.map(esc).join(","),
     ...rows.map((r) => cols.map((c) => esc(r[c])).join(",")),
   ].join("\n");
-}
-
-function triggerDownload(filename: string, content: string, mime: string) {
-  const url = URL.createObjectURL(new Blob([content], { type: mime }));
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
 }
 
 function DownloadIcon() {

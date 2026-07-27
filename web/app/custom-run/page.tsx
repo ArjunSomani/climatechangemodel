@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { REGIONS } from "@/lib/regions";
 import { SOURCES, type SourceKey } from "@/lib/sources";
+import { ConfigSaveLoad } from "@/components/ConfigSaveLoad";
 import {
   defaultScenarioConfig,
   type ScenarioConfigInput,
@@ -155,6 +156,14 @@ export default function CustomRunPage() {
             </button>
           ))}
         </div>
+      </div>
+
+      <div className="mt-6 flex flex-col gap-2 border-t border-zinc-200 pt-6 dark:border-zinc-800 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          Save this scenario to reuse or share it — or load one you saved
+          earlier.
+        </p>
+        <ConfigSaveLoad config={config} onLoad={setConfig} />
       </div>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-10">

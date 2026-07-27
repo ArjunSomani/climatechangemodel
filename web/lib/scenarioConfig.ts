@@ -103,3 +103,42 @@ export function validateScenarioConfig(v: unknown): ScenarioConfigInput | null {
     sources: sources as Record<SourceKey, SourceTweaksInput>,
   };
 }
+
+// Marks a downloaded scenario file so a re-imported one is recognizable at a
+// glance (and so we can grow the format later behind `version`). The config
+// itself is nested under `config`, which is also exactly the shape the
+// results export (custom-run-*.json = { config, result }) already uses -- so
+// both files load back into the form through parseScenarioConfigFile below.
+export const SCENARIO_CONFIG_FILE_TYPE = "optimize-scenario-config";
+
+export function serializeScenarioConfig(config: ScenarioConfigInput): string {
+  return JSON.stringify(
+    { type: SCENARIO_CONFIG_FILE_TYPE, version: 1, config },
+    null,
+    2
+  );
+}
+
+// Reads a saved scenario back from file text. Accepts three shapes so users
+// can reload anything the app hands them: a bare ScenarioConfig, our own
+// saved wrapper ({ type, version, config }), or the results export
+// ({ config, result }). Returns null on malformed JSON or a config that
+// fails validation, so the caller can show one "couldn't read that file"
+// message for every failure mode.
+export function parseScenarioConfigFile(text: string): ScenarioConfigInput | null {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(text);
+  } catch {
+    return null;
+  }
+
+  const direct = validateScenarioConfig(parsed);
+  if (direct) return direct;
+
+  if (typeof parsed === "object" && parsed !== null && "config" in parsed) {
+    return validateScenarioConfig((parsed as { config: unknown }).config);
+  }
+
+  return null;
+}
