@@ -9,8 +9,8 @@ test_golden_parity.py (test_zero_mortality_price_matches_golden).
 import numpy as np
 import pytest
 
-from optimize_engine import mortality
-from optimize_engine.constants import nrgs
+from optimize_engine import core, mortality
+from optimize_engine.constants import CO2_MT_MWh, Coalx, Gasx, nrgs
 
 
 # --- Published coefficients, verified against known figures (Level/OWID) ----
@@ -51,6 +51,27 @@ def test_coal_is_an_order_of_magnitude_worse_than_gas_on_deaths():
 
     # Renewables and nuclear are ~3 orders of magnitude below coal.
     assert coeffs['coal']['central'] / coeffs['solar']['central'] > 1000
+
+
+def test_deaths_and_co2_rank_gas_vs_coal_differently():
+    # Divergence at its root (test 2.5.4). The whole feature turns on gas and
+    # coal being ranked *differently* by the two externalities: gas is far
+    # better than coal on deaths (~9x) but only modestly better on CO2 (~2x).
+    # That gap is why a mortality price and a carbon price disagree about gas.
+    # If these two rankings were the same, no divergence could exist -- the
+    # coefficients would be wrong.
+    coeffs = mortality.load_coefficients()
+    specxs = core.get_specxs_nrgxs()
+
+    deaths_gas_over_coal = coeffs['gas']['central'] / coeffs['coal']['central']
+    co2_gas_over_coal = specxs[CO2_MT_MWh, Gasx] / specxs[CO2_MT_MWh, Coalx]
+
+    # Gas is dramatically better than coal on deaths...
+    assert deaths_gas_over_coal < 0.15
+    # ...but only modestly better on CO2...
+    assert co2_gas_over_coal > 0.4
+    # ...so the two externalities rank gas-vs-coal on very different scales.
+    assert co2_gas_over_coal > 3 * deaths_gas_over_coal
 
 
 # --- Technology mapping ----------------------------------------------------

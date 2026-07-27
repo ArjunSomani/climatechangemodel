@@ -23,6 +23,11 @@ export interface ScenarioConfigInput {
   co2_price: TweakPairInput;
   interest: TweakPairInput;
   demand: TweakPairInput;
+  // Mortality externality price. `initial` is $ per death; `yearly` is a
+  // multiplicative VSL escalation applied each year after the first (1.0 =
+  // flat). Mirrors the engine's mortality_price. Default 0 -> reported but
+  // does not change what gets built.
+  mortality_price: TweakPairInput;
   sources: Record<SourceKey, SourceTweaksInput>;
 }
 
@@ -47,6 +52,7 @@ export function defaultScenarioConfig(): ScenarioConfigInput {
     co2_price: defaultTweakPair(0, 0),
     interest: defaultTweakPair(0.12),
     demand: defaultTweakPair(1.02),
+    mortality_price: defaultTweakPair(0, 1),
     sources: Object.fromEntries(
       SOURCES.map((s) => [s.key, defaultSourceTweaks()])
     ) as Record<SourceKey, SourceTweaksInput>,
@@ -88,6 +94,16 @@ export function validateScenarioConfig(v: unknown): ScenarioConfigInput | null {
   if (!isValidTweakPair(c.interest)) return null;
   if (!isValidTweakPair(c.demand)) return null;
 
+  // mortality_price is optional for backward compatibility: a config without
+  // it (older saved scenarios, library cases) is treated as a zero,
+  // no-escalation price, matching the engine's default. When present it must
+  // be a valid pair.
+  let mortalityPrice: TweakPairInput = { initial: 0, yearly: 1 };
+  if (c.mortality_price !== undefined) {
+    if (!isValidTweakPair(c.mortality_price)) return null;
+    mortalityPrice = c.mortality_price as TweakPairInput;
+  }
+
   if (typeof c.sources !== "object" || c.sources === null) return null;
   const sources = c.sources as Record<string, unknown>;
   for (const s of SOURCES) {
@@ -100,6 +116,7 @@ export function validateScenarioConfig(v: unknown): ScenarioConfigInput | null {
     co2_price: c.co2_price as TweakPairInput,
     interest: c.interest as TweakPairInput,
     demand: c.demand as TweakPairInput,
+    mortality_price: mortalityPrice,
     sources: sources as Record<SourceKey, SourceTweaksInput>,
   };
 }

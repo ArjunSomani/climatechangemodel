@@ -26,6 +26,7 @@ ProgressCB = Callable[[str, int, int], None]
 
 
 def _do_region(region: str, inbox: pd.DataFrame, specxs_nrgxs: np.ndarray,
+                deaths_intensity_nrgxs: np.ndarray,
                 progress_cb: Optional[ProgressCB] = None) -> pd.DataFrame:
     years = inbox.at['Years', 'Initial']
 
@@ -91,6 +92,7 @@ def _do_region(region: str, inbox: pd.DataFrame, specxs_nrgxs: np.ndarray,
                 iterations=iterations,
                 year=year,
                 sample_hours=sample_hours,
+                deaths_intensity_nrgxs=deaths_intensity_nrgxs,
             )
 
             MW_nrgxs, battery_stored, outage_MWh, MWh_nrgxs = core.update_data(
@@ -103,6 +105,7 @@ def _do_region(region: str, inbox: pd.DataFrame, specxs_nrgxs: np.ndarray,
                 battery_stored=battery_stored,
                 hourly_target_MWh=hourly_target_MWh,
                 sample_hours=sample_hours,
+                deaths_intensity_nrgxs=deaths_intensity_nrgxs,
             )
 
             output_matrix = core.add_output_year(
@@ -133,10 +136,14 @@ def run_scenario(config: ScenarioConfig, progress_cb: Optional[ProgressCB] = Non
     regions = list(core.get_all_regions()) if config.region == 'US' else [config.region]
 
     coeffs = mortality.load_coefficients()
+    # The objective prices the CENTRAL death rates (the VSL band comes from the
+    # price, not the coefficient). Deaths are still *reported* across low/
+    # central/high bands independently, in _region_deaths.
+    deaths_intensity_nrgxs = mortality.objective_intensity_nrgxs('central', coeffs)
 
     region_results = []
     for region in regions:
-        output_matrix = _do_region(region, inbox, specxs_nrgxs, progress_cb)
+        output_matrix = _do_region(region, inbox, specxs_nrgxs, deaths_intensity_nrgxs, progress_cb)
         records = output_matrix.round(8).reset_index(drop=True).to_dict(orient='records')
         deaths = _region_deaths(records, coeffs)
         region_results.append(RegionResult(region=region, years=records, deaths=deaths))

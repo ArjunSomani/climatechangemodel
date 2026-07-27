@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { REGIONS } from "@/lib/regions";
 import { SOURCES, type SourceKey } from "@/lib/sources";
 import { ConfigSaveLoad } from "@/components/ConfigSaveLoad";
+import { MortalityPriceControl } from "@/components/MortalityPriceControl";
 import {
   defaultScenarioConfig,
   type ScenarioConfigInput,
@@ -86,6 +87,44 @@ const PRESETS: {
   },
 ];
 
+// The headline comparison: coal exits under either price, but gas is where
+// they disagree. A mortality-only price tolerates gas (gas is ~9x cleaner than
+// coal on deaths); a carbon-only price at comparable stringency pushes past it
+// (gas is only ~1.7x cleaner on CO2). Flip between these to see it move.
+const COMPARISON_PRESETS: {
+  label: string;
+  blurb: string;
+  apply: (c: ScenarioConfigInput) => ScenarioConfigInput;
+}[] = [
+  {
+    label: "Carbon price only",
+    blurb: "$400/ton CO₂, no mortality price.",
+    apply: (c) => ({
+      ...c,
+      co2_price: { initial: 400, yearly: 0 },
+      mortality_price: { initial: 0, yearly: 1 },
+    }),
+  },
+  {
+    label: "Mortality price only",
+    blurb: "$14.1M/death (central VSL), no carbon price.",
+    apply: (c) => ({
+      ...c,
+      co2_price: { initial: 0, yearly: 0 },
+      mortality_price: { initial: 14_100_000, yearly: 1 },
+    }),
+  },
+  {
+    label: "Both prices",
+    blurb: "$400/ton CO₂ and $14.1M/death together.",
+    apply: (c) => ({
+      ...c,
+      co2_price: { initial: 400, yearly: 0 },
+      mortality_price: { initial: 14_100_000, yearly: 1 },
+    }),
+  },
+];
+
 export default function CustomRunPage() {
   const router = useRouter();
   const [config, setConfig] = useState<ScenarioConfigInput>(defaultScenarioConfig());
@@ -141,6 +180,33 @@ export default function CustomRunPage() {
         </p>
         <div className="mt-3 grid gap-2 sm:grid-cols-3">
           {PRESETS.map((p) => (
+            <button
+              key={p.label}
+              type="button"
+              onClick={() => setConfig((c) => p.apply(c))}
+              className="rounded-lg border border-zinc-200 p-3 text-left text-sm hover:border-accent dark:border-zinc-800"
+            >
+              <div className="font-medium text-black dark:text-zinc-50">
+                {p.label}
+              </div>
+              <div className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+                {p.blurb}
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-4 rounded-xl border border-zinc-200 p-4 dark:border-zinc-800">
+        <p className="text-sm font-medium text-black dark:text-zinc-50">
+          Or compare pricing carbon vs. mortality:
+        </p>
+        <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+          Coal exits under either. Gas is where they disagree — flip between
+          these and watch the gas build move.
+        </p>
+        <div className="mt-3 grid gap-2 sm:grid-cols-3">
+          {COMPARISON_PRESETS.map((p) => (
             <button
               key={p.label}
               type="button"
@@ -221,6 +287,11 @@ export default function CustomRunPage() {
             />
           </div>
         </Section>
+
+        <MortalityPriceControl
+          value={config.mortality_price}
+          onChange={(next) => setConfig((c) => ({ ...c, mortality_price: next }))}
+        />
 
         <details className="group rounded-lg border border-zinc-200 dark:border-zinc-800">
           <summary className="flex cursor-pointer list-none items-center gap-2 px-4 py-3 text-lg font-medium marker:content-none">

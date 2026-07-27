@@ -78,6 +78,10 @@ CO2_M_MT = 0
 Demand = 1
 Interest = 2
 MW_Mult = 3
+# Mortality externality price, $ per death. Sits alongside CO2_M_MT as the
+# second priced externality; 0 by default so it is inert unless opted into.
+Mortality_M_Death = 4
+GLOBALS_LEN = 5
 
 # Output Matrix Columns
 output_header = pd.Series(['Year', 'CO2_M$_MT', 'Target_MWh', 'Outage_MWh',

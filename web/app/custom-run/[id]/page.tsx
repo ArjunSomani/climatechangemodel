@@ -5,6 +5,7 @@ import Link from "next/link";
 import { EnergyMixChart } from "@/components/EnergyMixChart";
 import { YearTable } from "@/components/YearTable";
 import { RunDownload } from "@/components/RunDownload";
+import { MortalityResults } from "@/components/MortalityResults";
 import { useRunStatus } from "@/lib/useRunStatus";
 
 // The queue worker runs on a wall-clock cron (`*/5 * * * *` in
@@ -107,6 +108,10 @@ export default function CustomRunStatusPage({
 
           <Section title="Energy mix over time">
             <EnergyMixChart data={result} />
+          </Section>
+
+          <Section title="Mortality">
+            <MortalityResults result={result} config={config} />
           </Section>
 
           <Section title="Year-by-year data">

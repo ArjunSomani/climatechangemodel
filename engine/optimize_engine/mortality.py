@@ -20,7 +20,10 @@ source of truth for these numbers.
 import json
 from typing import Optional
 
+import numpy as np
+
 from . import paths
+from .constants import nrgx2nrg_lu, nrgxs
 
 # 1 TWh = 1,000,000 MWh. The coefficients are deaths per TWh; the engine's
 # generation figures ({Source}_MWh in the output matrix) are annual MWh. This
@@ -79,6 +82,36 @@ def death_rate(source: str, band: str = 'central', coeffs: Optional[dict] = None
         return 0.0
     coeffs = coeffs if coeffs is not None else load_coefficients()
     return float(coeffs[key][band])
+
+
+# The objective's per-source cost intensity packs BOTH unit conversions into
+# the coefficient, so that intensity * mortality_price[$/death] lands in M$/MWh
+# -- exactly mirroring how the CO2 term's CO2_MT_MWh * CO2_M_MT lands in M$/MWh
+# (see core.fig_cost). The chain is:
+#     deaths/TWh --(/1e6)--> deaths/MWh --(x $/death)--> $/MWh --(/1e6)--> M$/MWh
+# so the deaths/TWh rate is divided by 1e12. Getting this scale wrong would put
+# the mortality term on a different footing from every real cost, so it is
+# isolated here as one named constant and asserted in the objective-scale test.
+OBJECTIVE_COST_SCALE = 1e12
+
+
+def objective_intensity_nrgxs(band: str = 'central',
+                              coeffs: Optional[dict] = None) -> np.ndarray:
+    """Per-source mortality cost intensity for the objective, indexed by nrgx.
+
+    Positional over constants.nrgxs (Solar, Wind, Nuclear, Gas, Coal, Battery),
+    so it drops straight into core.fig_cost / core.update_data next to the CO2
+    coefficient. Battery is 0 (no direct coefficient). Multiply by the global
+    mortality price ($ per death) to get M$/MWh.
+    """
+    coeffs = coeffs if coeffs is not None else load_coefficients()
+    intensity = np.zeros(nrgxs.shape[0], dtype=float)
+    for nrgx in nrgxs:
+        key = ENGINE_SOURCE_TO_MORTALITY_KEY.get(nrgx2nrg_lu[nrgx])
+        if key is None:
+            continue
+        intensity[nrgx] = float(coeffs[key][band]) / OBJECTIVE_COST_SCALE
+    return intensity
 
 
 def deaths_from_mwh(mwh: float, rate_per_twh: float) -> float:

@@ -45,10 +45,10 @@ from scipy.optimize import Bounds, minimize
 from . import paths
 from .constants import (
     Batteryx, CO2_M_MT, CO2_MT_MWh, Capital_M_MW, Capital_Total_M_MW,
-    Demand, Efficiency, Fixed_M_MW, Hours, Interest, Lifetime, MW_Mult,
-    Max_PCT, Variable_M_MWh, delete_chars, nrg2nrgx_lu, nrgs, nrg_sources,
-    nrgx2nrg_lu, nrgx_sources, nrgxs, output_header, param_order, specxs,
-    tweakxs,
+    Demand, Efficiency, Fixed_M_MW, GLOBALS_LEN, Hours, Interest, Lifetime,
+    MW_Mult, Max_PCT, Mortality_M_Death, Variable_M_MWh, delete_chars,
+    nrg2nrgx_lu, nrgs, nrg_sources, nrgx2nrg_lu, nrgx_sources, nrgxs,
+    output_header, param_order, specxs, tweakxs,
 )
 
 warnings.filterwarnings('error', module=r'.*optimize_engine.*')
@@ -162,10 +162,11 @@ def init_tweakxs(specxs_nrgxs, inbox):
                          specxs_nrgxs[Lifetime, nrgx] * 4,
                          specxs_nrgxs[Capital_Total_M_MW, nrgx])
 
-    tweaked_globalxs = np.zeros(4, dtype=float)
+    tweaked_globalxs = np.zeros(GLOBALS_LEN, dtype=float)
     tweaked_globalxs[CO2_M_MT] = 0.
     tweaked_globalxs[Demand] = 1
     tweaked_globalxs[Interest] = 0.
+    tweaked_globalxs[Mortality_M_Death] = 0.
 
     return tweaked_globalxs, tweaked_nrgxs
 
@@ -177,6 +178,7 @@ def fig_tweakxs(tweaked_nrgxs, tweaked_globalxs, inbox, year):
         tweaked_globalxs[Demand] = inbox.at['Demand', loc_]
         tweaked_globalxs[Interest] = inbox.at['Interest', loc_]
         tweaked_globalxs[MW_Mult] = inbox.at['MW_Mult', loc_]
+        tweaked_globalxs[Mortality_M_Death] = inbox.at['Mortality_Price', loc_]
     else:
         loc_ = 'Yearly'
         if tweaked_globalxs[CO2_M_MT] < inbox.at['CO2_Price', loc_]:
@@ -185,6 +187,9 @@ def fig_tweakxs(tweaked_nrgxs, tweaked_globalxs, inbox, year):
         tweaked_globalxs[Demand] *= inbox.at['Demand', loc_]
         tweaked_globalxs[Interest] *= inbox.at['Interest', loc_]
         tweaked_globalxs[MW_Mult] *= inbox.at['MW_Mult', loc_]
+        # VSL escalates in real terms over the horizon; Yearly is a
+        # multiplicative factor (1.0 = held flat). Mirrors Demand/Interest.
+        tweaked_globalxs[Mortality_M_Death] *= inbox.at['Mortality_Price', loc_]
 
     for nrgx in nrgxs:
         nrg = nrgx2nrg_lu[nrgx]
@@ -263,20 +268,27 @@ def fig_hourly(hourly_MWh_required, costly_nrgxs, hourly_MWh_avail_nrgxs,
 
 
 @jit(nopython=True)
-def fig_cost(MW_nrgxs, MWh_nrgxs, tweaked_globalxs, tweaked_nrgxs, expensive, outage_MWh):
+def fig_cost(MW_nrgxs, MWh_nrgxs, tweaked_globalxs, tweaked_nrgxs, expensive, outage_MWh,
+             deaths_intensity_nrgxs):
     cost = 0.
     for nrgx in nrgxs:
         cost += MW_nrgxs[nrgx] * tweaked_nrgxs[Capital_M_MW, nrgx] * tweaked_globalxs[MW_Mult]
         cost += MW_nrgxs[nrgx] * tweaked_nrgxs[Fixed_M_MW, nrgx] * tweaked_globalxs[MW_Mult]
         cost += MWh_nrgxs[nrgx] * tweaked_nrgxs[Variable_M_MWh, nrgx]
         cost += MWh_nrgxs[nrgx] * tweaked_nrgxs[CO2_MT_MWh, nrgx] * tweaked_globalxs[CO2_M_MT]
+        # Mortality externality, priced exactly as CO2 is: a per-source
+        # intensity times a global price. deaths_intensity_nrgxs is pre-scaled
+        # so this product is M$/MWh (see mortality.objective_intensity_nrgxs).
+        # Zero when the price is zero -> adds exactly 0.0, preserving parity.
+        cost += MWh_nrgxs[nrgx] * deaths_intensity_nrgxs[nrgx] * tweaked_globalxs[Mortality_M_Death]
     cost += outage_MWh * expensive
     return cost
 
 
 @jit(nopython=True)
 def update_data(knobs_nrgxs, hourly_cap_pct_nrgxs, MW_nrgxs, tweaked_nrgxs, tweaked_globalxs,
-                 specxs_nrgxs, battery_stored, hourly_target_MWh, sample_hours):
+                 specxs_nrgxs, battery_stored, hourly_target_MWh, sample_hours,
+                 deaths_intensity_nrgxs):
     hourly_MWh_needed = np.copy(hourly_target_MWh)
     MW_total = MW_nrgxs.sum()
     MWh_nrgxs = np.zeros(nrgxs.shape[0], dtype=float)
@@ -289,6 +301,10 @@ def update_data(knobs_nrgxs, hourly_cap_pct_nrgxs, MW_nrgxs, tweaked_nrgxs, twea
     for nrgx in nrgx_sources:
         cost_per_MWh[nrgx] = tweaked_nrgxs[Variable_M_MWh, nrgx]
         cost_per_MWh[nrgx] += tweaked_nrgxs[CO2_MT_MWh, nrgx] * tweaked_globalxs[CO2_M_MT]
+        # Mortality enters the dispatch merit order too (not just the build
+        # decision), so a priced grid also runs cleaner plants first. Zero
+        # price -> adds exactly 0.0, leaving the sort order untouched.
+        cost_per_MWh[nrgx] += deaths_intensity_nrgxs[nrgx] * tweaked_globalxs[Mortality_M_Death]
 
     costly_nrgxs = sort_costliest(costly_nrgxs=nrgx_sources.copy(), cost_per_MWh=cost_per_MWh)
 
@@ -311,7 +327,8 @@ def update_data(knobs_nrgxs, hourly_cap_pct_nrgxs, MW_nrgxs, tweaked_nrgxs, twea
 # ---------------------------------------------------------------------------
 
 def solve_this(knobs_nrgxs, hourly_cap_pct_nrgxs, MW_nrgxs, battery_stored, hourly_target_MWh,
-               tweaked_globalxs, tweaked_nrgxs, specxs_nrgxs, expensive, sample_hours):
+               tweaked_globalxs, tweaked_nrgxs, specxs_nrgxs, expensive, sample_hours,
+               deaths_intensity_nrgxs):
     new_MW_nrgxs = MW_nrgxs.copy()
     new_battery_stored = battery_stored
 
@@ -325,6 +342,7 @@ def solve_this(knobs_nrgxs, hourly_cap_pct_nrgxs, MW_nrgxs, battery_stored, hour
         battery_stored=new_battery_stored,
         hourly_target_MWh=hourly_target_MWh,
         sample_hours=sample_hours,
+        deaths_intensity_nrgxs=deaths_intensity_nrgxs,
     )
 
     return fig_cost(
@@ -334,6 +352,7 @@ def solve_this(knobs_nrgxs, hourly_cap_pct_nrgxs, MW_nrgxs, battery_stored, hour
         tweaked_nrgxs=tweaked_nrgxs,
         expensive=expensive,
         outage_MWh=outage_MWh,
+        deaths_intensity_nrgxs=deaths_intensity_nrgxs,
     )
 
 
@@ -354,7 +373,7 @@ class MinimizerFailure(RuntimeError):
 
 def run_minimizer(hourly_cap_pct_nrgxs, MW_nrgxs, battery_stored, hourly_target_MWh,
                    tweaked_globalxs, tweaked_nrgxs, specxs_nrgxs, expensive, knobs_nrgxs,
-                   region, iterations, year, sample_hours):
+                   region, iterations, year, sample_hours, deaths_intensity_nrgxs):
     MW_total = MW_nrgxs.sum() - MW_nrgxs[Batteryx]
 
     max_add_nrgxs = np.zeros(nrgxs.shape[0], dtype=float)
@@ -396,6 +415,7 @@ def run_minimizer(hourly_cap_pct_nrgxs, MW_nrgxs, battery_stored, hourly_target_
                 specxs_nrgxs,
                 expensive,
                 sample_hours,
+                deaths_intensity_nrgxs,
             ),
             bounds=bnds,
             method=method,

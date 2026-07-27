@@ -53,13 +53,13 @@ class ScenarioConfig(BaseModel):
     mw_mult: TweakPair = Field(default_factory=lambda: TweakPair(initial=1, yearly=1))
 
     # Mortality externality price, in $ per death, alongside the carbon price.
-    # Default 0 -> the feature is opt-in and a zero price must reproduce the
-    # current model exactly. This field is intentionally NOT emitted into the
-    # inbox DataFrame by to_inbox_df() yet: at this step deaths are a *reported
-    # output only*, so the engine's built mix cannot depend on this value. The
-    # objective term (mortality_price x deaths) and the corresponding inbox row
-    # are added in a later step; keeping the parameter out of the inbox here is
-    # what guarantees the zero-price regression test passes bit-for-bit.
+    # `initial` is the $/death price (0 by default -> opt-in; a zero price
+    # reproduces the current model exactly). `yearly` is a *multiplicative*
+    # escalation applied each year after the first (like Demand/Interest), used
+    # for HHS's real VSL growth over the horizon; 1.0 holds it flat. Emitted
+    # into the inbox by to_inbox_df() and read by core.fig_tweakxs into
+    # tweaked_globalxs[Mortality_M_Death], which core.fig_cost and
+    # core.update_data price exactly as they price CO2.
     mortality_price: TweakPair = Field(
         default_factory=lambda: TweakPair(initial=0, yearly=1))
 
@@ -87,6 +87,8 @@ class ScenarioConfig(BaseModel):
             'Interest': {'Initial': self.interest.initial, 'Yearly': self.interest.yearly},
             'Demand': {'Initial': self.demand.initial, 'Yearly': self.demand.yearly},
             'MW_Mult': {'Initial': self.mw_mult.initial, 'Yearly': self.mw_mult.yearly},
+            'Mortality_Price': {'Initial': self.mortality_price.initial,
+                                'Yearly': self.mortality_price.yearly},
         }
         for source in SOURCES:
             tweaks = self.sources.get(source, SourceTweaks())
