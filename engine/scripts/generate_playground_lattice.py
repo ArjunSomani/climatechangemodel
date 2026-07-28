@@ -1,20 +1,34 @@
-"""Pre-compute a small (carbon price × mortality price) lattice for the
-two-slider playground.
+"""Pre-compute a (carbon price × mortality price) lattice for the two-slider
+playground.
 
 The playground needs an *instant* response as the user drags two sliders, but
-each optimizer run takes tens of seconds — far too slow to run live, and the
-preview site has no always-on engine anyway. So we bake a coarse grid of runs
-for one region here and ship the results as a static JSON the web reads. The UI
-snaps the sliders to grid points and reads the nearest cell.
+each optimizer run takes ~15s — far too slow to run live, and the preview site
+has no always-on engine anyway. So we bake a grid of runs for one region here
+and ship the results as a static JSON the web reads. The UI snaps the sliders to
+grid points and reads the nearest cell.
 
-This is deliberately a small demo lattice (one region, a coarse grid). Widening
-it to more regions / a finer grid is a generation-pipeline concern, exactly as
-the pre-computed library is; see MORTALITY.md.
+The grid is deliberately fine so the sliders feel near-continuous. Each cell is
+one independent optimizer run, so we fan them out across CPU cores with a process
+pool (each cell is ~15s single-threaded; the pool turns a ~55-min serial run into
+~15 min on 4 cores). Widening to more regions is a further generation-pipeline
+concern; see MORTALITY.md.
 
-Run:  python scripts/generate_playground_lattice.py
+Run:  python scripts/generate_playground_lattice.py [--workers N]
 Out:  web/data/playground_lattice.json
 """
+# Keep every worker single-threaded so N processes fill N cores cleanly instead
+# of each spawning its own BLAS/numba thread pool and oversubscribing. Must be
+# set before numpy/numba are imported (below, via optimize_engine).
+import os
+
+os.environ.setdefault('OMP_NUM_THREADS', '1')
+os.environ.setdefault('OPENBLAS_NUM_THREADS', '1')
+os.environ.setdefault('MKL_NUM_THREADS', '1')
+os.environ.setdefault('NUMBA_NUM_THREADS', '1')
+
+import argparse
 import json
+from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
 from optimize_engine import ScenarioConfig, TweakPair, mortality, run_scenario
@@ -22,12 +36,11 @@ from optimize_engine.constants import nrgs
 
 REGION = 'MIDW'  # coal and gas both large -> the carbon-vs-mortality story shows
 YEARS = 6
-# Finer grid so the sliders have real resolution (the old 3x3 snapped too
-# coarsely to see coal phase out gradually). Carbon in even $50 steps; mortality
-# anchored to zero + the three HHS 2026 VSL presets so every notch is a real,
-# self-describing price rather than an arbitrary interpolation.
-CARBON_PRICES = [0.0, 50.0, 100.0, 150.0, 200.0, 250.0, 300.0, 350.0]  # $/ton CO2
-MORTALITY_PRICES = [0.0, 6_600_000.0, 14_100_000.0, 21_500_000.0]  # $/death (0, low, central, high VSL)
+# Fine grid so both sliders drag with near-continuous resolution. Carbon in $25
+# steps to $400; mortality in $2M steps to $24M (spanning zero through past the
+# high VSL preset). 17 x 13 = 221 cells.
+CARBON_PRICES = [float(c) for c in range(0, 401, 25)]           # $/ton CO2
+MORTALITY_PRICES = [float(2_000_000 * i) for i in range(0, 13)]  # $/death
 
 OUT = Path(__file__).resolve().parent.parent.parent / 'web' / 'data' / 'playground_lattice.json'
 
@@ -60,16 +73,36 @@ def _cell(result) -> dict:
     }
 
 
+def _compute(task: tuple[int, float, int, float]) -> tuple[str, dict]:
+    """Top-level so ProcessPoolExecutor can dispatch it. One optimizer run."""
+    ci, carbon, mi, mort = task
+    return f'{ci}_{mi}', _cell(run_scenario(_config(carbon, mort)))
+
+
 def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '--workers', type=int, default=os.cpu_count() or 1,
+        help='parallel optimizer processes (default: all cores)')
+    args = parser.parse_args()
+
+    tasks = [
+        (ci, carbon, mi, mort)
+        for ci, carbon in enumerate(CARBON_PRICES)
+        for mi, mort in enumerate(MORTALITY_PRICES)
+    ]
+    total = len(tasks)
+    print(f'{total} cells ({len(CARBON_PRICES)} carbon x {len(MORTALITY_PRICES)} '
+          f'mortality) on {args.workers} workers', flush=True)
+
     cells: dict[str, dict] = {}
-    total = len(CARBON_PRICES) * len(MORTALITY_PRICES)
-    n = 0
-    for ci, carbon in enumerate(CARBON_PRICES):
-        for mi, mort in enumerate(MORTALITY_PRICES):
-            n += 1
-            print(f'[{n}/{total}] carbon={carbon} mortality={mort} ...', flush=True)
-            result = run_scenario(_config(carbon, mort))
-            cells[f'{ci}_{mi}'] = _cell(result)
+    done = 0
+    with ProcessPoolExecutor(max_workers=args.workers) as pool:
+        for key, cell in pool.map(_compute, tasks):
+            cells[key] = cell
+            done += 1
+            if done % 10 == 0 or done == total:
+                print(f'[{done}/{total}] cells done', flush=True)
 
     payload = {
         'region': REGION,
