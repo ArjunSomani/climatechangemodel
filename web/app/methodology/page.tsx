@@ -176,10 +176,21 @@ export default function MethodologyPage() {
             <em>Projected Costs of Generating Electricity 2020</em> report.
           </li>
           <li>
-            <strong>Plant lifetimes, fixed/variable O&amp;M, CO₂ intensity,
-            and per-source build-rate caps</strong>{" "}are maintained in the
-            underlying engine&rsquo;s spec sheet and applied identically
-            across all 13 regions.
+            <strong>Plant lifetimes, fixed/variable O&amp;M, and per-source
+            build-rate caps</strong>{" "}are maintained in the underlying
+            engine&rsquo;s spec sheet and applied identically across all 13
+            regions.
+          </li>
+          <li>
+            <strong>CO₂ intensity</strong>: per-source emissions factors
+            (tonnes CO₂ per MWh) come from the engine&rsquo;s{" "}
+            <code className="rounded bg-zinc-100 px-1 dark:bg-zinc-800">
+              Specs.csv
+            </code>{" "}
+            spec sheet, applied identically across all 13 regions. These
+            per-MWh intensities are consistent with published lifecycle
+            emission ranges (e.g. IPCC AR5, EIA), though we don&rsquo;t claim
+            an exact one-to-one derivation from any single published source.
           </li>
         </ul>
       </Section>

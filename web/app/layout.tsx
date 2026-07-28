@@ -68,6 +68,9 @@ export default function RootLayout({
         <footer className="border-t border-zinc-200 dark:border-zinc-800">
           <div className="mx-auto flex max-w-4xl flex-col gap-2 px-6 py-8 text-sm text-zinc-500 sm:flex-row sm:justify-between dark:text-zinc-400">
             <div className="flex flex-wrap gap-x-4 gap-y-1">
+              <Link href="/about" className="hover:text-accent">
+                About
+              </Link>
               <a
                 href="https://github.com/cliffgold/Optimize"
                 className="hover:text-accent"

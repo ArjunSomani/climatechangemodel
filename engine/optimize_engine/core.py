@@ -461,6 +461,13 @@ def add_output_year(MW_nrgxs, MWh_nrgxs, tweaked_globalxs, tweaked_nrgxs, expens
         output_matrix.at[year, nrg + '_Variable_M$'] = MWh_nrgxs[nrgx] * tweaked_nrgxs[Variable_M_MWh, nrgx]
         output_matrix.at[year, nrg + '_CO2_M$'] = (
             MWh_nrgxs[nrgx] * tweaked_nrgxs[CO2_MT_MWh, nrgx] * tweaked_globalxs[CO2_M_MT])
+        # WARNING: MWh_nrgxs is summed over sample_years (NOT divided like _MWh
+        # above), so this _CO2_MT is total CO2 across all sample_years, NOT a
+        # per-year figure -- it over-reports annual CO2 by ~sample_years. This is
+        # faithful to the original Optimize.py and LOCKED by the golden parity
+        # tests; do NOT normalize it here. For annual CO2, divide by sample_years
+        # or compute per-year generation x CO2_MT_MWh (as scripts/
+        # generate_playground_lattice.py and web/lib/co2.ts do).
         output_matrix.at[year, nrg + '_CO2_MT'] = MWh_nrgxs[nrgx] * tweaked_nrgxs[CO2_MT_MWh, nrgx]
         output_matrix.at[year, nrg + '_Start_Knob'] = first_start_knobs[nrgx]
         output_matrix.at[year, nrg + '_Optimized_Knob'] = knobs_nrgxs[nrgx]

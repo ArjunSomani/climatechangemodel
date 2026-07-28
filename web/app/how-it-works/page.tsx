@@ -1,5 +1,18 @@
 import Link from "next/link";
 import { MORTALITY } from "@/lib/mortality";
+import { MAX_BUILD_RATE } from "@/lib/buildrates";
+
+// Per-year max build rates, largest first, so the bars read as a ranking.
+// Bar widths are scaled to the fastest source, and each uses its own
+// per-source series color (never the accent, which is reserved for chrome).
+const BUILD_RATES = Object.entries(MAX_BUILD_RATE)
+  .map(([key, fraction]) => ({
+    label: key,
+    colorVar: `--series-${key.toLowerCase()}`,
+    pct: fraction * 100,
+  }))
+  .sort((a, b) => b.pct - a.pct);
+const MAX_BUILD_PCT = Math.max(...BUILD_RATES.map((r) => r.pct));
 
 export const metadata = {
   title: "How It Works — Optimize",
@@ -345,6 +358,40 @@ export default function HowItWorksPage() {
             See the methodology page
           </Link>
           .
+        </p>
+      </Section>
+
+      <Section title="How fast can the grid actually change?">
+        <p>
+          The optimizer can&rsquo;t rebuild the grid overnight. Each source can
+          grow by only so much of its fleet per year — so change is bounded by
+          how fast we can actually build, which is why results play out over
+          years, not all at once.
+        </p>
+        <div className="mt-4 space-y-2.5">
+          {BUILD_RATES.map((r) => (
+            <div key={r.label} className="flex items-center gap-3">
+              <span className="w-16 shrink-0 text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                {r.label}
+              </span>
+              <div className="h-3 flex-1 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
+                <div
+                  className="h-full rounded-full"
+                  style={{
+                    width: `${(r.pct / MAX_BUILD_PCT) * 100}%`,
+                    background: `var(${r.colorVar})`,
+                  }}
+                  aria-hidden
+                />
+              </div>
+              <span className="w-14 shrink-0 text-right text-sm font-semibold text-black tabular-nums dark:text-zinc-50">
+                {r.pct.toFixed(1)}%
+              </span>
+            </div>
+          ))}
+        </div>
+        <p className="text-center text-xs text-zinc-500 dark:text-zinc-500">
+          max new capacity added per year, as a share of the fleet
         </p>
       </Section>
 
