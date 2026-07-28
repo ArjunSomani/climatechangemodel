@@ -1,9 +1,18 @@
 import Link from "next/link";
+import { MORTALITY } from "@/lib/mortality";
 
 export const metadata = {
   title: "How It Works — Optimize",
   description: "How the grid decarbonization model works, in plain terms.",
 };
+
+// Compact risk teaser for the "why price mortality" visual -- the full ladder
+// (all sources, log scale, uncertainty bands) lives on the Safety page.
+const RISK_TEASER: { label: string; value: number; colorVar: string }[] = [
+  { label: "Coal", value: MORTALITY.coal.central, colorVar: "--series-coal" },
+  { label: "Gas", value: MORTALITY.gas.central, colorVar: "--series-gas" },
+  { label: "Solar", value: MORTALITY.solar.central, colorVar: "--series-solar" },
+];
 
 function Icon({
   name,
@@ -261,6 +270,49 @@ export default function HowItWorksPage() {
             How mortality pricing works
           </Link>
           .
+        </p>
+      </Section>
+
+      <Section title="Why price mortality?">
+        <p>
+          Every source of power costs lives — mining and drilling accidents, and
+          far more, the air pollution that shortens lives downwind. The market
+          never charges for it, and the sources are wildly unequal: per unit of
+          energy, coal is{" "}
+          <strong className="text-black dark:text-zinc-50">
+            more than 1,000× deadlier than solar
+          </strong>{" "}
+          — three orders of magnitude.
+        </p>
+        <div className="mt-4 grid grid-cols-3 gap-3">
+          {RISK_TEASER.map((r) => (
+            <div
+              key={r.label}
+              className="rounded-xl border border-zinc-200 p-4 text-center dark:border-zinc-800"
+            >
+              <div
+                className="mx-auto mb-2 h-2.5 w-2.5 rounded-full"
+                style={{ background: `var(${r.colorVar})` }}
+                aria-hidden
+              />
+              <div className="font-display text-2xl font-semibold text-black tabular-nums dark:text-zinc-50">
+                {r.value}
+              </div>
+              <div className="text-xs text-zinc-500 dark:text-zinc-400">
+                {r.label}
+              </div>
+            </div>
+          ))}
+        </div>
+        <p className="text-center text-xs text-zinc-500 dark:text-zinc-500">
+          deaths per TWh — central estimate
+        </p>
+        <p className="text-sm text-zinc-500 dark:text-zinc-500">
+          That gap is why a mortality price hits coal hardest while barely
+          touching solar or wind.{" "}
+          <Link href="/safety" className="underline">
+            See the full risk ladder →
+          </Link>
         </p>
       </Section>
 
