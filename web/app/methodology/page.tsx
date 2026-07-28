@@ -1,4 +1,10 @@
+import Link from "next/link";
 import { NewHereBanner } from "@/components/NewHereBanner";
+import {
+  CountedModeledNote,
+  MoralChoiceNote,
+  AttributionNote,
+} from "@/components/SafetyDisclosure";
 
 export const metadata = {
   title: "Methodology — Optimize",
@@ -27,12 +33,68 @@ export default function MethodologyPage() {
           sources (solar, wind, nuclear, gas, coal, battery), bounded by that
           source&rsquo;s maximum build rate. It minimizes total system cost —
           financed capital + fixed O&amp;M for everything installed, variable
-          O&amp;M + CO₂ cost for everything generated, plus a steep penalty
+          O&amp;M + CO₂ cost + mortality cost for everything generated, plus a
+          steep penalty
           for any unmet demand (&ldquo;outage&rdquo;) — subject to meeting
           demand in every one of the ~8,760 hours in the year. The optimizer
           re-runs with progressively tighter tolerances until two consecutive
           runs agree within 1%, so the answer is a close numerical
           approximation, not a proven global optimum.
+        </p>
+      </Section>
+
+      <Section title="Mortality — the second externality">
+        <p>
+          Alongside CO₂, the optimizer prices mortality. Each source carries a
+          death rate in deaths per TWh (mining and drilling accidents, plus
+          air-pollution and radiation deaths downwind); the objective adds one
+          linear term,{" "}
+          <code className="rounded bg-zinc-100 px-1 dark:bg-zinc-800">
+            generation × death-rate × mortality-price
+          </code>
+          , structurally identical to the CO₂ term. A mortality price of zero
+          reproduces the original model exactly, so the feature is strictly
+          opt-in.
+        </p>
+        <ul className="list-disc space-y-2 pl-5">
+          <li>
+            <strong>Coefficients come from{" "}
+            <a href="https://levelmodel.vercel.app" className="underline">
+              Level
+            </a>
+            .</strong>{" "}They are imported, not re-derived, as a low/central/high
+            band per source, and every figure links back to its Level source
+            page. Battery carries no direct rate — its harm is embodied in the
+            electricity it stores.
+          </li>
+          <li>
+            <strong>Value of a statistical life (VSL).</strong>{" "}The price per
+            death uses HHS&rsquo;s 2026 published range ($6.6M / $14.1M / $21.5M,
+            constant 2025 dollars), optionally escalated ~1.1%/yr in real terms.
+            Presented as published values, never as endorsement.
+          </li>
+          <li>
+            <strong>Production-based attribution.</strong>{" "}Deaths are assigned
+            to the region that generated the power. A consumption-based account
+            (allocating through inter-regional transfers) would need a transfer
+            matrix the engine doesn&rsquo;t model, and is not implemented.
+          </li>
+          <li>
+            <strong>Mortality only.</strong>{" "}Morbidity, water, land, minerals,
+            and equity-weighting are out of scope.
+          </li>
+        </ul>
+        <div className="space-y-2 pt-1">
+          <CountedModeledNote />
+          <AttributionNote />
+          <MoralChoiceNote />
+        </div>
+        <p className="text-sm">
+          The full framing lives on the{" "}
+          <Link href="/safety" className="underline">
+            Safety &amp; mortality
+          </Link>{" "}
+          page.
         </p>
       </Section>
 

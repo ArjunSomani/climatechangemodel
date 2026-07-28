@@ -51,6 +51,13 @@
   --eia-hydro: #6b6a64;
   --eia-oil: #918f88;
   --eia-other: #b8b6af;
+
+  /* Mortality lens (dark). A single sober crimson -- a magnitude hue for the
+     deaths band chart and mortality accents, distinct from the reserved UI
+     accent and from the categorical series slots. Deaths are real people; the
+     tone stays grave, never celebratory. */
+  --mortality: #d76b64;
+  --mortality-strong: #e88a83;
 }
 
 :root[data-theme="light"] {
@@ -94,6 +101,11 @@
   --eia-hydro: #a8a6a0;
   --eia-oil: #78766f;
   --eia-other: #4a4944;
+
+  /* Mortality lens (light) -- deeper crimson for contrast on the near-white
+     surface (~4.5:1 on --background). */
+  --mortality: #b23c39;
+  --mortality-strong: #8f2f2d;
 }
 
 @theme inline {

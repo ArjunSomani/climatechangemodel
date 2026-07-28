@@ -161,6 +161,11 @@ const KNOBS: { icon: keyof typeof ICONS; title: string; body: string }[] = [
     body: "A price on carbon pollution that climbs every year, making gas and coal steadily more expensive.",
   },
   {
+    icon: "flame",
+    title: "Mortality price",
+    body: "A price per death — coal's air pollution and accidents cost lives. It works exactly like the CO₂ price, on a different harm.",
+  },
+  {
     icon: "city",
     title: "Demand growth",
     body: "How much more electricity the region needs each year.",
@@ -231,8 +236,8 @@ export default function HowItWorksPage() {
       </Section>
 
       <Section title="The knobs you can turn">
-        <p>Three big levers, plus per-source cost dials, shape every run:</p>
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+        <p>Four big levers, plus per-source cost dials, shape every run:</p>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
           {KNOBS.map((k) => (
             <div
               key={k.title}
@@ -248,6 +253,14 @@ export default function HowItWorksPage() {
             </div>
           ))}
         </div>
+        <p className="text-sm text-zinc-500 dark:text-zinc-500">
+          The carbon and mortality prices work the same way — two harms the
+          market ignores, each given a dollar figure.{" "}
+          <Link href="/safety" className="underline">
+            How mortality pricing works
+          </Link>
+          .
+        </p>
       </Section>
 
       <Section title="What happens every simulated year">

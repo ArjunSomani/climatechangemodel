@@ -62,6 +62,63 @@ export function levelSourceUrl(sourceId: string): string {
   return `https://levelmodel.vercel.app/sources#${encodeURIComponent(sourceId)}`;
 }
 
+// --- Risk ladder -----------------------------------------------------------
+// All seven Level sources, ranked most-to-least deadly for the signature
+// risk-ladder chart. `dispatched` flags the five Optimize actually builds;
+// oil and hydro ride along with demand in reality but aren't in the optimizer.
+// `colorVar` reuses the site's validated per-source palette so a source's
+// identity color is the same here as in every energy-mix chart.
+export interface RiskLadderRow {
+  key: string;
+  label: string;
+  low: number;
+  central: number;
+  high: number;
+  modeledShare: number;
+  source: string;
+  note?: string;
+  colorVar: string;
+  dispatched: boolean;
+}
+
+const LADDER_META: Record<
+  string,
+  { label: string; colorVar: string; dispatched: boolean }
+> = {
+  coal: { label: "Coal", colorVar: "--series-coal", dispatched: true },
+  oil: { label: "Oil", colorVar: "--eia-oil", dispatched: false },
+  gas: { label: "Gas", colorVar: "--series-gas", dispatched: true },
+  nuclear: { label: "Nuclear", colorVar: "--series-nuclear", dispatched: true },
+  hydro: { label: "Hydro", colorVar: "--eia-hydro", dispatched: false },
+  wind: { label: "Wind", colorVar: "--series-wind", dispatched: true },
+  solar: { label: "Solar", colorVar: "--series-solar", dispatched: true },
+};
+
+export function riskLadder(): RiskLadderRow[] {
+  return Object.entries(MORTALITY)
+    .map(([key, c]) => ({
+      key,
+      label: LADDER_META[key]?.label ?? key,
+      low: c.low,
+      central: c.central,
+      high: c.high,
+      modeledShare: c.modeledShare,
+      source: c.source,
+      note: c.note,
+      colorVar: LADDER_META[key]?.colorVar ?? "--ink-muted",
+      dispatched: LADDER_META[key]?.dispatched ?? false,
+    }))
+    .sort((a, b) => b.central - a.central);
+}
+
+// One TWh is roughly the annual electricity of this many US homes
+// (~10.8 MWh/home/yr, EIA). Lets deaths/TWh be stated at human scale.
+export const HOMES_PER_TWH = 92_600;
+
+export function coalVsSolarFactor(): number {
+  return MORTALITY.coal.central / MORTALITY.solar.central;
+}
+
 export function deathRate(source: SourceKey, band: Band = "central"): number {
   const key = ENGINE_SOURCE_TO_MORTALITY_KEY[source];
   if (key === null) return 0;

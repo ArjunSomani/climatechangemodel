@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getLibraryCase } from "@/lib/library";
 import { EnergyMixChart } from "@/components/EnergyMixChart";
+import { coalVsSolarFactor } from "@/lib/mortality";
 
 export const dynamic = "force-dynamic";
 
@@ -71,6 +72,16 @@ export default async function Home() {
             </Link>{" "}
             — pick a carbon price and see what the model builds.
           </p>
+          <p className="mx-auto mt-6 max-w-xl text-sm text-zinc-500 dark:text-zinc-400">
+            It prices <span className="text-zinc-700 dark:text-zinc-300">two</span>{" "}
+            harms the market ignores — carbon <em>and</em> mortality. Coal is
+            roughly {Math.round(coalVsSolarFactor())}× deadlier than solar per
+            unit of energy;{" "}
+            <Link href="/safety" className="underline hover:text-accent">
+              see the risk ladder
+            </Link>
+            .
+          </p>
         </div>
       </div>
 
@@ -100,8 +111,8 @@ export default async function Home() {
           />
           <ValueCard
             n="03"
-            title="Compare policy scenarios"
-            body="See how CO₂ pricing, interest rates, and build rates change the cheapest path to decarbonization."
+            title="Price what the market ignores"
+            body="Put a price on carbon and on mortality — the two harms electricity imposes without paying for — and watch the cheapest grid change."
           />
         </div>
       </div>
