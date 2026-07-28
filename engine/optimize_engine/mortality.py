@@ -17,6 +17,7 @@ keeps its `source` id (e.g. "owid-safest-sources") so the UI can link each
 number back to its Level source page. Optimize must not become a second
 source of truth for these numbers.
 """
+import hashlib
 import json
 from typing import Optional
 
@@ -66,6 +67,20 @@ def load_coefficients(path=None) -> dict:
     p = path or paths.mortality_json()
     with open(p) as f:
         return json.load(f)
+
+
+def mortality_version(coeffs: Optional[dict] = None) -> str:
+    """Short content hash of the coefficient table.
+
+    A stamp for pre-computed results (alongside eia_version/specs_version), so
+    that changing any coefficient invalidates cases generated under the old
+    numbers rather than silently serving a stale death figure. Content-derived
+    rather than a hand-maintained semver, so it can never drift out of sync
+    with the data it names. Order-independent (keys sorted before hashing).
+    """
+    coeffs = coeffs if coeffs is not None else load_coefficients()
+    canonical = json.dumps(coeffs, sort_keys=True, separators=(',', ':'))
+    return hashlib.sha256(canonical.encode('utf-8')).hexdigest()[:12]
 
 
 def death_rate(source: str, band: str = 'central', coeffs: Optional[dict] = None) -> float:

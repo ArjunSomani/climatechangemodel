@@ -70,6 +70,58 @@ attribution and the imported/exported-mortality headline are deferred until a
 real interchange dataset (e.g. EIA-930) is wired in. This is an accounting
 attribution, not an atmospheric model.
 
+## Where it shows up in the site
+
+Mortality is a site-wide lens, not a single panel:
+
+- **/safety** — the anchor page: the risk ladder, the carbon-vs-mortality
+  "same object" framing, VSL as a moral choice (HHS range), production-based
+  attribution + the consumption descope, and the out-of-scope list.
+- **Landing / How It Works / Methodology** — threaded copy: two priced
+  externalities, mortality as a fourth lever, a full methodology subsection.
+- **Custom Run** — mortality price slider (HHS presets), VSL escalation toggle,
+  carbon-vs-mortality preset pair.
+- **Custom Run results & Library case** — the Mortality section: deaths band
+  over time, counted/modeled split, deaths/TWh, per-source coefficients linked
+  to Level.
+- **Compare** — a deaths column and the CO₂-vs-deaths frontier scatter.
+- **Data Explorer** — a descriptive mix-weighted deaths/TWh read on each
+  region's real recent generation.
+
+Deaths shown in result views are computed client-side from the per-source
+generation and the mirrored coefficients — a pure function of generation, so
+they match the engine's production-based figures exactly.
+
+## Coefficient versioning
+
+`mortality.mortality_version()` is a content hash of `mortality.json`. It's the
+stamp a pre-computed result should carry (next to `eia_version`/`specs_version`)
+so that changing a coefficient invalidates cases built under the old numbers.
+The primitive and its tests are in; wiring it into the library schema and
+generation pipeline is a remaining step (below).
+
+## Deferred — exact next steps
+
+These need the Neon/Blob pipeline or external data (can't be run/validated from
+a code sandbox), or hours of optimizer compute:
+
+1. **Persist engine deaths + `mortality_version` in the library.** Add a
+   `mortality_version` column in `setup_library_schema.py`; stamp it in
+   `generate_library.py` (regenerate any case whose stored version differs, as
+   with `eia_version`); optionally store a `deaths_per_twh` summary column so
+   the **Library list** can show a per-card deaths chip (the list query carries
+   only metadata today). Read them in `web/lib/library.ts`.
+2. **Wire the preview worker to this branch** (`run_worker.yml`) so custom runs
+   submitted on the preview actually re-optimize under the mortality price,
+   end-to-end, instead of being drained by the production worker.
+3. **Consumption-based accounting (EIA-930).** The headline of §2.3 —
+   imported/exported mortality per region — needs an hourly inter-regional
+   interchange dataset the engine doesn't model. Bring in EIA-930 flows, then
+   allocate deaths through them; add the accounting-identity test.
+4. **Two-slider playground.** Pre-compute a lattice of (carbon, mortality)
+   price pairs per region in the generation pipeline, then drive an instant
+   carbon-vs-mortality explorer off the lookup surface (no worker wait).
+
 ## Known preview limitation
 
 Custom runs submitted from the preview site are drained by the production
@@ -89,3 +141,6 @@ generation, matching the engine), so the Mortality section works regardless.
   ordering (coal exits before gas), divergence (carbon-only vs mortality-only
   disagree most on gas).
 - `test_mortality_web_mirror.py` — engine/web coefficient files stay identical.
+- `test_mortality_persistence.py` — `mortality_version` is deterministic and
+  content-derived; reported deaths equal an independent recompute from
+  generation (the same computation the web does client-side).
