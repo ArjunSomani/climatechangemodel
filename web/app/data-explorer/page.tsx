@@ -113,12 +113,13 @@ function SafetyLens({
           </span>
         </div>
         <p className="mt-2 text-sm">
-          A mix-weighted read on the real grid: coal-heavy regions sit higher,
-          renewable- and nuclear-heavy regions lower. About{" "}
-          {Math.round(risk.modeledShare * 100)}% of it is modeled
-          (air-pollution/radiation) rather than counted accidents. Covers{" "}
-          {Math.round(risk.coveredShare * 100)}% of generation (the rest is
-          &ldquo;other,&rdquo; which has no single coefficient). See the{" "}
+          Not a model projection — what this region&apos;s grid{" "}
+          <em>actually ran on</em>, read as lives. Coal-heavy regions (the
+          Midwest and Plains today) sit highest; renewable- and nuclear-heavy
+          regions lowest. About {Math.round(risk.modeledShare * 100)}% of it is
+          modeled (air-pollution/radiation) rather than counted accidents.
+          Covers {Math.round(risk.coveredShare * 100)}% of generation (the rest
+          is &ldquo;other,&rdquo; which has no single coefficient). See the{" "}
           <Link href="/safety" className="underline hover:text-accent">
             risk ladder
           </Link>{" "}

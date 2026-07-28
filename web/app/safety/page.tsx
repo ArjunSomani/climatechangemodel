@@ -1,11 +1,27 @@
 import Link from "next/link";
 import { RiskLadder } from "@/components/RiskLadder";
+import { SafetyFaq } from "@/components/SafetyFaq";
+import { Term } from "@/components/Term";
 import {
   MoralChoiceNote,
   AttributionNote,
   CountedModeledNote,
 } from "@/components/SafetyDisclosure";
-import { VSL_PRESETS, coalVsSolarFactor, formatVsl } from "@/lib/mortality";
+import {
+  MORTALITY,
+  VSL_PRESETS,
+  coalVsSolarFactor,
+  formatVsl,
+} from "@/lib/mortality";
+
+const VSL_CENTRAL = 14_100_000;
+// deaths/TWh × $/death ÷ 1e6 MWh/TWh = $/MWh of mortality cost.
+const coalMortalityPerMwh = Math.round(
+  (MORTALITY.coal.central * VSL_CENTRAL) / 1_000_000
+);
+const gasMortalityPerMwh = Math.round(
+  (MORTALITY.gas.central * VSL_CENTRAL) / 1_000_000
+);
 
 export const metadata = {
   title: "Safety & mortality — Optimize",
@@ -35,12 +51,22 @@ export default function SafetyPage() {
         Optimize lets you put a price on it.
       </p>
 
+      <div className="mt-6 rounded-xl border-l-2 border-[var(--mortality)] bg-zinc-50/60 px-4 py-3 dark:bg-zinc-900/40">
+        <p className="text-sm text-zinc-700 dark:text-zinc-300">
+          <span className="font-medium">In one line:</span> electricity kills
+          people, very unevenly, and the market never charges for it — so we let
+          you charge for it and watch the cheapest grid change.
+        </p>
+      </div>
+
       <section className="mt-12">
         <h2 className="text-xl font-medium">The risk ladder</h2>
         <p className="mt-2 text-zinc-600 dark:text-zinc-400">
-          Deaths per terawatt-hour, by source. The scale is logarithmic —
-          each step is a multiple, not an addition — because the sources span
-          three orders of magnitude.
+          <Term definition="Deaths per terawatt-hour (TWh) of electricity — a TWh is roughly the annual power of 93,000 US homes. Lets you compare sources fairly regardless of how much each one generates.">
+            Deaths per terawatt-hour
+          </Term>
+          , by source. The scale is logarithmic — each step is a multiple, not
+          an addition — because the sources span three orders of magnitude.
         </p>
         <div className="mt-5 rounded-xl border border-zinc-200 p-5 dark:border-zinc-800">
           <RiskLadder />
@@ -48,6 +74,26 @@ export default function SafetyPage() {
         <div className="mt-3">
           <CountedModeledNote />
         </div>
+      </section>
+
+      <section className="mt-12">
+        <h2 className="text-xl font-medium">
+          The most surprising number: nuclear
+        </h2>
+        <p className="mt-3 text-zinc-700 dark:text-zinc-300">
+          Nuclear sits near the bottom of the ladder at {MORTALITY.nuclear.central}{" "}
+          deaths/TWh — roughly{" "}
+          <span className="font-semibold text-black dark:text-zinc-50">
+            {Math.round(MORTALITY.coal.central / MORTALITY.nuclear.central)}×
+            safer than coal
+          </span>
+          , on par with wind and solar. That figure{" "}
+          <em>includes</em> every death from every nuclear accident, Chernobyl
+          and Fukushima among them. The toll from electricity is dominated by
+          coal&apos;s ordinary, everyday air pollution — not by rare disasters.
+          The number isn&apos;t hiding the accidents; the accidents are just
+          small next to the smog.
+        </p>
       </section>
 
       <section className="mt-12">
@@ -88,9 +134,11 @@ export default function SafetyPage() {
         <h2 className="text-xl font-medium">What is a life worth?</h2>
         <p className="mt-3 text-zinc-700 dark:text-zinc-300">
           To price mortality you need a dollar value per death — a{" "}
-          <em>value of a statistical life</em> (VSL). HHS&apos;s 2026 regulatory
-          guidance publishes a range, not a single number (constant 2025
-          dollars):
+          <Term definition="Value of a Statistical Life: the dollar figure at which a large population's willingness to pay to reduce risk implies one avoided death. It is a statistical aggregate, not a valuation of any specific person.">
+            <em>value of a statistical life</em> (VSL)
+          </Term>
+          . HHS&apos;s 2026 regulatory guidance publishes a range, not a single
+          number (constant 2025 dollars):
         </p>
         <div className="mt-4 grid grid-cols-3 gap-3 text-center">
           {VSL_PRESETS.map((p) => (
@@ -107,6 +155,16 @@ export default function SafetyPage() {
             </div>
           ))}
         </div>
+        <p className="mt-4 text-zinc-700 dark:text-zinc-300">
+          Where does a number like $14.1M come from? From{" "}
+          <span className="font-medium">what people actually pay to avoid risk</span>{" "}
+          — wage premiums for dangerous jobs, spending on safety features —
+          scaled up from small risks to one statistical death. It is emphatically{" "}
+          <span className="font-medium">not the price of your life</span>, or
+          anyone&apos;s in particular. It is what a population&apos;s own choices
+          reveal about avoiding one death somewhere among them. Agencies use it
+          precisely so safety rules aren&apos;t written on gut feeling.
+        </p>
         <div className="mt-4">
           <MoralChoiceNote />
         </div>
@@ -146,6 +204,96 @@ export default function SafetyPage() {
       </section>
 
       <section className="mt-12">
+        <h2 className="text-xl font-medium">
+          What pricing mortality actually does
+        </h2>
+        <p className="mt-3 text-zinc-700 dark:text-zinc-300">
+          Take a coal-heavy region and set the mortality price to the central
+          VSL, {formatVsl(VSL_CENTRAL)}. Here is what the optimizer now sees:
+        </p>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <ParallelCard
+            title="Coal"
+            unit={`~$${coalMortalityPerMwh}/MWh`}
+            body={`Coal's ${MORTALITY.coal.central} deaths/TWh, priced at the central VSL, adds about $${coalMortalityPerMwh} per MWh — many times what it costs to actually run the plant (a few tens of dollars). Coal can't compete, and the optimizer stops rebuilding it.`}
+          />
+          <ParallelCard
+            title="Gas"
+            unit={`~$${gasMortalityPerMwh}/MWh`}
+            body={`Gas's ${MORTALITY.gas.central} deaths/TWh adds only about $${gasMortalityPerMwh} per MWh — comparable to its running cost, not a knockout. Gas takes a hit but survives, and often fills in as coal leaves.`}
+          />
+        </div>
+        <p className="mt-4 text-sm text-zinc-600 dark:text-zinc-400">
+          That&apos;s the whole story in one comparison: the same price is a
+          death sentence for coal and a tax for gas. A carbon price, which sees
+          coal and gas as far more alike, lands very differently — which is why
+          it&apos;s worth pricing both and watching where they disagree.
+        </p>
+      </section>
+
+      <section className="mt-12">
+        <h2 className="text-xl font-medium">Where these numbers come from</h2>
+        <p className="mt-3 text-zinc-700 dark:text-zinc-300">
+          Optimize does not invent death rates. They are imported from{" "}
+          <a
+            href="https://levelmodel.vercel.app"
+            className="underline hover:text-accent"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Level
+          </a>
+          , which draws on{" "}
+          <a
+            href="https://ourworldindata.org/safest-sources-of-energy"
+            className="underline hover:text-accent"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Our World in Data&apos;s analysis of the safest sources of energy
+          </a>
+          . That analysis compiles the published epidemiological literature —
+          air-pollution mortality from concentration-response studies, and
+          accident death tolls from energy-accident databases. Optimize is not a
+          second source of truth for these figures; every coefficient on this
+          site links back to its Level source page, and Level to the original
+          research.
+        </p>
+      </section>
+
+      <section className="mt-12">
+        <h2 className="text-xl font-medium">
+          What could make these numbers wrong
+        </h2>
+        <p className="mt-3 text-zinc-700 dark:text-zinc-300">
+          Stated plainly, because pretending otherwise would be the real error:
+        </p>
+        <ul className="mt-3 list-disc space-y-2 pl-5 text-zinc-700 dark:text-zinc-300">
+          <li>
+            <strong>They&apos;re global averages.</strong>{" "}US coal with modern
+            scrubbers is likely somewhat safer than the global fleet these
+            figures describe. Trust the <em>ranking</em> more than any decimal.
+          </li>
+          <li>
+            <strong>Air-pollution death is modeled, not counted.</strong>{" "}The
+            bulk of the toll comes from statistical attribution, which depends on
+            exposure and dose-response assumptions that reasonable experts
+            dispute — hence the wide upper bands.
+          </li>
+          <li>
+            <strong>Future deaths aren&apos;t discounted.</strong>{" "}A death in
+            2050 is weighted the same as one today; a different choice would
+            change priced costs.
+          </li>
+          <li>
+            <strong>VSL is contested.</strong>{" "}The very idea, and the specific
+            number, are debated on ethical and methodological grounds. That
+            debate is the point — it&apos;s why the price is yours to set.
+          </li>
+        </ul>
+      </section>
+
+      <section className="mt-12">
         <h2 className="text-xl font-medium">Where the deaths land</h2>
         <p className="mt-3 text-zinc-700 dark:text-zinc-300">
           CO₂ is a global pollutant — it doesn&apos;t matter where it&apos;s
@@ -163,6 +311,13 @@ export default function SafetyPage() {
           transfer matrix Optimize doesn&apos;t yet model. It&apos;s the marquee
           next step, not done here.
         </p>
+      </section>
+
+      <section className="mt-12">
+        <h2 className="text-xl font-medium">Questions people ask</h2>
+        <div className="mt-4">
+          <SafetyFaq />
+        </div>
       </section>
 
       <section className="mt-12">

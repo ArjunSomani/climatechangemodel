@@ -54,12 +54,14 @@ export function CountedModeledNote({ className = "" }: { className?: string }) {
       <span className="font-medium text-zinc-600 dark:text-zinc-300">
         Counted
       </span>{" "}
-      deaths are recorded accidents;{" "}
+      deaths are recorded accidents — a mine-shaft collapse, a rig fire.{" "}
       <span className="font-medium text-zinc-600 dark:text-zinc-300">
-        modeled
+        Modeled
       </span>{" "}
       deaths are air-pollution and radiation attributions from epidemiological
-      models. They are shown distinctly (solid vs hatched) throughout.
+      models — a fatal heart attack months after chronic particulate exposure,
+      which no coroner labels &ldquo;coal.&rdquo; They&apos;re shown distinctly
+      (solid vs hatched) throughout.
     </p>
   );
 }
