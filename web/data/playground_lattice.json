@@ -11,19 +11,37 @@
   ],
   "carbonPrices": [
     0.0,
+    25.0,
     50.0,
+    75.0,
     100.0,
+    125.0,
     150.0,
+    175.0,
     200.0,
+    225.0,
     250.0,
+    275.0,
     300.0,
-    350.0
+    325.0,
+    350.0,
+    375.0,
+    400.0
   ],
   "mortalityPrices": [
     0.0,
-    6600000.0,
-    14100000.0,
-    21500000.0
+    2000000.0,
+    4000000.0,
+    6000000.0,
+    8000000.0,
+    10000000.0,
+    12000000.0,
+    14000000.0,
+    16000000.0,
+    18000000.0,
+    20000000.0,
+    22000000.0,
+    24000000.0
   ],
   "mortalityVersion": "5aabd2ad8e5c",
   "cells": {
@@ -44,26 +62,86 @@
     },
     "0_1": {
       "finalMixMWh": {
-        "Solar": 82983157.708,
-        "Wind": 163841264.255,
-        "Nuclear": 263608123.358,
-        "Gas": 210441565.533,
-        "Coal": 143580.7,
+        "Solar": 81740651.858,
+        "Wind": 162452269.161,
+        "Nuclear": 260322046.423,
+        "Gas": 215472161.781,
+        "Coal": 1030560.373,
         "Battery": 0.0
       },
-      "co2FinalMT": 635.0332,
-      "deathsCentral": 604.783,
-      "deathsLow": 604.783,
-      "deathsHigh": 1857.454,
-      "cumulativeDeathsCentral": 18571.594
+      "co2FinalMT": 652.3581,
+      "deathsCentral": 640.55,
+      "deathsLow": 640.55,
+      "deathsHigh": 2098.482,
+      "cumulativeDeathsCentral": 18771.717
     },
     "0_2": {
       "finalMixMWh": {
-        "Solar": 83067597.109,
+        "Solar": 82458808.007,
+        "Wind": 163255189.971,
+        "Nuclear": 262229131.314,
+        "Gas": 212721237.416,
+        "Coal": 353302.767,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 641.9159,
+      "deathsCentral": 616.267,
+      "deathsLow": 616.267,
+      "deathsHigh": 1923.634,
+      "cumulativeDeathsCentral": 18627.386
+    },
+    "0_3": {
+      "finalMixMWh": {
+        "Solar": 82891786.555,
+        "Wind": 163739111.562,
+        "Nuclear": 263368562.015,
+        "Gas": 210847851.504,
+        "Coal": 170367.255,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 636.2065,
+      "deathsCentral": 606.57,
+      "deathsLow": 606.57,
+      "deathsHigh": 1866.877,
+      "cumulativeDeathsCentral": 18579.517
+    },
+    "0_4": {
+      "finalMixMWh": {
+        "Solar": 83067607.774,
+        "Wind": 163935674.715,
+        "Nuclear": 263829214.248,
+        "Gas": 210062878.599,
+        "Coal": 122315.781,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9583,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "0_5": {
+      "finalMixMWh": {
+        "Solar": 83067613.106,
+        "Wind": 163935674.715,
+        "Nuclear": 263829150.263,
+        "Gas": 210062921.255,
+        "Coal": 122316.114,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9584,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.501,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "0_6": {
+      "finalMixMWh": {
+        "Solar": 83067602.442,
         "Wind": 163935674.715,
         "Nuclear": 263829235.577,
         "Gas": 210062857.27,
-        "Coal": 122315.614,
+        "Coal": 122315.604,
         "Battery": 0.0
       },
       "co2FinalMT": 633.9582,
@@ -72,22 +150,292 @@
       "deathsHigh": 1849.5,
       "cumulativeDeathsCentral": 18564.794
     },
-    "0_3": {
+    "0_7": {
       "finalMixMWh": {
-        "Solar": 83156014.27,
-        "Wind": 164034500.168,
-        "Nuclear": 264060201.547,
-        "Gas": 209680075.27,
-        "Coal": 86884.068,
+        "Solar": 83067618.438,
+        "Wind": 163935664.051,
+        "Nuclear": 263829235.577,
+        "Gas": 210062857.27,
+        "Coal": 122315.645,
         "Battery": 0.0
       },
-      "co2FinalMT": 632.8015,
-      "deathsCentral": 601.276,
-      "deathsLow": 601.276,
-      "deathsHigh": 1838.339,
-      "cumulativeDeathsCentral": 18560.5
+      "co2FinalMT": 633.9582,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "0_8": {
+      "finalMixMWh": {
+        "Solar": 83067623.77,
+        "Wind": 163935674.715,
+        "Nuclear": 263829235.577,
+        "Gas": 210062835.942,
+        "Coal": 122315.604,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9581,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "0_9": {
+      "finalMixMWh": {
+        "Solar": 83067629.102,
+        "Wind": 163935664.051,
+        "Nuclear": 263829235.577,
+        "Gas": 210062835.942,
+        "Coal": 122315.614,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9581,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "0_10": {
+      "finalMixMWh": {
+        "Solar": 83118385.522,
+        "Wind": 163992504.416,
+        "Nuclear": 263962111.927,
+        "Gas": 209843899.226,
+        "Coal": 100767.989,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.2901,
+      "deathsCentral": 602.072,
+      "deathsLow": 602.072,
+      "deathsHigh": 1842.829,
+      "cumulativeDeathsCentral": 18562.245
+    },
+    "0_11": {
+      "finalMixMWh": {
+        "Solar": 83167664.945,
+        "Wind": 164047510.533,
+        "Nuclear": 264090594.613,
+        "Gas": 209629014.92,
+        "Coal": 82890.146,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 632.6509,
+      "deathsCentral": 601.036,
+      "deathsLow": 601.036,
+      "deathsHigh": 1837.014,
+      "cumulativeDeathsCentral": 18559.979
+    },
+    "0_12": {
+      "finalMixMWh": {
+        "Solar": 83207703.81,
+        "Wind": 164092257.657,
+        "Nuclear": 264195040.117,
+        "Gas": 209452564.511,
+        "Coal": 70107.572,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 632.1356,
+      "deathsCentral": 600.232,
+      "deathsLow": 600.232,
+      "deathsHigh": 1832.664,
+      "cumulativeDeathsCentral": 18558.264
     },
     "1_0": {
+      "finalMixMWh": {
+        "Solar": 74087757.898,
+        "Wind": 153896599.839,
+        "Nuclear": 239007528.088,
+        "Gas": 191148175.401,
+        "Coal": 62877616.872,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 901.6314,
+      "deathsCentral": 2092.993,
+      "deathsLow": 2092.993,
+      "deathsHigh": 15742.833,
+      "cumulativeDeathsCentral": 31109.897
+    },
+    "1_1": {
+      "finalMixMWh": {
+        "Solar": 81988563.296,
+        "Wind": 162729475.248,
+        "Nuclear": 260983378.204,
+        "Gas": 214597246.73,
+        "Coal": 719017.453,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 648.5528,
+      "deathsCentral": 630.464,
+      "deathsLow": 630.464,
+      "deathsHigh": 2021.343,
+      "cumulativeDeathsCentral": 18708.972
+    },
+    "1_2": {
+      "finalMixMWh": {
+        "Solar": 82579729.752,
+        "Wind": 163390263.153,
+        "Nuclear": 262547970.569,
+        "Gas": 212207477.299,
+        "Coal": 292248.843,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 640.2953,
+      "deathsCentral": 613.34,
+      "deathsLow": 613.34,
+      "deathsHigh": 1905.632,
+      "cumulativeDeathsCentral": 18612.006
+    },
+    "1_3": {
+      "finalMixMWh": {
+        "Solar": 82963471.533,
+        "Wind": 163819253.277,
+        "Nuclear": 263556529.796,
+        "Gas": 210529438.818,
+        "Coal": 148989.518,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 635.285,
+      "deathsCentral": 605.16,
+      "deathsLow": 605.16,
+      "deathsHigh": 1859.406,
+      "cumulativeDeathsCentral": 18573.246
+    },
+    "1_4": {
+      "finalMixMWh": {
+        "Solar": 83067618.438,
+        "Wind": 163935653.387,
+        "Nuclear": 263829235.577,
+        "Gas": 210062857.27,
+        "Coal": 122315.656,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9582,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "1_5": {
+      "finalMixMWh": {
+        "Solar": 83067623.77,
+        "Wind": 163935674.715,
+        "Nuclear": 263829235.577,
+        "Gas": 210062835.942,
+        "Coal": 122315.593,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9581,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "1_6": {
+      "finalMixMWh": {
+        "Solar": 83067597.109,
+        "Wind": 163935653.387,
+        "Nuclear": 263829214.248,
+        "Gas": 210062899.927,
+        "Coal": 122317.322,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9583,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.501,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "1_7": {
+      "finalMixMWh": {
+        "Solar": 83067623.77,
+        "Wind": 163935674.715,
+        "Nuclear": 263829235.577,
+        "Gas": 210062835.942,
+        "Coal": 122315.583,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9581,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "1_8": {
+      "finalMixMWh": {
+        "Solar": 83067597.109,
+        "Wind": 163935674.715,
+        "Nuclear": 263829235.577,
+        "Gas": 210062857.27,
+        "Coal": 122315.604,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9582,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "1_9": {
+      "finalMixMWh": {
+        "Solar": 83079882.307,
+        "Wind": 163949378.255,
+        "Nuclear": 263861292.263,
+        "Gas": 210010367.912,
+        "Coal": 116780.689,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.7962,
+      "deathsCentral": 602.927,
+      "deathsLow": 602.927,
+      "deathsHigh": 1847.818,
+      "cumulativeDeathsCentral": 18564.157
+    },
+    "1_10": {
+      "finalMixMWh": {
+        "Solar": 83129001.766,
+        "Wind": 164004288.394,
+        "Nuclear": 263989625.65,
+        "Gas": 209798043.022,
+        "Coal": 96731.649,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.1526,
+      "deathsCentral": 601.845,
+      "deathsLow": 601.845,
+      "deathsHigh": 1841.539,
+      "cumulativeDeathsCentral": 18561.745
+    },
+    "1_11": {
+      "finalMixMWh": {
+        "Solar": 83173402.303,
+        "Wind": 164053930.401,
+        "Nuclear": 264105567.197,
+        "Gas": 209603826.0,
+        "Coal": 80973.598,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 632.5769,
+      "deathsCentral": 600.919,
+      "deathsLow": 600.919,
+      "deathsHigh": 1836.373,
+      "cumulativeDeathsCentral": 18559.727
+    },
+    "1_12": {
+      "finalMixMWh": {
+        "Solar": 83217216.307,
+        "Wind": 164102889.898,
+        "Nuclear": 264219866.453,
+        "Gas": 209410398.131,
+        "Coal": 67303.264,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 632.0137,
+      "deathsCentral": 600.046,
+      "deathsLow": 600.046,
+      "deathsHigh": 1831.681,
+      "cumulativeDeathsCentral": 18557.873
+    },
+    "2_0": {
       "finalMixMWh": {
         "Solar": 80928853.073,
         "Wind": 161544817.533,
@@ -102,12 +450,237 @@
       "deathsHigh": 2447.533,
       "cumulativeDeathsCentral": 19192.651
     },
-    "1_1": {
+    "2_1": {
       "finalMixMWh": {
-        "Solar": 83067575.781,
+        "Solar": 82160843.989,
+        "Wind": 162922113.964,
+        "Nuclear": 261440852.496,
+        "Gas": 213937215.985,
+        "Coal": 556657.288,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 646.048,
+      "deathsCentral": 624.641,
+      "deathsLow": 624.641,
+      "deathsHigh": 1979.422,
+      "cumulativeDeathsCentral": 18674.239
+    },
+    "2_2": {
+      "finalMixMWh": {
+        "Solar": 82677302.157,
+        "Wind": 163499336.934,
+        "Nuclear": 262804999.927,
+        "Gas": 211787199.854,
+        "Coal": 248837.622,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 639.0025,
+      "deathsCentral": 611.106,
+      "deathsLow": 611.106,
+      "deathsHigh": 1892.368,
+      "cumulativeDeathsCentral": 18600.808
+    },
+    "2_3": {
+      "finalMixMWh": {
+        "Solar": 83034442.007,
+        "Wind": 163898584.511,
+        "Nuclear": 263742407.387,
+        "Gas": 210211985.912,
+        "Coal": 130250.397,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 634.3793,
+      "deathsCentral": 603.818,
+      "deathsLow": 603.818,
+      "deathsHigh": 1852.534,
+      "cumulativeDeathsCentral": 18567.41
+    },
+    "2_4": {
+      "finalMixMWh": {
+        "Solar": 83067607.774,
+        "Wind": 163935653.387,
+        "Nuclear": 263829171.591,
+        "Gas": 210062921.255,
+        "Coal": 122320.113,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9584,
+      "deathsCentral": 603.21,
+      "deathsLow": 603.21,
+      "deathsHigh": 1849.501,
+      "cumulativeDeathsCentral": 18564.795
+    },
+    "2_5": {
+      "finalMixMWh": {
+        "Solar": 83067629.102,
+        "Wind": 163935664.051,
+        "Nuclear": 263829235.577,
+        "Gas": 210062835.942,
+        "Coal": 122315.604,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9581,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "2_6": {
+      "finalMixMWh": {
+        "Solar": 83067602.442,
         "Wind": 163935674.715,
         "Nuclear": 263829235.577,
-        "Gas": 210062878.599,
+        "Gas": 210062857.27,
+        "Coal": 122315.645,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9582,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "2_7": {
+      "finalMixMWh": {
+        "Solar": 83067629.102,
+        "Wind": 163935664.051,
+        "Nuclear": 263829235.577,
+        "Gas": 210062835.942,
+        "Coal": 122315.593,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9581,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "2_8": {
+      "finalMixMWh": {
+        "Solar": 83067623.77,
+        "Wind": 163935674.715,
+        "Nuclear": 263829235.577,
+        "Gas": 210062835.942,
+        "Coal": 122315.593,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9581,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "2_9": {
+      "finalMixMWh": {
+        "Solar": 83091783.591,
+        "Wind": 163962676.555,
+        "Nuclear": 263892389.168,
+        "Gas": 209959222.248,
+        "Coal": 111619.731,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.6395,
+      "deathsCentral": 602.659,
+      "deathsLow": 602.659,
+      "deathsHigh": 1846.231,
+      "cumulativeDeathsCentral": 18563.553
+    },
+    "2_10": {
+      "finalMixMWh": {
+        "Solar": 83140556.464,
+        "Wind": 164017213.445,
+        "Nuclear": 264019805.431,
+        "Gas": 209747686.511,
+        "Coal": 92421.403,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0022,
+      "deathsCentral": 601.599,
+      "deathsLow": 601.599,
+      "deathsHigh": 1840.149,
+      "cumulativeDeathsCentral": 18561.206
+    },
+    "2_11": {
+      "finalMixMWh": {
+        "Solar": 83183954.562,
+        "Wind": 164065703.715,
+        "Nuclear": 264133102.248,
+        "Gas": 209557351.27,
+        "Coal": 77557.524,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 632.4409,
+      "deathsCentral": 600.706,
+      "deathsLow": 600.706,
+      "deathsHigh": 1835.216,
+      "cumulativeDeathsCentral": 18559.269
+    },
+    "2_12": {
+      "finalMixMWh": {
+        "Solar": 83227795.226,
+        "Wind": 164114727.197,
+        "Nuclear": 264247486.818,
+        "Gas": 209363347.533,
+        "Coal": 64334.364,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 631.8785,
+      "deathsCentral": 599.842,
+      "deathsLow": 599.842,
+      "deathsHigh": 1830.62,
+      "cumulativeDeathsCentral": 18557.444
+    },
+    "3_0": {
+      "finalMixMWh": {
+        "Solar": 81529617.339,
+        "Wind": 162216354.985,
+        "Nuclear": 259760318.584,
+        "Gas": 216117027.985,
+        "Coal": 1394363.62,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 655.8384,
+      "deathsCentral": 651.281,
+      "deathsLow": 651.281,
+      "deathsHigh": 2185.384,
+      "cumulativeDeathsCentral": 18840.163
+    },
+    "3_1": {
+      "finalMixMWh": {
+        "Solar": 82311753.558,
+        "Wind": 163090768.818,
+        "Nuclear": 261840420.0,
+        "Gas": 213331146.263,
+        "Coal": 443618.037,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 643.9297,
+      "deathsCentral": 620.18,
+      "deathsLow": 620.18,
+      "deathsHigh": 1949.0,
+      "cumulativeDeathsCentral": 18648.732
+    },
+    "3_2": {
+      "finalMixMWh": {
+        "Solar": 82780281.328,
+        "Wind": 163614478.664,
+        "Nuclear": 263075828.803,
+        "Gas": 211338619.533,
+        "Coal": 208467.062,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 637.6527,
+      "deathsCentral": 608.869,
+      "deathsLow": 608.869,
+      "deathsHigh": 1879.546,
+      "cumulativeDeathsCentral": 18590.084
+    },
+    "3_3": {
+      "finalMixMWh": {
+        "Solar": 83067607.774,
+        "Wind": 163935674.715,
+        "Nuclear": 263829235.577,
+        "Gas": 210062857.27,
         "Coal": 122315.604,
         "Battery": 0.0
       },
@@ -117,13 +690,13 @@
       "deathsHigh": 1849.5,
       "cumulativeDeathsCentral": 18564.794
     },
-    "1_2": {
+    "3_4": {
       "finalMixMWh": {
-        "Solar": 83067629.102,
-        "Wind": 163935642.723,
+        "Solar": 83067623.77,
+        "Wind": 163935653.387,
         "Nuclear": 263829235.577,
         "Gas": 210062857.27,
-        "Coal": 122315.687,
+        "Coal": 122315.635,
         "Battery": 0.0
       },
       "co2FinalMT": 633.9582,
@@ -132,22 +705,127 @@
       "deathsHigh": 1849.5,
       "cumulativeDeathsCentral": 18564.794
     },
-    "1_3": {
+    "3_5": {
       "finalMixMWh": {
-        "Solar": 83172959.737,
-        "Wind": 164053418.518,
-        "Nuclear": 264104415.46,
-        "Gas": 209605766.891,
-        "Coal": 81118.888,
+        "Solar": 83067629.102,
+        "Wind": 163935664.051,
+        "Nuclear": 263829235.577,
+        "Gas": 210062835.942,
+        "Coal": 122315.614,
         "Battery": 0.0
       },
-      "co2FinalMT": 632.5826,
-      "deathsCentral": 600.928,
-      "deathsLow": 600.928,
-      "deathsHigh": 1836.422,
-      "cumulativeDeathsCentral": 18559.746
+      "co2FinalMT": 633.9581,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
     },
-    "2_0": {
+    "3_6": {
+      "finalMixMWh": {
+        "Solar": 83067618.438,
+        "Wind": 163935674.715,
+        "Nuclear": 263829235.577,
+        "Gas": 210062857.27,
+        "Coal": 122315.593,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9582,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "3_7": {
+      "finalMixMWh": {
+        "Solar": 83067570.449,
+        "Wind": 163935664.051,
+        "Nuclear": 263829235.577,
+        "Gas": 210062921.255,
+        "Coal": 122315.989,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9584,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.501,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "3_8": {
+      "finalMixMWh": {
+        "Solar": 83067629.102,
+        "Wind": 163935674.715,
+        "Nuclear": 263829235.577,
+        "Gas": 210062835.942,
+        "Coal": 122315.593,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9582,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "3_9": {
+      "finalMixMWh": {
+        "Solar": 83104250.08,
+        "Wind": 163976614.708,
+        "Nuclear": 263924979.066,
+        "Gas": 209905410.526,
+        "Coal": 106437.049,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.4759,
+      "deathsCentral": 602.382,
+      "deathsLow": 602.382,
+      "deathsHigh": 1844.617,
+      "cumulativeDeathsCentral": 18562.934
+    },
+    "3_10": {
+      "finalMixMWh": {
+        "Solar": 83152319.113,
+        "Wind": 164029818.569,
+        "Nuclear": 264050539.752,
+        "Gas": 209696818.117,
+        "Coal": 88181.548,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 632.8509,
+      "deathsCentral": 601.354,
+      "deathsLow": 601.354,
+      "deathsHigh": 1838.771,
+      "cumulativeDeathsCentral": 18560.671
+    },
+    "3_11": {
+      "finalMixMWh": {
+        "Solar": 83194922.726,
+        "Wind": 164077988.912,
+        "Nuclear": 264161746.38,
+        "Gas": 209508978.307,
+        "Coal": 74061.561,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 632.2997,
+      "deathsCentral": 600.485,
+      "deathsLow": 600.485,
+      "deathsHigh": 1834.025,
+      "cumulativeDeathsCentral": 18558.801
+    },
+    "3_12": {
+      "finalMixMWh": {
+        "Solar": 83237707.631,
+        "Wind": 164125807.336,
+        "Nuclear": 264273358.248,
+        "Gas": 209319218.934,
+        "Coal": 61611.459,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 631.752,
+      "deathsCentral": 599.653,
+      "deathsLow": 599.653,
+      "deathsHigh": 1829.638,
+      "cumulativeDeathsCentral": 18557.048
+    },
+    "4_0": {
       "finalMixMWh": {
         "Solar": 81672294.12,
         "Wind": 162375859.927,
@@ -162,7 +840,37 @@
       "deathsHigh": 2124.146,
       "cumulativeDeathsCentral": 18792.215
     },
-    "2_1": {
+    "4_1": {
+      "finalMixMWh": {
+        "Solar": 82428868.172,
+        "Wind": 163221640.292,
+        "Nuclear": 262149917.387,
+        "Gas": 212847032.715,
+        "Coal": 370220.699,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 642.3226,
+      "deathsCentral": 617.032,
+      "deathsLow": 617.032,
+      "deathsHigh": 1928.483,
+      "cumulativeDeathsCentral": 18631.487
+    },
+    "4_2": {
+      "finalMixMWh": {
+        "Solar": 82878754.861,
+        "Wind": 163724160.307,
+        "Nuclear": 263334479.124,
+        "Gas": 210905779.62,
+        "Coal": 174512.861,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 636.3754,
+      "deathsCentral": 606.833,
+      "deathsLow": 606.833,
+      "deathsHigh": 1868.294,
+      "cumulativeDeathsCentral": 18580.704
+    },
+    "4_3": {
       "finalMixMWh": {
         "Solar": 83067629.102,
         "Wind": 163935664.051,
@@ -177,7 +885,232 @@
       "deathsHigh": 1849.5,
       "cumulativeDeathsCentral": 18564.794
     },
-    "2_2": {
+    "4_4": {
+      "finalMixMWh": {
+        "Solar": 83067597.109,
+        "Wind": 163935674.715,
+        "Nuclear": 263829235.577,
+        "Gas": 210062857.27,
+        "Coal": 122315.604,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9582,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "4_5": {
+      "finalMixMWh": {
+        "Solar": 83067623.77,
+        "Wind": 163935653.387,
+        "Nuclear": 263829235.577,
+        "Gas": 210062857.27,
+        "Coal": 122315.676,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9582,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "4_6": {
+      "finalMixMWh": {
+        "Solar": 83067623.77,
+        "Wind": 163935664.051,
+        "Nuclear": 263829235.577,
+        "Gas": 210062857.27,
+        "Coal": 122315.614,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9582,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "4_7": {
+      "finalMixMWh": {
+        "Solar": 83067623.77,
+        "Wind": 163935674.715,
+        "Nuclear": 263829235.577,
+        "Gas": 210062835.942,
+        "Coal": 122315.593,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9581,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "4_8": {
+      "finalMixMWh": {
+        "Solar": 83067623.77,
+        "Wind": 163935674.715,
+        "Nuclear": 263829235.577,
+        "Gas": 210062835.942,
+        "Coal": 122315.593,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9581,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "4_9": {
+      "finalMixMWh": {
+        "Solar": 83067629.102,
+        "Wind": 163935653.387,
+        "Nuclear": 263829214.248,
+        "Gas": 210062878.599,
+        "Coal": 122316.437,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9583,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "4_10": {
+      "finalMixMWh": {
+        "Solar": 83166203.945,
+        "Wind": 164045878.905,
+        "Nuclear": 264086755.489,
+        "Gas": 209635456.117,
+        "Coal": 83387.173,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 632.6699,
+      "deathsCentral": 601.066,
+      "deathsLow": 601.066,
+      "deathsHigh": 1837.18,
+      "cumulativeDeathsCentral": 18560.044
+    },
+    "4_11": {
+      "finalMixMWh": {
+        "Solar": 83205768.252,
+        "Wind": 164090092.818,
+        "Nuclear": 264190006.599,
+        "Gas": 209461117.226,
+        "Coal": 70696.422,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 632.1604,
+      "deathsCentral": 600.27,
+      "deathsLow": 600.27,
+      "deathsHigh": 1832.868,
+      "cumulativeDeathsCentral": 18558.345
+    },
+    "4_12": {
+      "finalMixMWh": {
+        "Solar": 83243786.245,
+        "Wind": 164132600.453,
+        "Nuclear": 264289183.971,
+        "Gas": 209292153.109,
+        "Coal": 59973.895,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 631.6746,
+      "deathsCentral": 599.537,
+      "deathsLow": 599.537,
+      "deathsHigh": 1829.043,
+      "cumulativeDeathsCentral": 18556.809
+    },
+    "5_0": {
+      "finalMixMWh": {
+        "Solar": 81940611.569,
+        "Wind": 162675834.153,
+        "Nuclear": 260855812.642,
+        "Gas": 214773569.168,
+        "Coal": 771848.15,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 649.2695,
+      "deathsCentral": 632.252,
+      "deathsLow": 632.252,
+      "deathsHigh": 2034.66,
+      "cumulativeDeathsCentral": 18719.888
+    },
+    "5_1": {
+      "finalMixMWh": {
+        "Solar": 82552040.069,
+        "Wind": 163359315.547,
+        "Nuclear": 262474963.226,
+        "Gas": 212325935.606,
+        "Coal": 305434.939,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 640.6645,
+      "deathsCentral": 613.993,
+      "deathsLow": 613.993,
+      "deathsHigh": 1909.583,
+      "cumulativeDeathsCentral": 18615.379
+    },
+    "5_2": {
+      "finalMixMWh": {
+        "Solar": 82945331.672,
+        "Wind": 163798969.905,
+        "Nuclear": 263508988.642,
+        "Gas": 210610209.723,
+        "Coal": 154177.022,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 635.5176,
+      "deathsCentral": 605.512,
+      "deathsLow": 605.512,
+      "deathsHigh": 1861.249,
+      "cumulativeDeathsCentral": 18574.796
+    },
+    "5_3": {
+      "finalMixMWh": {
+        "Solar": 83067623.77,
+        "Wind": 163935674.715,
+        "Nuclear": 263829235.577,
+        "Gas": 210062857.27,
+        "Coal": 122315.614,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9582,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "5_4": {
+      "finalMixMWh": {
+        "Solar": 83067629.102,
+        "Wind": 163935674.715,
+        "Nuclear": 263829235.577,
+        "Gas": 210062835.942,
+        "Coal": 122315.572,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9582,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "5_5": {
+      "finalMixMWh": {
+        "Solar": 83067618.438,
+        "Wind": 163935653.387,
+        "Nuclear": 263829235.577,
+        "Gas": 210062857.27,
+        "Coal": 122315.656,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9582,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "5_6": {
       "finalMixMWh": {
         "Solar": 83067629.102,
         "Wind": 163935674.715,
@@ -192,22 +1125,97 @@
       "deathsHigh": 1849.5,
       "cumulativeDeathsCentral": 18564.794
     },
-    "2_3": {
+    "5_7": {
       "finalMixMWh": {
-        "Solar": 83194912.062,
-        "Wind": 164077956.92,
-        "Nuclear": 264161682.394,
-        "Gas": 209509063.62,
-        "Coal": 74068.091,
+        "Solar": 83067629.102,
+        "Wind": 163935674.715,
+        "Nuclear": 263829235.577,
+        "Gas": 210062835.942,
+        "Coal": 122315.593,
         "Battery": 0.0
       },
-      "co2FinalMT": 632.2999,
-      "deathsCentral": 600.486,
-      "deathsLow": 600.486,
-      "deathsHigh": 1834.028,
-      "cumulativeDeathsCentral": 18558.802
+      "co2FinalMT": 633.9582,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
     },
-    "3_0": {
+    "5_8": {
+      "finalMixMWh": {
+        "Solar": 83067719.748,
+        "Wind": 163935792.022,
+        "Nuclear": 263829512.847,
+        "Gas": 210062409.372,
+        "Coal": 122266.844,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9568,
+      "deathsCentral": 603.207,
+      "deathsLow": 603.207,
+      "deathsHigh": 1849.485,
+      "cumulativeDeathsCentral": 18564.788
+    },
+    "5_9": {
+      "finalMixMWh": {
+        "Solar": 83125941.131,
+        "Wind": 164000961.153,
+        "Nuclear": 263981862.088,
+        "Gas": 209811053.387,
+        "Coal": 97861.298,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.1915,
+      "deathsCentral": 601.909,
+      "deathsLow": 601.909,
+      "deathsHigh": 1841.901,
+      "cumulativeDeathsCentral": 18561.887
+    },
+    "5_10": {
+      "finalMixMWh": {
+        "Solar": 83171834.661,
+        "Wind": 164052160.139,
+        "Nuclear": 264101450.803,
+        "Gas": 209610736.423,
+        "Coal": 81495.313,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 632.5972,
+      "deathsCentral": 600.951,
+      "deathsLow": 600.951,
+      "deathsHigh": 1836.548,
+      "cumulativeDeathsCentral": 18559.796
+    },
+    "5_11": {
+      "finalMixMWh": {
+        "Solar": 83213782.423,
+        "Wind": 164099061.438,
+        "Nuclear": 264210929.825,
+        "Gas": 209425605.328,
+        "Coal": 68299.037,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 632.0576,
+      "deathsCentral": 600.112,
+      "deathsLow": 600.112,
+      "deathsHigh": 1832.032,
+      "cumulativeDeathsCentral": 18558.013
+    },
+    "5_12": {
+      "finalMixMWh": {
+        "Solar": 83252205.657,
+        "Wind": 164142006.307,
+        "Nuclear": 264311130.964,
+        "Gas": 209254593.679,
+        "Coal": 57765.44,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 631.5675,
+      "deathsCentral": 599.379,
+      "deathsLow": 599.379,
+      "deathsHigh": 1828.232,
+      "cumulativeDeathsCentral": 18556.482
+    },
+    "6_0": {
       "finalMixMWh": {
         "Solar": 82123471.182,
         "Wind": 162880235.518,
@@ -222,67 +1230,37 @@
       "deathsHigh": 1987.831,
       "cumulativeDeathsCentral": 18681.228
     },
-    "3_1": {
+    "6_1": {
       "finalMixMWh": {
-        "Solar": 83067618.438,
-        "Wind": 163935664.051,
-        "Nuclear": 263829214.248,
-        "Gas": 210062878.599,
-        "Coal": 122317.551,
+        "Solar": 82659055.653,
+        "Wind": 163478946.92,
+        "Nuclear": 262756946.891,
+        "Gas": 211866200.496,
+        "Coal": 256526.431,
         "Battery": 0.0
       },
-      "co2FinalMT": 633.9583,
-      "deathsCentral": 603.209,
-      "deathsLow": 603.209,
-      "deathsHigh": 1849.501,
-      "cumulativeDeathsCentral": 18564.794
+      "co2FinalMT": 639.2431,
+      "deathsCentral": 611.515,
+      "deathsLow": 611.515,
+      "deathsHigh": 1894.755,
+      "cumulativeDeathsCentral": 18602.823
     },
-    "3_2": {
+    "6_2": {
       "finalMixMWh": {
-        "Solar": 83067671.759,
-        "Wind": 163935706.708,
-        "Nuclear": 263829342.219,
-        "Gas": 210062665.314,
-        "Coal": 122295.223,
+        "Solar": 83018930.88,
+        "Wind": 163881244.467,
+        "Nuclear": 263701755.328,
+        "Gas": 210281580.701,
+        "Coal": 134175.127,
         "Battery": 0.0
       },
-      "co2FinalMT": 633.9576,
-      "deathsCentral": 603.208,
-      "deathsLow": 603.208,
-      "deathsHigh": 1849.494,
-      "cumulativeDeathsCentral": 18564.791
+      "co2FinalMT": 634.5769,
+      "deathsCentral": 604.108,
+      "deathsLow": 604.108,
+      "deathsHigh": 1853.999,
+      "cumulativeDeathsCentral": 18568.659
     },
-    "3_3": {
-      "finalMixMWh": {
-        "Solar": 83213265.208,
-        "Wind": 164098474.905,
-        "Nuclear": 264209586.131,
-        "Gas": 209427908.803,
-        "Coal": 68451.284,
-        "Battery": 0.0
-      },
-      "co2FinalMT": 632.0642,
-      "deathsCentral": 600.122,
-      "deathsLow": 600.122,
-      "deathsHigh": 1832.086,
-      "cumulativeDeathsCentral": 18558.035
-    },
-    "4_0": {
-      "finalMixMWh": {
-        "Solar": 82405220.234,
-        "Wind": 163195171.664,
-        "Nuclear": 262087382.321,
-        "Gas": 212945762.19,
-        "Coal": 384140.732,
-        "Battery": 0.0
-      },
-      "co2FinalMT": 642.6451,
-      "deathsCentral": 617.649,
-      "deathsLow": 617.649,
-      "deathsHigh": 1932.433,
-      "cumulativeDeathsCentral": 18634.811
-    },
-    "4_1": {
+    "6_3": {
       "finalMixMWh": {
         "Solar": 83067629.102,
         "Wind": 163935664.051,
@@ -297,52 +1275,562 @@
       "deathsHigh": 1849.5,
       "cumulativeDeathsCentral": 18564.794
     },
-    "4_2": {
+    "6_4": {
       "finalMixMWh": {
-        "Solar": 83069649.974,
-        "Wind": 163937967.526,
-        "Nuclear": 263834610.35,
-        "Gas": 210054091.27,
-        "Coal": 121368.434,
+        "Solar": 83067618.438,
+        "Wind": 163935674.715,
+        "Nuclear": 263829235.577,
+        "Gas": 210062857.27,
+        "Coal": 122315.676,
         "Battery": 0.0
       },
-      "co2FinalMT": 633.931,
-      "deathsCentral": 603.162,
-      "deathsLow": 603.162,
-      "deathsHigh": 1849.214,
-      "cumulativeDeathsCentral": 18564.686
+      "co2FinalMT": 633.9582,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
     },
-    "4_3": {
+    "6_5": {
       "finalMixMWh": {
-        "Solar": 83236331.945,
-        "Wind": 164124239.693,
-        "Nuclear": 264269753.737,
-        "Gas": 209325361.533,
-        "Coal": 61991.08,
+        "Solar": 83067623.77,
+        "Wind": 163935674.715,
+        "Nuclear": 263829235.577,
+        "Gas": 210062835.942,
+        "Coal": 122315.593,
         "Battery": 0.0
       },
-      "co2FinalMT": 631.7696,
-      "deathsCentral": 599.679,
-      "deathsLow": 599.679,
-      "deathsHigh": 1829.775,
-      "cumulativeDeathsCentral": 18557.104
+      "co2FinalMT": 633.9581,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
     },
-    "5_0": {
+    "6_6": {
       "finalMixMWh": {
-        "Solar": 79796599.401,
-        "Wind": 163454344.533,
-        "Nuclear": 265539458.715,
-        "Gas": 211961176.161,
-        "Coal": 266109.328,
+        "Solar": 83067666.427,
+        "Wind": 163935717.372,
+        "Nuclear": 263829320.891,
+        "Gas": 210062686.642,
+        "Coal": 122298.472,
         "Battery": 0.0
       },
-      "co2FinalMT": 638.6818,
-      "deathsCentral": 612.071,
-      "deathsLow": 612.071,
-      "deathsHigh": 1897.73,
-      "cumulativeDeathsCentral": 18605.367
+      "co2FinalMT": 633.9577,
+      "deathsCentral": 603.208,
+      "deathsLow": 603.208,
+      "deathsHigh": 1849.495,
+      "cumulativeDeathsCentral": 18564.792
     },
-    "5_1": {
+    "6_7": {
+      "finalMixMWh": {
+        "Solar": 83067629.102,
+        "Wind": 163935664.051,
+        "Nuclear": 263829235.577,
+        "Gas": 210062835.942,
+        "Coal": 122315.614,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9581,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "6_8": {
+      "finalMixMWh": {
+        "Solar": 83088285.723,
+        "Wind": 163958858.759,
+        "Nuclear": 263883516.526,
+        "Gas": 209973938.891,
+        "Coal": 113066.922,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.6844,
+      "deathsCentral": 602.735,
+      "deathsLow": 602.735,
+      "deathsHigh": 1846.679,
+      "cumulativeDeathsCentral": 18563.725
+    },
+    "6_9": {
+      "finalMixMWh": {
+        "Solar": 83138178.339,
+        "Wind": 164014536.723,
+        "Nuclear": 264013577.518,
+        "Gas": 209758094.803,
+        "Coal": 93300.463,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0332,
+      "deathsCentral": 601.65,
+      "deathsLow": 601.65,
+      "deathsHigh": 1840.434,
+      "cumulativeDeathsCentral": 18561.317
+    },
+    "6_10": {
+      "finalMixMWh": {
+        "Solar": 83182936.128,
+        "Wind": 164064573.307,
+        "Nuclear": 264130436.19,
+        "Gas": 209561872.905,
+        "Coal": 77886.126,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 632.4541,
+      "deathsCentral": 600.726,
+      "deathsLow": 600.726,
+      "deathsHigh": 1835.328,
+      "cumulativeDeathsCentral": 18559.314
+    },
+    "6_11": {
+      "finalMixMWh": {
+        "Solar": 83225939.65,
+        "Wind": 164112647.672,
+        "Nuclear": 264242645.255,
+        "Gas": 209371601.65,
+        "Coal": 64846.325,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 631.9022,
+      "deathsCentral": 599.877,
+      "deathsLow": 599.877,
+      "deathsHigh": 1830.804,
+      "cumulativeDeathsCentral": 18557.519
+    },
+    "6_12": {
+      "finalMixMWh": {
+        "Solar": 83263600.391,
+        "Wind": 164154760.73,
+        "Nuclear": 264340884.175,
+        "Gas": 209203533.328,
+        "Coal": 54910.295,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 631.4226,
+      "deathsCentral": 599.167,
+      "deathsLow": 599.167,
+      "deathsHigh": 1827.162,
+      "cumulativeDeathsCentral": 18556.045
+    },
+    "7_0": {
+      "finalMixMWh": {
+        "Solar": 82280869.938,
+        "Wind": 163056174.044,
+        "Nuclear": 261758518.686,
+        "Gas": 213457346.803,
+        "Coal": 464778.625,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 644.3588,
+      "deathsCentral": 621.051,
+      "deathsLow": 621.051,
+      "deathsHigh": 1954.802,
+      "cumulativeDeathsCentral": 18653.638
+    },
+    "7_1": {
+      "finalMixMWh": {
+        "Solar": 82752207.734,
+        "Wind": 163583061.832,
+        "Nuclear": 263002032.307,
+        "Gas": 211461428.847,
+        "Coal": 218938.527,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 638.0193,
+      "deathsCentral": 609.467,
+      "deathsLow": 609.467,
+      "deathsHigh": 1882.926,
+      "cumulativeDeathsCentral": 18592.909
+    },
+    "7_2": {
+      "finalMixMWh": {
+        "Solar": 83067623.77,
+        "Wind": 163935664.051,
+        "Nuclear": 263829214.248,
+        "Gas": 210062878.599,
+        "Coal": 122317.176,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9583,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "7_3": {
+      "finalMixMWh": {
+        "Solar": 83067629.102,
+        "Wind": 163935664.051,
+        "Nuclear": 263829235.577,
+        "Gas": 210062835.942,
+        "Coal": 122315.614,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9581,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "7_4": {
+      "finalMixMWh": {
+        "Solar": 83067623.77,
+        "Wind": 163935653.387,
+        "Nuclear": 263829214.248,
+        "Gas": 210062878.599,
+        "Coal": 122316.749,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9583,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "7_5": {
+      "finalMixMWh": {
+        "Solar": 83067618.438,
+        "Wind": 163935674.715,
+        "Nuclear": 263829235.577,
+        "Gas": 210062857.27,
+        "Coal": 122315.604,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9582,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "7_6": {
+      "finalMixMWh": {
+        "Solar": 83067842.387,
+        "Wind": 163935909.328,
+        "Nuclear": 263829790.117,
+        "Gas": 210061940.146,
+        "Coal": 122217.845,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9554,
+      "deathsCentral": 603.204,
+      "deathsLow": 603.204,
+      "deathsHigh": 1849.47,
+      "cumulativeDeathsCentral": 18564.782
+    },
+    "7_7": {
+      "finalMixMWh": {
+        "Solar": 83067623.77,
+        "Wind": 163935674.715,
+        "Nuclear": 263829235.577,
+        "Gas": 210062835.942,
+        "Coal": 122315.593,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9581,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "7_8": {
+      "finalMixMWh": {
+        "Solar": 83099957.726,
+        "Wind": 163971794.474,
+        "Nuclear": 263913738.964,
+        "Gas": 209923987.62,
+        "Coal": 108199.043,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.5322,
+      "deathsCentral": 602.477,
+      "deathsLow": 602.477,
+      "deathsHigh": 1845.168,
+      "cumulativeDeathsCentral": 18563.146
+    },
+    "7_9": {
+      "finalMixMWh": {
+        "Solar": 83148106.741,
+        "Wind": 164025648.854,
+        "Nuclear": 264039534.263,
+        "Gas": 209714712.701,
+        "Coal": 89684.101,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 632.9041,
+      "deathsCentral": 601.441,
+      "deathsLow": 601.441,
+      "deathsHigh": 1839.258,
+      "cumulativeDeathsCentral": 18560.86
+    },
+    "7_10": {
+      "finalMixMWh": {
+        "Solar": 83192475.285,
+        "Wind": 164075237.54,
+        "Nuclear": 264155326.511,
+        "Gas": 209519791.839,
+        "Coal": 74842.039,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 632.3312,
+      "deathsCentral": 600.535,
+      "deathsLow": 600.535,
+      "deathsHigh": 1834.291,
+      "cumulativeDeathsCentral": 18558.905
+    },
+    "7_11": {
+      "finalMixMWh": {
+        "Solar": 83237190.416,
+        "Wind": 164125220.803,
+        "Nuclear": 264272014.555,
+        "Gas": 209321501.08,
+        "Coal": 61751.974,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 631.7586,
+      "deathsCentral": 599.662,
+      "deathsLow": 599.662,
+      "deathsHigh": 1829.688,
+      "cumulativeDeathsCentral": 18557.069
+    },
+    "7_12": {
+      "finalMixMWh": {
+        "Solar": 83274179.31,
+        "Wind": 164166544.708,
+        "Nuclear": 264368419.226,
+        "Gas": 209156162.803,
+        "Coal": 52361.574,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 631.2887,
+      "deathsCentral": 598.972,
+      "deathsLow": 598.972,
+      "deathsHigh": 1826.192,
+      "cumulativeDeathsCentral": 18555.647
+    },
+    "8_0": {
+      "finalMixMWh": {
+        "Solar": 82405220.234,
+        "Wind": 163195171.664,
+        "Nuclear": 262087382.321,
+        "Gas": 212945762.19,
+        "Coal": 384140.732,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 642.6451,
+      "deathsCentral": 617.649,
+      "deathsLow": 617.649,
+      "deathsHigh": 1932.433,
+      "cumulativeDeathsCentral": 18634.811
+    },
+    "8_1": {
+      "finalMixMWh": {
+        "Solar": 82855304.212,
+        "Wind": 163698320.869,
+        "Nuclear": 263272839.854,
+        "Gas": 211009030.73,
+        "Coal": 182189.683,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 636.678,
+      "deathsCentral": 607.308,
+      "deathsLow": 607.308,
+      "deathsHigh": 1870.884,
+      "cumulativeDeathsCentral": 18582.864
+    },
+    "8_2": {
+      "finalMixMWh": {
+        "Solar": 83067629.102,
+        "Wind": 163935674.715,
+        "Nuclear": 263829235.577,
+        "Gas": 210062835.942,
+        "Coal": 122315.572,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9582,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "8_3": {
+      "finalMixMWh": {
+        "Solar": 83067623.77,
+        "Wind": 163935674.715,
+        "Nuclear": 263829235.577,
+        "Gas": 210062835.942,
+        "Coal": 122315.593,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9581,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "8_4": {
+      "finalMixMWh": {
+        "Solar": 83067618.438,
+        "Wind": 163935653.387,
+        "Nuclear": 263829214.248,
+        "Gas": 210062878.599,
+        "Coal": 122317.572,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9583,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.501,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "8_5": {
+      "finalMixMWh": {
+        "Solar": 83067629.102,
+        "Wind": 163935674.715,
+        "Nuclear": 263829235.577,
+        "Gas": 210062835.942,
+        "Coal": 122315.593,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9582,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "8_6": {
+      "finalMixMWh": {
+        "Solar": 83067629.102,
+        "Wind": 163935674.715,
+        "Nuclear": 263829235.577,
+        "Gas": 210062835.942,
+        "Coal": 122315.572,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9582,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "8_7": {
+      "finalMixMWh": {
+        "Solar": 83067607.774,
+        "Wind": 163935653.387,
+        "Nuclear": 263829235.577,
+        "Gas": 210062878.599,
+        "Coal": 122315.729,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.9583,
+      "deathsCentral": 603.209,
+      "deathsLow": 603.209,
+      "deathsHigh": 1849.5,
+      "cumulativeDeathsCentral": 18564.794
+    },
+    "8_8": {
+      "finalMixMWh": {
+        "Solar": 83112077.628,
+        "Wind": 163985359.38,
+        "Nuclear": 263945411.737,
+        "Gas": 209871540.92,
+        "Coal": 103289.976,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.3735,
+      "deathsCentral": 602.21,
+      "deathsLow": 602.21,
+      "deathsHigh": 1843.627,
+      "cumulativeDeathsCentral": 18562.553
+    },
+    "8_9": {
+      "finalMixMWh": {
+        "Solar": 83162135.54,
+        "Wind": 164041314.613,
+        "Nuclear": 264076133.912,
+        "Gas": 209653329.372,
+        "Coal": 84777.085,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 632.7226,
+      "deathsCentral": 601.15,
+      "deathsLow": 601.15,
+      "deathsHigh": 1837.642,
+      "cumulativeDeathsCentral": 18560.226
+    },
+    "8_10": {
+      "finalMixMWh": {
+        "Solar": 83204387.234,
+        "Wind": 164088535.839,
+        "Nuclear": 264186423.416,
+        "Gas": 209467217.168,
+        "Coal": 71118.42,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 632.1781,
+      "deathsCentral": 600.297,
+      "deathsLow": 600.297,
+      "deathsHigh": 1833.014,
+      "cumulativeDeathsCentral": 18558.403
+    },
+    "8_11": {
+      "finalMixMWh": {
+        "Solar": 83243290.358,
+        "Wind": 164132035.248,
+        "Nuclear": 264287882.934,
+        "Gas": 209294371.27,
+        "Coal": 60108.229,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 631.681,
+      "deathsCentral": 599.547,
+      "deathsLow": 599.547,
+      "deathsHigh": 1829.092,
+      "cumulativeDeathsCentral": 18556.828
+    },
+    "8_12": {
+      "finalMixMWh": {
+        "Solar": 83279586.077,
+        "Wind": 164172623.321,
+        "Nuclear": 264382538.672,
+        "Gas": 209131869.679,
+        "Coal": 51066.849,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 631.2201,
+      "deathsCentral": 598.873,
+      "deathsLow": 598.873,
+      "deathsHigh": 1825.697,
+      "cumulativeDeathsCentral": 18555.445
+    },
+    "9_0": {
+      "finalMixMWh": {
+        "Solar": 79726929.964,
+        "Wind": 163332015.109,
+        "Nuclear": 265211256.263,
+        "Gas": 212430039.854,
+        "Coal": 317439.096,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 640.1506,
+      "deathsCentral": 614.633,
+      "deathsLow": 614.633,
+      "deathsHigh": 1913.177,
+      "cumulativeDeathsCentral": 18618.491
+    },
+    "9_1": {
+      "finalMixMWh": {
+        "Solar": 79980829.369,
+        "Wind": 163781363.255,
+        "Nuclear": 266416485.285,
+        "Gas": 210680209.752,
+        "Coal": 158800.665,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 634.8349,
+      "deathsCentral": 605.879,
+      "deathsLow": 605.879,
+      "deathsHigh": 1862.904,
+      "cumulativeDeathsCentral": 18576.227
+    },
+    "9_2": {
       "finalMixMWh": {
         "Solar": 80066857.741,
         "Wind": 163935674.715,
@@ -357,37 +1845,547 @@
       "deathsHigh": 1849.53,
       "cumulativeDeathsCentral": 18564.862
     },
-    "5_2": {
+    "9_3": {
       "finalMixMWh": {
-        "Solar": 80079078.953,
-        "Wind": 163957696.358,
-        "Nuclear": 266888974.818,
-        "Gas": 209978417.869,
-        "Coal": 113532.191,
+        "Solar": 80066857.741,
+        "Wind": 163935674.715,
+        "Nuclear": 266830001.606,
+        "Gas": 210062835.942,
+        "Coal": 122315.593,
         "Battery": 0.0
       },
-      "co2FinalMT": 632.7955,
-      "deathsCentral": 602.819,
-      "deathsLow": 602.819,
-      "deathsHigh": 1846.851,
-      "cumulativeDeathsCentral": 18563.846
+      "co2FinalMT": 633.0577,
+      "deathsCentral": 603.269,
+      "deathsLow": 603.269,
+      "deathsHigh": 1849.53,
+      "cumulativeDeathsCentral": 18564.862
     },
-    "5_3": {
+    "9_4": {
       "finalMixMWh": {
-        "Solar": 80178746.88,
-        "Wind": 164138423.124,
-        "Nuclear": 267373024.38,
-        "Gas": 209268883.752,
-        "Coal": 58587.55,
+        "Solar": 80066863.073,
+        "Wind": 163935664.051,
+        "Nuclear": 266830001.606,
+        "Gas": 210062835.942,
+        "Coal": 122315.614,
         "Battery": 0.0
       },
-      "co2FinalMT": 630.6869,
-      "deathsCentral": 599.5,
-      "deathsLow": 599.5,
-      "deathsHigh": 1828.567,
-      "cumulativeDeathsCentral": 18556.675
+      "co2FinalMT": 633.0577,
+      "deathsCentral": 603.269,
+      "deathsLow": 603.269,
+      "deathsHigh": 1849.53,
+      "cumulativeDeathsCentral": 18564.862
     },
-    "6_0": {
+    "9_5": {
+      "finalMixMWh": {
+        "Solar": 80066873.737,
+        "Wind": 163935685.38,
+        "Nuclear": 266830065.591,
+        "Gas": 210062750.628,
+        "Coal": 122305.856,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0574,
+      "deathsCentral": 603.269,
+      "deathsLow": 603.269,
+      "deathsHigh": 1849.527,
+      "cumulativeDeathsCentral": 18564.861
+    },
+    "9_6": {
+      "finalMixMWh": {
+        "Solar": 80066692.445,
+        "Wind": 163935642.723,
+        "Nuclear": 266829958.949,
+        "Gas": 210063070.555,
+        "Coal": 122316.135,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0583,
+      "deathsCentral": 603.27,
+      "deathsLow": 603.27,
+      "deathsHigh": 1849.532,
+      "cumulativeDeathsCentral": 18564.865
+    },
+    "9_7": {
+      "finalMixMWh": {
+        "Solar": 80071427.365,
+        "Wind": 163943886.175,
+        "Nuclear": 266852033.912,
+        "Gas": 210031376.453,
+        "Coal": 118965.701,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 632.9596,
+      "deathsCentral": 603.1,
+      "deathsLow": 603.1,
+      "deathsHigh": 1848.514,
+      "cumulativeDeathsCentral": 18564.478
+    },
+    "9_8": {
+      "finalMixMWh": {
+        "Solar": 80101900.412,
+        "Wind": 163998902.956,
+        "Nuclear": 266999392.292,
+        "Gas": 209818923.591,
+        "Coal": 98564.054,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 632.3083,
+      "deathsCentral": 602.009,
+      "deathsLow": 602.009,
+      "deathsHigh": 1842.155,
+      "cumulativeDeathsCentral": 18562.041
+    },
+    "9_9": {
+      "finalMixMWh": {
+        "Solar": 80130560.54,
+        "Wind": 164050816.445,
+        "Nuclear": 267138389.912,
+        "Gas": 209616025.883,
+        "Coal": 81898.976,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 631.7005,
+      "deathsCentral": 601.036,
+      "deathsLow": 601.036,
+      "deathsHigh": 1836.713,
+      "cumulativeDeathsCentral": 18559.918
+    },
+    "9_10": {
+      "finalMixMWh": {
+        "Solar": 80155450.861,
+        "Wind": 164095947.482,
+        "Nuclear": 267259237.007,
+        "Gas": 209437911.854,
+        "Coal": 69119.85,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 631.1763,
+      "deathsCentral": 600.228,
+      "deathsLow": 600.228,
+      "deathsHigh": 1832.35,
+      "cumulativeDeathsCentral": 18558.197
+    },
+    "9_11": {
+      "finalMixMWh": {
+        "Solar": 80178906.843,
+        "Wind": 164138583.088,
+        "Nuclear": 267373386.964,
+        "Gas": 209268243.898,
+        "Coal": 58556.479,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 630.6851,
+      "deathsCentral": 599.497,
+      "deathsLow": 599.497,
+      "deathsHigh": 1828.555,
+      "cumulativeDeathsCentral": 18556.67
+    },
+    "9_12": {
+      "finalMixMWh": {
+        "Solar": 80203994.453,
+        "Wind": 164184289.993,
+        "Nuclear": 267495791.036,
+        "Gas": 209084989.708,
+        "Coal": 48618.475,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 630.162,
+      "deathsCentral": 598.745,
+      "deathsLow": 598.745,
+      "deathsHigh": 1824.785,
+      "cumulativeDeathsCentral": 18555.129
+    },
+    "10_0": {
+      "finalMixMWh": {
+        "Solar": 79796599.401,
+        "Wind": 163454344.533,
+        "Nuclear": 265539458.715,
+        "Gas": 211961176.161,
+        "Coal": 266109.328,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 638.6818,
+      "deathsCentral": 612.071,
+      "deathsLow": 612.071,
+      "deathsHigh": 1897.73,
+      "cumulativeDeathsCentral": 18605.367
+    },
+    "10_1": {
+      "finalMixMWh": {
+        "Solar": 80027741.332,
+        "Wind": 163865354.759,
+        "Nuclear": 266641628.584,
+        "Gas": 210345139.533,
+        "Coal": 137823.711,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.8644,
+      "deathsCentral": 604.434,
+      "deathsLow": 604.434,
+      "deathsHigh": 1855.382,
+      "cumulativeDeathsCentral": 18569.88
+    },
+    "10_2": {
+      "finalMixMWh": {
+        "Solar": 80066863.073,
+        "Wind": 163935642.723,
+        "Nuclear": 266830001.606,
+        "Gas": 210062857.27,
+        "Coal": 122315.687,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0578,
+      "deathsCentral": 603.269,
+      "deathsLow": 603.269,
+      "deathsHigh": 1849.53,
+      "cumulativeDeathsCentral": 18564.862
+    },
+    "10_3": {
+      "finalMixMWh": {
+        "Solar": 80066863.073,
+        "Wind": 163935664.051,
+        "Nuclear": 266830001.606,
+        "Gas": 210062835.942,
+        "Coal": 122315.614,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0577,
+      "deathsCentral": 603.269,
+      "deathsLow": 603.269,
+      "deathsHigh": 1849.53,
+      "cumulativeDeathsCentral": 18564.862
+    },
+    "10_4": {
+      "finalMixMWh": {
+        "Solar": 80066852.409,
+        "Wind": 163935674.715,
+        "Nuclear": 266830001.606,
+        "Gas": 210062835.942,
+        "Coal": 122315.604,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0577,
+      "deathsCentral": 603.269,
+      "deathsLow": 603.269,
+      "deathsHigh": 1849.53,
+      "cumulativeDeathsCentral": 18564.862
+    },
+    "10_5": {
+      "finalMixMWh": {
+        "Solar": 80066900.398,
+        "Wind": 163935728.036,
+        "Nuclear": 266830193.562,
+        "Gas": 210062558.672,
+        "Coal": 122284.986,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0568,
+      "deathsCentral": 603.268,
+      "deathsLow": 603.268,
+      "deathsHigh": 1849.521,
+      "cumulativeDeathsCentral": 18564.858
+    },
+    "10_6": {
+      "finalMixMWh": {
+        "Solar": 80066895.066,
+        "Wind": 163935717.372,
+        "Nuclear": 266830172.234,
+        "Gas": 210062601.328,
+        "Coal": 122287.818,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.057,
+      "deathsCentral": 603.268,
+      "deathsLow": 603.268,
+      "deathsHigh": 1849.522,
+      "cumulativeDeathsCentral": 18564.859
+    },
+    "10_7": {
+      "finalMixMWh": {
+        "Solar": 80078199.153,
+        "Wind": 163956107.387,
+        "Nuclear": 266884751.781,
+        "Gas": 209984475.153,
+        "Coal": 114135.272,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 632.8142,
+      "deathsCentral": 602.851,
+      "deathsLow": 602.851,
+      "deathsHigh": 1847.037,
+      "cumulativeDeathsCentral": 18563.917
+    },
+    "10_8": {
+      "finalMixMWh": {
+        "Solar": 80108437.588,
+        "Wind": 164010761.584,
+        "Nuclear": 267031086.394,
+        "Gas": 209772854.102,
+        "Coal": 94558.572,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 632.1692,
+      "deathsCentral": 601.782,
+      "deathsLow": 601.782,
+      "deathsHigh": 1840.87,
+      "cumulativeDeathsCentral": 18561.543
+    },
+    "10_9": {
+      "finalMixMWh": {
+        "Solar": 80136745.796,
+        "Wind": 164062003.226,
+        "Nuclear": 267168399.066,
+        "Gas": 209571918.613,
+        "Coal": 78616.152,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 631.5701,
+      "deathsCentral": 600.833,
+      "deathsLow": 600.833,
+      "deathsHigh": 1835.606,
+      "cumulativeDeathsCentral": 18559.481
+    },
+    "10_10": {
+      "finalMixMWh": {
+        "Solar": 80164440.81,
+        "Wind": 164112295.752,
+        "Nuclear": 267303003.022,
+        "Gas": 209373009.328,
+        "Coal": 64933.383,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 630.9877,
+      "deathsCentral": 599.945,
+      "deathsLow": 599.945,
+      "deathsHigh": 1830.866,
+      "cumulativeDeathsCentral": 18557.601
+    },
+    "10_11": {
+      "finalMixMWh": {
+        "Solar": 80186446.456,
+        "Wind": 164152297.292,
+        "Nuclear": 267410135.912,
+        "Gas": 209213344.423,
+        "Coal": 55449.974,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 630.5277,
+      "deathsCentral": 599.269,
+      "deathsLow": 599.269,
+      "deathsHigh": 1827.396,
+      "cumulativeDeathsCentral": 18556.198
+    },
+    "10_12": {
+      "finalMixMWh": {
+        "Solar": 80209022.639,
+        "Wind": 164193482.562,
+        "Nuclear": 267520404.088,
+        "Gas": 209048006.146,
+        "Coal": 46764.403,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 630.0572,
+      "deathsCentral": 598.596,
+      "deathsLow": 598.596,
+      "deathsHigh": 1824.058,
+      "cumulativeDeathsCentral": 18554.83
+    },
+    "11_0": {
+      "finalMixMWh": {
+        "Solar": 79854687.482,
+        "Wind": 163556859.81,
+        "Nuclear": 265814553.285,
+        "Gas": 211563613.533,
+        "Coal": 227967.53,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 637.4635,
+      "deathsCentral": 610.03,
+      "deathsLow": 610.03,
+      "deathsHigh": 1885.838,
+      "cumulativeDeathsCentral": 18595.386
+    },
+    "11_1": {
+      "finalMixMWh": {
+        "Solar": 80066857.741,
+        "Wind": 163935674.715,
+        "Nuclear": 266830001.606,
+        "Gas": 210062835.942,
+        "Coal": 122315.572,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0577,
+      "deathsCentral": 603.269,
+      "deathsLow": 603.269,
+      "deathsHigh": 1849.53,
+      "cumulativeDeathsCentral": 18564.862
+    },
+    "11_2": {
+      "finalMixMWh": {
+        "Solar": 80066863.073,
+        "Wind": 163935642.723,
+        "Nuclear": 266830001.606,
+        "Gas": 210062857.27,
+        "Coal": 122315.676,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0578,
+      "deathsCentral": 603.269,
+      "deathsLow": 603.269,
+      "deathsHigh": 1849.53,
+      "cumulativeDeathsCentral": 18564.862
+    },
+    "11_3": {
+      "finalMixMWh": {
+        "Solar": 80066857.741,
+        "Wind": 163935642.723,
+        "Nuclear": 266830001.606,
+        "Gas": 210062857.27,
+        "Coal": 122315.676,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0578,
+      "deathsCentral": 603.269,
+      "deathsLow": 603.269,
+      "deathsHigh": 1849.53,
+      "cumulativeDeathsCentral": 18564.862
+    },
+    "11_4": {
+      "finalMixMWh": {
+        "Solar": 80066857.741,
+        "Wind": 163935653.387,
+        "Nuclear": 266830001.606,
+        "Gas": 210062857.27,
+        "Coal": 122315.676,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0578,
+      "deathsCentral": 603.269,
+      "deathsLow": 603.269,
+      "deathsHigh": 1849.53,
+      "cumulativeDeathsCentral": 18564.862
+    },
+    "11_5": {
+      "finalMixMWh": {
+        "Solar": 80066783.091,
+        "Wind": 163935664.051,
+        "Nuclear": 266829980.277,
+        "Gas": 210062942.584,
+        "Coal": 122315.812,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.058,
+      "deathsCentral": 603.269,
+      "deathsLow": 603.269,
+      "deathsHigh": 1849.531,
+      "cumulativeDeathsCentral": 18564.863
+    },
+    "11_6": {
+      "finalMixMWh": {
+        "Solar": 80066905.73,
+        "Wind": 163935738.701,
+        "Nuclear": 266830236.219,
+        "Gas": 210062516.015,
+        "Coal": 122278.987,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0567,
+      "deathsCentral": 603.267,
+      "deathsLow": 603.267,
+      "deathsHigh": 1849.519,
+      "cumulativeDeathsCentral": 18564.858
+    },
+    "11_7": {
+      "finalMixMWh": {
+        "Solar": 80085157.566,
+        "Wind": 163968659.19,
+        "Nuclear": 266918365.445,
+        "Gas": 209936144.847,
+        "Coal": 109373.65,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 632.6654,
+      "deathsCentral": 602.6,
+      "deathsLow": 602.6,
+      "deathsHigh": 1845.564,
+      "cumulativeDeathsCentral": 18563.355
+    },
+    "11_8": {
+      "finalMixMWh": {
+        "Solar": 80114681.496,
+        "Wind": 164021639.102,
+        "Nuclear": 267061244.847,
+        "Gas": 209729258.715,
+        "Coal": 90859.083,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 632.038,
+      "deathsCentral": 601.57,
+      "deathsLow": 601.57,
+      "deathsHigh": 1839.674,
+      "cumulativeDeathsCentral": 18561.078
+    },
+    "11_9": {
+      "finalMixMWh": {
+        "Solar": 80142584.464,
+        "Wind": 164072614.139,
+        "Nuclear": 267196744.599,
+        "Gas": 209530157.474,
+        "Coal": 75590.821,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 631.447,
+      "deathsCentral": 600.643,
+      "deathsLow": 600.643,
+      "deathsHigh": 1834.577,
+      "cumulativeDeathsCentral": 18559.075
+    },
+    "11_10": {
+      "finalMixMWh": {
+        "Solar": 80170578.077,
+        "Wind": 164123439.876,
+        "Nuclear": 267332841.547,
+        "Gas": 209328646.117,
+        "Coal": 62188.353,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 630.8593,
+      "deathsCentral": 599.754,
+      "deathsLow": 599.754,
+      "deathsHigh": 1829.877,
+      "cumulativeDeathsCentral": 18557.202
+    },
+    "11_11": {
+      "finalMixMWh": {
+        "Solar": 80193116.934,
+        "Wind": 164164454.518,
+        "Nuclear": 267442661.825,
+        "Gas": 209164630.204,
+        "Coal": 52815.304,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 630.3887,
+      "deathsCentral": 599.069,
+      "deathsLow": 599.069,
+      "deathsHigh": 1826.396,
+      "cumulativeDeathsCentral": 18555.788
+    },
+    "11_12": {
+      "finalMixMWh": {
+        "Solar": 80214701.343,
+        "Wind": 164203880.19,
+        "Nuclear": 267548237.737,
+        "Gas": 209006138.365,
+        "Coal": 44729.566,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 629.9388,
+      "deathsCentral": 598.43,
+      "deathsLow": 598.43,
+      "deathsHigh": 1823.249,
+      "cumulativeDeathsCentral": 18554.496
+    },
+    "12_0": {
       "finalMixMWh": {
         "Solar": 79921274.956,
         "Wind": 163675094.168,
@@ -402,9 +2400,204 @@
       "deathsHigh": 1873.261,
       "cumulativeDeathsCentral": 18584.882
     },
-    "6_1": {
+    "12_1": {
+      "finalMixMWh": {
+        "Solar": 80066863.073,
+        "Wind": 163935664.051,
+        "Nuclear": 266830001.606,
+        "Gas": 210062835.942,
+        "Coal": 122315.614,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0577,
+      "deathsCentral": 603.269,
+      "deathsLow": 603.269,
+      "deathsHigh": 1849.53,
+      "cumulativeDeathsCentral": 18564.862
+    },
+    "12_2": {
+      "finalMixMWh": {
+        "Solar": 80066863.073,
+        "Wind": 163935664.051,
+        "Nuclear": 266830001.606,
+        "Gas": 210062835.942,
+        "Coal": 122315.604,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0577,
+      "deathsCentral": 603.269,
+      "deathsLow": 603.269,
+      "deathsHigh": 1849.53,
+      "cumulativeDeathsCentral": 18564.862
+    },
+    "12_3": {
       "finalMixMWh": {
         "Solar": 80066852.409,
+        "Wind": 163935674.715,
+        "Nuclear": 266830001.606,
+        "Gas": 210062835.942,
+        "Coal": 122315.604,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0577,
+      "deathsCentral": 603.269,
+      "deathsLow": 603.269,
+      "deathsHigh": 1849.53,
+      "cumulativeDeathsCentral": 18564.862
+    },
+    "12_4": {
+      "finalMixMWh": {
+        "Solar": 80066740.434,
+        "Wind": 163935664.051,
+        "Nuclear": 266830001.606,
+        "Gas": 210062963.912,
+        "Coal": 122312.25,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.058,
+      "deathsCentral": 603.269,
+      "deathsLow": 603.269,
+      "deathsHigh": 1849.53,
+      "cumulativeDeathsCentral": 18564.864
+    },
+    "12_5": {
+      "finalMixMWh": {
+        "Solar": 80066921.726,
+        "Wind": 163935760.029,
+        "Nuclear": 266830300.204,
+        "Gas": 210062430.701,
+        "Coal": 122270.343,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0564,
+      "deathsCentral": 603.267,
+      "deathsLow": 603.267,
+      "deathsHigh": 1849.516,
+      "cumulativeDeathsCentral": 18564.857
+    },
+    "12_6": {
+      "finalMixMWh": {
+        "Solar": 80067225.657,
+        "Wind": 163936218.591,
+        "Nuclear": 266831750.54,
+        "Gas": 210060425.825,
+        "Coal": 122044.499,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0501,
+      "deathsCentral": 603.256,
+      "deathsLow": 603.256,
+      "deathsHigh": 1849.449,
+      "cumulativeDeathsCentral": 18564.831
+    },
+    "12_7": {
+      "finalMixMWh": {
+        "Solar": 80091844.04,
+        "Wind": 163980752.431,
+        "Nuclear": 266950742.058,
+        "Gas": 209889414.175,
+        "Coal": 104934.777,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 632.5224,
+      "deathsCentral": 602.361,
+      "deathsLow": 602.361,
+      "deathsHigh": 1844.176,
+      "cumulativeDeathsCentral": 18562.822
+    },
+    "12_8": {
+      "finalMixMWh": {
+        "Solar": 80123612.792,
+        "Wind": 164038221.985,
+        "Nuclear": 267104669.606,
+        "Gas": 209665443.942,
+        "Coal": 85728.149,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 631.8474,
+      "deathsCentral": 601.267,
+      "deathsLow": 601.267,
+      "deathsHigh": 1837.987,
+      "cumulativeDeathsCentral": 18560.419
+    },
+    "12_9": {
+      "finalMixMWh": {
+        "Solar": 80149670.847,
+        "Wind": 164085464.54,
+        "Nuclear": 267231147.416,
+        "Gas": 209479417.051,
+        "Coal": 71984.123,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 631.2979,
+      "deathsCentral": 600.413,
+      "deathsLow": 600.413,
+      "deathsHigh": 1833.341,
+      "cumulativeDeathsCentral": 18558.589
+    },
+    "12_10": {
+      "finalMixMWh": {
+        "Solar": 80174609.157,
+        "Wind": 164130766.204,
+        "Nuclear": 267352463.737,
+        "Gas": 209299447.445,
+        "Coal": 60413.498,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 630.775,
+      "deathsCentral": 599.63,
+      "deathsLow": 599.63,
+      "deathsHigh": 1829.234,
+      "cumulativeDeathsCentral": 18556.942
+    },
+    "12_11": {
+      "finalMixMWh": {
+        "Solar": 80196652.128,
+        "Wind": 164170927.708,
+        "Nuclear": 267460001.869,
+        "Gas": 209138694.788,
+        "Coal": 51427.912,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 630.3148,
+      "deathsCentral": 598.963,
+      "deathsLow": 598.963,
+      "deathsHigh": 1825.866,
+      "cumulativeDeathsCentral": 18555.571
+    },
+    "12_12": {
+      "finalMixMWh": {
+        "Solar": 80217335.409,
+        "Wind": 164208636.438,
+        "Nuclear": 267560970.832,
+        "Gas": 208986921.416,
+        "Coal": 43823.257,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 629.8847,
+      "deathsCentral": 598.355,
+      "deathsLow": 598.355,
+      "deathsHigh": 1822.884,
+      "cumulativeDeathsCentral": 18554.345
+    },
+    "13_0": {
+      "finalMixMWh": {
+        "Solar": 79972170.011,
+        "Wind": 163765878.788,
+        "Nuclear": 266375001.416,
+        "Gas": 210741678.394,
+        "Coal": 162941.106,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 635.0144,
+      "deathsCentral": 606.151,
+      "deathsLow": 606.151,
+      "deathsHigh": 1864.349,
+      "cumulativeDeathsCentral": 18577.441
+    },
+    "13_1": {
+      "finalMixMWh": {
+        "Solar": 80066857.741,
         "Wind": 163935674.715,
         "Nuclear": 266830001.606,
         "Gas": 210062835.942,
@@ -417,37 +2610,172 @@
       "deathsHigh": 1849.53,
       "cumulativeDeathsCentral": 18564.862
     },
-    "6_2": {
+    "13_2": {
       "finalMixMWh": {
-        "Solar": 80094451.445,
-        "Wind": 163985455.358,
-        "Nuclear": 266963325.854,
-        "Gas": 209871199.664,
-        "Coal": 103259.555,
+        "Solar": 80066857.741,
+        "Wind": 163935674.715,
+        "Nuclear": 266830001.606,
+        "Gas": 210062835.942,
+        "Coal": 122315.593,
         "Battery": 0.0
       },
-      "co2FinalMT": 632.4669,
-      "deathsCentral": 602.269,
-      "deathsLow": 602.269,
-      "deathsHigh": 1843.647,
-      "cumulativeDeathsCentral": 18562.618
+      "co2FinalMT": 633.0577,
+      "deathsCentral": 603.269,
+      "deathsLow": 603.269,
+      "deathsHigh": 1849.53,
+      "cumulativeDeathsCentral": 18564.862
     },
-    "6_3": {
+    "13_3": {
       "finalMixMWh": {
-        "Solar": 80191240.029,
-        "Wind": 164161052.628,
-        "Nuclear": 267433554.569,
-        "Gas": 209178301.752,
-        "Coal": 53546.944,
+        "Solar": 80066863.073,
+        "Wind": 163935664.051,
+        "Nuclear": 266830001.606,
+        "Gas": 210062835.942,
+        "Coal": 122315.604,
         "Battery": 0.0
       },
-      "co2FinalMT": 630.4277,
-      "deathsCentral": 599.125,
-      "deathsLow": 599.125,
-      "deathsHigh": 1826.675,
-      "cumulativeDeathsCentral": 18555.902
+      "co2FinalMT": 633.0577,
+      "deathsCentral": 603.269,
+      "deathsLow": 603.269,
+      "deathsHigh": 1849.53,
+      "cumulativeDeathsCentral": 18564.862
     },
-    "7_0": {
+    "13_4": {
+      "finalMixMWh": {
+        "Solar": 80066863.073,
+        "Wind": 163935685.38,
+        "Nuclear": 266830022.934,
+        "Gas": 210062814.613,
+        "Coal": 122313.135,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0576,
+      "deathsCentral": 603.269,
+      "deathsLow": 603.269,
+      "deathsHigh": 1849.529,
+      "cumulativeDeathsCentral": 18564.861
+    },
+    "13_5": {
+      "finalMixMWh": {
+        "Solar": 80066879.069,
+        "Wind": 163935706.708,
+        "Nuclear": 266830108.248,
+        "Gas": 210062686.642,
+        "Coal": 122299.732,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0572,
+      "deathsCentral": 603.268,
+      "deathsLow": 603.268,
+      "deathsHigh": 1849.525,
+      "cumulativeDeathsCentral": 18564.86
+    },
+    "13_6": {
+      "finalMixMWh": {
+        "Solar": 80070419.595,
+        "Wind": 163942083.92,
+        "Nuclear": 266847171.022,
+        "Gas": 210038329.533,
+        "Coal": 119694.066,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 632.9812,
+      "deathsCentral": 603.137,
+      "deathsLow": 603.137,
+      "deathsHigh": 1848.736,
+      "cumulativeDeathsCentral": 18564.562
+    },
+    "13_7": {
+      "finalMixMWh": {
+        "Solar": 80100492.734,
+        "Wind": 163996354.204,
+        "Nuclear": 266992588.511,
+        "Gas": 209828820.0,
+        "Coal": 99436.636,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 632.3382,
+      "deathsCentral": 602.058,
+      "deathsLow": 602.058,
+      "deathsHigh": 1842.434,
+      "cumulativeDeathsCentral": 18562.149
+    },
+    "13_8": {
+      "finalMixMWh": {
+        "Solar": 80130320.595,
+        "Wind": 164050368.547,
+        "Nuclear": 267137174.19,
+        "Gas": 209617796.146,
+        "Coal": 82027.858,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 631.7057,
+      "deathsCentral": 601.044,
+      "deathsLow": 601.044,
+      "deathsHigh": 1836.757,
+      "cumulativeDeathsCentral": 18559.935
+    },
+    "13_9": {
+      "finalMixMWh": {
+        "Solar": 80154784.347,
+        "Wind": 164094742.423,
+        "Nuclear": 267256016.409,
+        "Gas": 209442689.431,
+        "Coal": 69444.458,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 631.1903,
+      "deathsCentral": 600.249,
+      "deathsLow": 600.249,
+      "deathsHigh": 1832.463,
+      "cumulativeDeathsCentral": 18558.242
+    },
+    "13_10": {
+      "finalMixMWh": {
+        "Solar": 80176656.69,
+        "Wind": 164134466.693,
+        "Nuclear": 267362424.131,
+        "Gas": 209284602.832,
+        "Coal": 59522.888,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 630.7322,
+      "deathsCentral": 599.566,
+      "deathsLow": 599.566,
+      "deathsHigh": 1828.909,
+      "cumulativeDeathsCentral": 18556.812
+    },
+    "13_11": {
+      "finalMixMWh": {
+        "Solar": 80202682.752,
+        "Wind": 164181911.869,
+        "Nuclear": 267489435.153,
+        "Gas": 209094544.861,
+        "Coal": 49108.051,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 630.1891,
+      "deathsCentral": 598.783,
+      "deathsLow": 598.783,
+      "deathsHigh": 1824.975,
+      "cumulativeDeathsCentral": 18555.207
+    },
+    "13_12": {
+      "finalMixMWh": {
+        "Solar": 80223440.682,
+        "Wind": 164219236.686,
+        "Nuclear": 267590724.044,
+        "Gas": 208942536.876,
+        "Coal": 41761.308,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 629.7597,
+      "deathsCentral": 598.181,
+      "deathsLow": 598.181,
+      "deathsHigh": 1822.048,
+      "cumulativeDeathsCentral": 18553.999
+    },
+    "14_0": {
       "finalMixMWh": {
         "Solar": 80017572.985,
         "Wind": 163847150.912,
@@ -462,13 +2790,433 @@
       "deathsHigh": 1856.966,
       "cumulativeDeathsCentral": 18571.224
     },
-    "7_1": {
+    "14_1": {
       "finalMixMWh": {
         "Solar": 80066863.073,
-        "Wind": 163935664.051,
+        "Wind": 163935642.723,
+        "Nuclear": 266830001.606,
+        "Gas": 210062857.27,
+        "Coal": 122315.687,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0578,
+      "deathsCentral": 603.269,
+      "deathsLow": 603.269,
+      "deathsHigh": 1849.53,
+      "cumulativeDeathsCentral": 18564.862
+    },
+    "14_2": {
+      "finalMixMWh": {
+        "Solar": 80066857.741,
+        "Wind": 163935674.715,
+        "Nuclear": 266830001.606,
+        "Gas": 210062835.942,
+        "Coal": 122315.572,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0577,
+      "deathsCentral": 603.269,
+      "deathsLow": 603.269,
+      "deathsHigh": 1849.53,
+      "cumulativeDeathsCentral": 18564.862
+    },
+    "14_3": {
+      "finalMixMWh": {
+        "Solar": 80066857.741,
+        "Wind": 163935674.715,
+        "Nuclear": 266830001.606,
+        "Gas": 210062835.942,
+        "Coal": 122315.572,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0577,
+      "deathsCentral": 603.269,
+      "deathsLow": 603.269,
+      "deathsHigh": 1849.53,
+      "cumulativeDeathsCentral": 18564.862
+    },
+    "14_4": {
+      "finalMixMWh": {
+        "Solar": 80066852.409,
+        "Wind": 163935674.715,
+        "Nuclear": 266830001.606,
+        "Gas": 210062835.942,
+        "Coal": 122315.593,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0577,
+      "deathsCentral": 603.269,
+      "deathsLow": 603.269,
+      "deathsHigh": 1849.53,
+      "cumulativeDeathsCentral": 18564.862
+    },
+    "14_5": {
+      "finalMixMWh": {
+        "Solar": 80066948.387,
+        "Wind": 163935824.015,
+        "Nuclear": 266830428.175,
+        "Gas": 210062217.416,
+        "Coal": 122248.442,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0558,
+      "deathsCentral": 603.266,
+      "deathsLow": 603.266,
+      "deathsHigh": 1849.51,
+      "cumulativeDeathsCentral": 18564.854
+    },
+    "14_6": {
+      "finalMixMWh": {
+        "Solar": 80077106.069,
+        "Wind": 163954113.175,
+        "Nuclear": 266879462.321,
+        "Gas": 209992089.416,
+        "Coal": 114907.023,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 632.8377,
+      "deathsCentral": 602.891,
+      "deathsLow": 602.891,
+      "deathsHigh": 1847.274,
+      "cumulativeDeathsCentral": 18564.007
+    },
+    "14_7": {
+      "finalMixMWh": {
+        "Solar": 80107867.051,
+        "Wind": 164009684.496,
+        "Nuclear": 267028292.365,
+        "Gas": 209776927.839,
+        "Coal": 94904.878,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 632.1814,
+      "deathsCentral": 601.802,
+      "deathsLow": 601.802,
+      "deathsHigh": 1840.982,
+      "cumulativeDeathsCentral": 18561.586
+    },
+    "14_8": {
+      "finalMixMWh": {
+        "Solar": 80135428.763,
+        "Wind": 164059635.766,
+        "Nuclear": 267162000.526,
+        "Gas": 209581324.467,
+        "Coal": 79300.553,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 631.5978,
+      "deathsCentral": 600.876,
+      "deathsLow": 600.876,
+      "deathsHigh": 1835.839,
+      "cumulativeDeathsCentral": 18559.573
+    },
+    "14_9": {
+      "finalMixMWh": {
+        "Solar": 80162723.869,
+        "Wind": 164109160.467,
+        "Nuclear": 267294642.263,
+        "Gas": 209385443.825,
+        "Coal": 65714.804,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 631.0237,
+      "deathsCentral": 599.998,
+      "deathsLow": 599.998,
+      "deathsHigh": 1831.146,
+      "cumulativeDeathsCentral": 18557.714
+    },
+    "14_10": {
+      "finalMixMWh": {
+        "Solar": 80186009.223,
+        "Wind": 164151518.803,
+        "Nuclear": 267408045.723,
+        "Gas": 209216501.036,
+        "Coal": 55624.606,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 630.5368,
+      "deathsCentral": 599.282,
+      "deathsLow": 599.282,
+      "deathsHigh": 1827.462,
+      "cumulativeDeathsCentral": 18556.225
+    },
+    "14_11": {
+      "finalMixMWh": {
+        "Solar": 80208372.12,
+        "Wind": 164192277.504,
+        "Nuclear": 267517204.818,
+        "Gas": 209052826.38,
+        "Coal": 47002.531,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 630.0708,
+      "deathsCentral": 598.616,
+      "deathsLow": 598.616,
+      "deathsHigh": 1824.152,
+      "cumulativeDeathsCentral": 18554.869
+    },
+    "14_12": {
+      "finalMixMWh": {
+        "Solar": 80225472.219,
+        "Wind": 164223545.036,
+        "Nuclear": 267600961.708,
+        "Gas": 208926647.168,
+        "Coal": 41063.933,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 629.7152,
+      "deathsCentral": 598.12,
+      "deathsLow": 598.12,
+      "deathsHigh": 1821.758,
+      "cumulativeDeathsCentral": 18553.878
+    },
+    "15_0": {
+      "finalMixMWh": {
+        "Solar": 80063818.434,
+        "Wind": 163930193.299,
+        "Nuclear": 266815327.62,
+        "Gas": 210084889.577,
+        "Coal": 123464.092,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.1204,
+      "deathsCentral": 603.359,
+      "deathsLow": 603.359,
+      "deathsHigh": 1849.973,
+      "cumulativeDeathsCentral": 18565.244
+    },
+    "15_1": {
+      "finalMixMWh": {
+        "Solar": 80066857.741,
+        "Wind": 163935632.058,
+        "Nuclear": 266829980.277,
+        "Gas": 210062878.599,
+        "Coal": 122316.78,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0578,
+      "deathsCentral": 603.269,
+      "deathsLow": 603.269,
+      "deathsHigh": 1849.53,
+      "cumulativeDeathsCentral": 18564.862
+    },
+    "15_2": {
+      "finalMixMWh": {
+        "Solar": 80066863.073,
+        "Wind": 163935674.715,
         "Nuclear": 266830022.934,
         "Gas": 210062814.613,
-        "Coal": 122313.167,
+        "Coal": 122313.25,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0576,
+      "deathsCentral": 603.269,
+      "deathsLow": 603.269,
+      "deathsHigh": 1849.529,
+      "cumulativeDeathsCentral": 18564.862
+    },
+    "15_3": {
+      "finalMixMWh": {
+        "Solar": 80066857.741,
+        "Wind": 163935653.387,
+        "Nuclear": 266829980.277,
+        "Gas": 210062857.27,
+        "Coal": 122316.687,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0578,
+      "deathsCentral": 603.269,
+      "deathsLow": 603.269,
+      "deathsHigh": 1849.53,
+      "cumulativeDeathsCentral": 18564.862
+    },
+    "15_4": {
+      "finalMixMWh": {
+        "Solar": 80066852.409,
+        "Wind": 163935674.715,
+        "Nuclear": 266830001.606,
+        "Gas": 210062835.942,
+        "Coal": 122315.593,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0577,
+      "deathsCentral": 603.269,
+      "deathsLow": 603.269,
+      "deathsHigh": 1849.53,
+      "cumulativeDeathsCentral": 18564.862
+    },
+    "15_5": {
+      "finalMixMWh": {
+        "Solar": 80066863.073,
+        "Wind": 163935696.044,
+        "Nuclear": 266830044.263,
+        "Gas": 210062771.956,
+        "Coal": 122308.241,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0575,
+      "deathsCentral": 603.269,
+      "deathsLow": 603.269,
+      "deathsHigh": 1849.528,
+      "cumulativeDeathsCentral": 18564.861
+    },
+    "15_6": {
+      "finalMixMWh": {
+        "Solar": 80083989.832,
+        "Wind": 163966547.672,
+        "Nuclear": 266912713.401,
+        "Gas": 209944292.321,
+        "Coal": 110159.835,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 632.6904,
+      "deathsCentral": 602.642,
+      "deathsLow": 602.642,
+      "deathsHigh": 1845.809,
+      "cumulativeDeathsCentral": 18563.448
+    },
+    "15_7": {
+      "finalMixMWh": {
+        "Solar": 80113839.022,
+        "Wind": 164020508.693,
+        "Nuclear": 267057277.752,
+        "Gas": 209734718.803,
+        "Coal": 91339.702,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 632.0545,
+      "deathsCentral": 601.597,
+      "deathsLow": 601.597,
+      "deathsHigh": 1839.828,
+      "cumulativeDeathsCentral": 18561.138
+    },
+    "15_8": {
+      "finalMixMWh": {
+        "Solar": 80141000.825,
+        "Wind": 164069713.467,
+        "Nuclear": 267189023.693,
+        "Gas": 209541525.547,
+        "Coal": 76411.827,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 631.4805,
+      "deathsCentral": 600.694,
+      "deathsLow": 600.694,
+      "deathsHigh": 1834.856,
+      "cumulativeDeathsCentral": 18559.185
+    },
+    "15_9": {
+      "finalMixMWh": {
+        "Solar": 80169074.42,
+        "Wind": 164120699.168,
+        "Nuclear": 267325547.212,
+        "Gas": 209339502.307,
+        "Coal": 62857.096,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 630.8907,
+      "deathsCentral": 599.801,
+      "deathsLow": 599.801,
+      "deathsHigh": 1830.118,
+      "cumulativeDeathsCentral": 18557.299
+    },
+    "15_10": {
+      "finalMixMWh": {
+        "Solar": 80190338.901,
+        "Wind": 164159399.672,
+        "Nuclear": 267429139.577,
+        "Gas": 209184913.577,
+        "Coal": 53900.65,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 630.4465,
+      "deathsCentral": 599.152,
+      "deathsLow": 599.152,
+      "deathsHigh": 1826.81,
+      "cumulativeDeathsCentral": 18555.958
+    },
+    "15_11": {
+      "finalMixMWh": {
+        "Solar": 80212984.401,
+        "Wind": 164200702.248,
+        "Nuclear": 267539727.679,
+        "Gas": 209018914.117,
+        "Coal": 45344.436,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 629.9749,
+      "deathsCentral": 598.481,
+      "deathsLow": 598.481,
+      "deathsHigh": 1823.495,
+      "cumulativeDeathsCentral": 18554.598
+    },
+    "15_12": {
+      "finalMixMWh": {
+        "Solar": 80230687.029,
+        "Wind": 164233057.533,
+        "Nuclear": 267626363.912,
+        "Gas": 208888191.942,
+        "Coal": 39385.025,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 629.6075,
+      "deathsCentral": 597.972,
+      "deathsLow": 597.972,
+      "deathsHigh": 1821.058,
+      "cumulativeDeathsCentral": 18553.585
+    },
+    "16_0": {
+      "finalMixMWh": {
+        "Solar": 80066841.745,
+        "Wind": 163935632.058,
+        "Nuclear": 266829916.292,
+        "Gas": 210062963.912,
+        "Coal": 122322.435,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0581,
+      "deathsCentral": 603.27,
+      "deathsLow": 603.27,
+      "deathsHigh": 1849.532,
+      "cumulativeDeathsCentral": 18564.864
+    },
+    "16_1": {
+      "finalMixMWh": {
+        "Solar": 80066841.745,
+        "Wind": 163935621.394,
+        "Nuclear": 266829916.292,
+        "Gas": 210062985.241,
+        "Coal": 122322.477,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0581,
+      "deathsCentral": 603.27,
+      "deathsLow": 603.27,
+      "deathsHigh": 1849.533,
+      "cumulativeDeathsCentral": 18564.864
+    },
+    "16_2": {
+      "finalMixMWh": {
+        "Solar": 80066857.741,
+        "Wind": 163935664.051,
+        "Nuclear": 266829980.277,
+        "Gas": 210062857.27,
+        "Coal": 122316.655,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 633.0578,
+      "deathsCentral": 603.269,
+      "deathsLow": 603.269,
+      "deathsHigh": 1849.53,
+      "cumulativeDeathsCentral": 18564.862
+    },
+    "16_3": {
+      "finalMixMWh": {
+        "Solar": 80066863.073,
+        "Wind": 163935685.38,
+        "Nuclear": 266830022.934,
+        "Gas": 210062814.613,
+        "Coal": 122313.135,
         "Battery": 0.0
       },
       "co2FinalMT": 633.0576,
@@ -477,35 +3225,140 @@
       "deathsHigh": 1849.529,
       "cumulativeDeathsCentral": 18564.861
     },
-    "7_2": {
+    "16_4": {
       "finalMixMWh": {
-        "Solar": 80108586.887,
-        "Wind": 164010996.197,
-        "Nuclear": 267031768.905,
-        "Gas": 209771851.664,
-        "Coal": 94474.414,
+        "Solar": 80066857.741,
+        "Wind": 163935674.715,
+        "Nuclear": 266830001.606,
+        "Gas": 210062835.942,
+        "Coal": 122315.583,
         "Battery": 0.0
       },
-      "co2FinalMT": 632.1662,
-      "deathsCentral": 601.778,
-      "deathsLow": 601.778,
-      "deathsHigh": 1840.843,
-      "cumulativeDeathsCentral": 18561.532
+      "co2FinalMT": 633.0577,
+      "deathsCentral": 603.269,
+      "deathsLow": 603.269,
+      "deathsHigh": 1849.53,
+      "cumulativeDeathsCentral": 18564.862
     },
-    "7_3": {
+    "16_5": {
       "finalMixMWh": {
-        "Solar": 80202309.504,
-        "Wind": 164181229.358,
-        "Nuclear": 267487579.577,
-        "Gas": 209097317.562,
-        "Coal": 49252.034,
+        "Solar": 80067060.361,
+        "Wind": 163936026.635,
+        "Nuclear": 266831004.044,
+        "Gas": 210061428.263,
+        "Coal": 122161.66,
         "Battery": 0.0
       },
-      "co2FinalMT": 630.197,
-      "deathsCentral": 598.794,
-      "deathsLow": 598.794,
-      "deathsHigh": 1825.03,
-      "cumulativeDeathsCentral": 18555.23
+      "co2FinalMT": 633.0533,
+      "deathsCentral": 603.261,
+      "deathsLow": 603.261,
+      "deathsHigh": 1849.483,
+      "cumulativeDeathsCentral": 18564.844
+    },
+    "16_6": {
+      "finalMixMWh": {
+        "Solar": 80090948.245,
+        "Wind": 163979142.131,
+        "Nuclear": 266946433.708,
+        "Gas": 209895663.416,
+        "Coal": 105519.05,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 632.5415,
+      "deathsCentral": 602.393,
+      "deathsLow": 602.393,
+      "deathsHigh": 1844.359,
+      "cumulativeDeathsCentral": 18562.892
+    },
+    "16_7": {
+      "finalMixMWh": {
+        "Solar": 80123095.577,
+        "Wind": 164037283.533,
+        "Nuclear": 267102131.518,
+        "Gas": 209669155.095,
+        "Coal": 86018.296,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 631.8584,
+      "deathsCentral": 601.285,
+      "deathsLow": 601.285,
+      "deathsHigh": 1838.083,
+      "cumulativeDeathsCentral": 18560.457
+    },
+    "16_8": {
+      "finalMixMWh": {
+        "Solar": 80147282.058,
+        "Wind": 164081124.197,
+        "Nuclear": 267219523.401,
+        "Gas": 209496565.139,
+        "Coal": 73178.148,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 631.3482,
+      "deathsCentral": 600.49,
+      "deathsLow": 600.49,
+      "deathsHigh": 1833.753,
+      "cumulativeDeathsCentral": 18558.751
+    },
+    "16_9": {
+      "finalMixMWh": {
+        "Solar": 80174150.595,
+        "Wind": 164129945.058,
+        "Nuclear": 267350266.905,
+        "Gas": 209302732.029,
+        "Coal": 60611.848,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 630.7845,
+      "deathsCentral": 599.644,
+      "deathsLow": 599.644,
+      "deathsHigh": 1829.306,
+      "cumulativeDeathsCentral": 18556.972
+    },
+    "16_10": {
+      "finalMixMWh": {
+        "Solar": 80195607.033,
+        "Wind": 164168997.482,
+        "Nuclear": 267454819.051,
+        "Gas": 209146415.693,
+        "Coal": 51840.693,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 630.3368,
+      "deathsCentral": 598.994,
+      "deathsLow": 598.994,
+      "deathsHigh": 1826.024,
+      "cumulativeDeathsCentral": 18555.635
+    },
+    "16_11": {
+      "finalMixMWh": {
+        "Solar": 80216866.182,
+        "Wind": 164207783.299,
+        "Nuclear": 267558688.686,
+        "Gas": 208990355.299,
+        "Coal": 43982.512,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 629.8943,
+      "deathsCentral": 598.368,
+      "deathsLow": 598.368,
+      "deathsHigh": 1822.949,
+      "cumulativeDeathsCentral": 18554.372
+    },
+    "16_12": {
+      "finalMixMWh": {
+        "Solar": 80233747.664,
+        "Wind": 164238656.255,
+        "Nuclear": 267641336.496,
+        "Gas": 208865541.109,
+        "Coal": 38416.899,
+        "Battery": 0.0
+      },
+      "co2FinalMT": 629.5441,
+      "deathsCentral": 597.885,
+      "deathsLow": 597.885,
+      "deathsHigh": 1820.65,
+      "cumulativeDeathsCentral": 18553.415
     }
   }
 }
