@@ -1,0 +1,49 @@
+name: Cleanup mortality library
+
+# Rollback helper: removes the experimental mortality cases (group_name=
+# 'Mortality') from the shared library, restoring the pre-mortality /library
+# listing. Pair with a Vercel Instant Rollback (or git revert) to fully return
+# production to its pre-mortality state.
+#
+# Manual only, and guarded: it lists what it would delete and stops unless you
+# type DELETE into the confirm box.
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type DELETE to actually remove the mortality cases (else dry run)'
+        required: false
+        default: ""
+
+concurrency:
+  group: cleanup-mortality-library
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: engine
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - run: pip install -e ".[library]"
+
+      - name: Remove mortality cases (dry run unless confirm=DELETE)
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
+          CONFIRM: ${{ inputs.confirm }}
+        run: |
+          if [ "$CONFIRM" = "DELETE" ]; then
+            python scripts/cleanup_mortality_cases.py --confirm
+          else
+            echo "confirm != DELETE -> dry run"
+            python scripts/cleanup_mortality_cases.py
+          fi
