@@ -2,7 +2,6 @@
 
 import {
   CartesianGrid,
-  Legend,
   Scatter,
   ScatterChart,
   Tooltip,
@@ -81,23 +80,24 @@ export function CO2VsDeathsChart({ cases }: { cases: LibraryCaseDetail[] }) {
   });
 
   return (
-    <div
-      role="img"
-      aria-label={
-        "Scatter plot of final-year CO₂ emissions against final-year deaths, one point per scenario: " +
-        points
-          .map(
-            (p) =>
-              `${p.label} at ${p.co2.toFixed(1)} MT and ${Math.round(
-                p.deaths
-              ).toLocaleString()} deaths`
-          )
-          .join("; ") +
-        "."
-      }
-    >
-      <ResponsiveContainer width="100%" height={340}>
-        <ScatterChart margin={{ top: 12, right: 16, left: 8, bottom: 24 }}>
+    <div>
+      <div
+        role="img"
+        aria-label={
+          "Scatter plot of final-year CO₂ emissions against final-year deaths, one point per scenario: " +
+          points
+            .map(
+              (p) =>
+                `${p.label} at ${p.co2.toFixed(1)} MT and ${Math.round(
+                  p.deaths
+                ).toLocaleString()} deaths`
+            )
+            .join("; ") +
+          "."
+        }
+      >
+        <ResponsiveContainer width="100%" height={320}>
+        <ScatterChart margin={{ top: 12, right: 16, left: 8, bottom: 28 }}>
           <CartesianGrid stroke="var(--chart-gridline)" />
           <XAxis
             type="number"
@@ -134,12 +134,28 @@ export function CO2VsDeathsChart({ cases }: { cases: LibraryCaseDetail[] }) {
           />
           <ZAxis range={[120, 120]} />
           <Tooltip content={<FrontierTooltip />} cursor={{ strokeDasharray: "3 3" }} />
-          <Legend wrapperStyle={{ color: "var(--ink-secondary)", fontSize: 13 }} />
           {points.map((p) => (
             <Scatter key={p.label} name={p.label} data={[p]} fill={p.color} />
           ))}
         </ScatterChart>
       </ResponsiveContainer>
+      </div>
+
+      {/* Custom legend below the plot -- recharts' own <Legend> renders in the
+          same bottom slot as the X-axis label and collides with it. This one
+          wraps cleanly on narrow screens. */}
+      <ul className="mt-2 flex flex-wrap justify-center gap-x-4 gap-y-1 text-sm text-zinc-600 dark:text-zinc-400">
+        {points.map((p) => (
+          <li key={p.label} className="inline-flex items-center gap-1.5">
+            <span
+              className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
+              style={{ background: p.color }}
+              aria-hidden
+            />
+            {p.label}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
