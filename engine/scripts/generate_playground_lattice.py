@@ -22,8 +22,12 @@ from optimize_engine.constants import nrgs
 
 REGION = 'MIDW'  # coal and gas both large -> the carbon-vs-mortality story shows
 YEARS = 6
-CARBON_PRICES = [0.0, 150.0, 350.0]         # $/ton CO2
-MORTALITY_PRICES = [0.0, 14_100_000.0, 21_500_000.0]  # $/death (0, central, high VSL)
+# Finer grid so the sliders have real resolution (the old 3x3 snapped too
+# coarsely to see coal phase out gradually). Carbon in even $50 steps; mortality
+# anchored to zero + the three HHS 2026 VSL presets so every notch is a real,
+# self-describing price rather than an arbitrary interpolation.
+CARBON_PRICES = [0.0, 50.0, 100.0, 150.0, 200.0, 250.0, 300.0, 350.0]  # $/ton CO2
+MORTALITY_PRICES = [0.0, 6_600_000.0, 14_100_000.0, 21_500_000.0]  # $/death (0, low, central, high VSL)
 
 OUT = Path(__file__).resolve().parent.parent.parent / 'web' / 'data' / 'playground_lattice.json'
 

@@ -36,7 +36,7 @@ export function Nav() {
 
   return (
     <header className="border-b border-zinc-200 dark:border-zinc-800">
-      <div className="mx-auto flex max-w-4xl items-center justify-between px-6 py-4">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link
           href="/"
           className="font-display text-lg font-semibold tracking-tight"
@@ -45,9 +45,11 @@ export function Nav() {
           Optimize
         </Link>
 
-        <div className="flex items-center gap-2 sm:gap-6">
-          {/* Desktop nav */}
-          <nav className="hidden items-center gap-6 sm:flex">
+        <div className="flex items-center gap-2 lg:gap-5">
+          {/* Desktop nav -- 8 links need real width, so it only appears at lg+
+              (1024px). Below that the row would overflow, so we show the
+              hamburger instead (tablets included). */}
+          <nav className="hidden items-center gap-5 lg:flex">
             {LINKS.map(([href, label]) => (
               <Link
                 key={href}
@@ -72,7 +74,7 @@ export function Nav() {
             aria-expanded={open}
             aria-controls="mobile-nav"
             onClick={() => setOpen((v) => !v)}
-            className="-mr-2.5 flex h-11 w-11 items-center justify-center sm:hidden"
+            className="-mr-2.5 flex h-11 w-11 items-center justify-center lg:hidden"
           >
             <svg
               width="20"
@@ -97,7 +99,7 @@ export function Nav() {
       {open && (
         <nav
           id="mobile-nav"
-          className="border-t border-zinc-200 px-6 py-3 sm:hidden dark:border-zinc-800"
+          className="border-t border-zinc-200 px-6 py-3 lg:hidden dark:border-zinc-800"
         >
           <ul className="flex flex-col gap-1">
             {LINKS.map(([href, label]) => (

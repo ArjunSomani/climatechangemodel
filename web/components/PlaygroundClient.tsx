@@ -153,7 +153,7 @@ export function PlaygroundClient({ lattice }: { lattice: Lattice }) {
       </div>
 
       <p className="text-xs text-zinc-500 dark:text-zinc-400">
-        A coarse pre-computed grid for {lattice.region} over {lattice.years}{" "}
+        A pre-computed grid for {lattice.region} over {lattice.years}{" "}
         years — the sliders snap to grid points. Watch where coal leaves under
         either price, and where the <strong>gas</strong> share diverges: a
         mortality price keeps more gas than a carbon price of comparable bite.
