@@ -1,0 +1,87 @@
+name: Preview generate library
+
+# Seeds the scenario library into an ISOLATED preview datastore -- never the
+# production Neon/Blob.
+#
+# generate_library.yml binds secrets.DATABASE_URL / secrets.BLOB_READ_WRITE_TOKEN,
+# which are the SAME production datastore that the live /library page reads from.
+# Dispatching it would surface experimental mortality cases on production's
+# public library (and render them with production's frozen, pre-mortality UI).
+#
+# THIS workflow instead binds PREVIEW_DATABASE_URL / PREVIEW_BLOB_READ_WRITE_TOKEN
+# -- point those repo secrets at a throwaway Neon branch + a separate Blob store
+# and the mortality cases only ever exist in the preview world. The preview
+# deployment must have its DATABASE_URL / BLOB_READ_WRITE_TOKEN env vars pointed
+# at the SAME isolated store for the seeded cases to show up on the preview site.
+#
+# Manual only. Select the feature branch under "Run workflow" so the branch's
+# generator (which knows the mortality cases) is what runs.
+on:
+  workflow_dispatch:
+    inputs:
+      regions:
+        description: "Comma-separated region subset (blank = the generator's defaults)"
+        required: false
+        default: ""
+      max_cases:
+        description: "Max new cases to compute this run (re-dispatch to continue)"
+        required: false
+        default: "200"
+
+concurrency:
+  # Distinct from generate-library so a preview seed can never queue behind or
+  # cancel a production library run.
+  group: preview-generate-library
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    defaults:
+      run:
+        working-directory: engine
+    steps:
+      # Fail loudly if the preview secrets are unset, rather than silently
+      # falling through to an empty env (or, worse, prod). This is the guard
+      # that keeps "preview" from ever meaning "production".
+      - name: Require isolated preview datastore
+        env:
+          PREVIEW_DATABASE_URL: ${{ secrets.PREVIEW_DATABASE_URL }}
+          PREVIEW_BLOB_READ_WRITE_TOKEN: ${{ secrets.PREVIEW_BLOB_READ_WRITE_TOKEN }}
+        run: |
+          if [ -z "$PREVIEW_DATABASE_URL" ] || [ -z "$PREVIEW_BLOB_READ_WRITE_TOKEN" ]; then
+            echo "::error::PREVIEW_DATABASE_URL and PREVIEW_BLOB_READ_WRITE_TOKEN must both be set."
+            echo "Create an isolated Neon branch + Blob store and add them as repo secrets."
+            echo "Refusing to run so the production library is never touched."
+            exit 1
+          fi
+
+      # Checks out the ref this workflow was dispatched on (the feature branch),
+      # so the generator that runs is the branch's -- the one that knows the
+      # mortality cases.
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: engine/pyproject.toml
+
+      - run: pip install -e ".[library]"
+
+      - name: Generate library cases (preview datastore)
+        env:
+          # NOTE: the generator reads DATABASE_URL / BLOB_READ_WRITE_TOKEN. We
+          # bind those names to the PREVIEW_* secrets so the isolated store is
+          # the only thing this job can reach.
+          DATABASE_URL: ${{ secrets.PREVIEW_DATABASE_URL }}
+          BLOB_READ_WRITE_TOKEN: ${{ secrets.PREVIEW_BLOB_READ_WRITE_TOKEN }}
+          REGIONS: ${{ inputs.regions }}
+          MAX_CASES: ${{ inputs.max_cases }}
+        run: |
+          args=(--max-cases "$MAX_CASES")
+          if [ -n "$REGIONS" ]; then
+            args+=(--regions "$REGIONS")
+          fi
+          python scripts/generate_library.py "${args[@]}"
