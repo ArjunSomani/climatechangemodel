@@ -89,6 +89,7 @@ const ICONS = {
     </>
   ),
   bolt: <path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z" />,
+  pulse: <path d="M2 12h4l2.5-7 5 14 2.5-7H22" />,
   cash: (
     <>
       <rect x="2.5" y="6" width="19" height="12" rx="1.5" />
@@ -161,7 +162,7 @@ const KNOBS: { icon: keyof typeof ICONS; title: string; body: string }[] = [
     body: "A price on carbon pollution that climbs every year, making gas and coal steadily more expensive.",
   },
   {
-    icon: "flame",
+    icon: "pulse",
     title: "Mortality price",
     body: "A price per death — coal's air pollution and accidents cost lives. It works exactly like the CO₂ price, on a different harm.",
   },

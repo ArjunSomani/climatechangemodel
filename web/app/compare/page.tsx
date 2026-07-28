@@ -65,7 +65,10 @@ export default async function ComparePage({
         <AssumptionsBadges />
       </div>
 
-      <section className="mt-8 overflow-x-auto">
+      <p className="mt-8 text-xs text-zinc-400 sm:hidden">
+        Scroll the table sideways to see every column →
+      </p>
+      <section className="mt-2 overflow-x-auto sm:mt-8">
         <table style={{ borderCollapse: "collapse", width: "100%", fontSize: 13 }}>
           <thead>
             <tr className="border-b border-zinc-300 dark:border-zinc-700">

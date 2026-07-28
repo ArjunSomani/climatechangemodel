@@ -121,15 +121,15 @@ export default function SafetyPage() {
         <h2 className="text-xl font-medium">Every number here is a band</h2>
         <p className="mt-3 text-zinc-700 dark:text-zinc-300">
           You&apos;ll see deaths reported as a{" "}
-          <span className="font-medium">low–central–high</span> range, not a
-          single figure. That band is real scientific uncertainty, and it comes
-          from two independent places:
+          <span className="font-medium">central estimate with a high-side band</span>
+          , not a single figure. That band is real scientific uncertainty, and
+          it comes from two independent places:
         </p>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <ParallelCard
             title="How deadly each source is"
             unit="deaths / TWh"
-            body="Every rate is published as a range. Coal's depends on how air-pollution exposure is modeled; hydro's high bound includes the 1975 Banqiao dam failure, its low bound excludes it. The risk ladder above shows each source's central rate with its low–high in the tooltip."
+            body="Every rate is a central estimate with a much higher upper bound. Coal's depends on how air-pollution exposure is modeled; hydro's high bound includes the 1975 Banqiao dam failure, its central figure excludes it. The risk ladder above shows each source's central rate; hover a bar for its high bound."
           />
           <ParallelCard
             title="What a life is worth"

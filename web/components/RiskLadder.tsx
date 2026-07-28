@@ -79,17 +79,24 @@ export function RiskLadder() {
                 </div>
               </div>
 
-              <div className="w-28 shrink-0 text-right text-sm tabular-nums sm:w-32">
-                <span className="font-medium">{fmtRate(r.central)}</span>
-                <span className="text-zinc-400"> /TWh</span>
-                <a
-                  href={levelSourceUrl(r.source)}
-                  className="ml-2 text-xs text-zinc-400 underline hover:text-accent"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  src
-                </a>
+              <div className="w-28 shrink-0 text-right text-sm tabular-nums sm:w-36">
+                <div>
+                  <span className="font-medium">{fmtRate(r.central)}</span>
+                  <span className="text-zinc-400"> /TWh</span>
+                  <a
+                    href={levelSourceUrl(r.source)}
+                    className="ml-2 text-xs text-zinc-400 underline hover:text-accent"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    src
+                  </a>
+                </div>
+                {r.high > r.central && (
+                  <div className="hidden text-[11px] text-zinc-400 sm:block">
+                    up to {fmtRate(r.high)} (high)
+                  </div>
+                )}
               </div>
             </div>
           );
@@ -114,6 +121,10 @@ export function RiskLadder() {
         </span>
         <span>
           1 TWh ≈ powering {Math.round(HOMES_PER_TWH / 1000)}k homes for a year
+        </span>
+        <span>
+          <span className="rounded bg-zinc-200 px-1 dark:bg-zinc-800">n/a</span> = not
+          built by Optimize (rides along with demand)
         </span>
       </figcaption>
     </figure>

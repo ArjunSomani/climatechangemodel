@@ -78,14 +78,15 @@ export function DeathsTrajectoryChart({ result }: { result: YearRecord[] }) {
   const total = perYear.reduce((a, y) => a + y.central, 0);
 
   return (
-    <div
-      role="img"
-      aria-label={`Area chart of annual deaths from ${data[0]?.Year ?? ""} to ${
-        data[data.length - 1]?.Year ?? ""
-      }, shown as a low-to-high uncertainty band around a central estimate. Cumulative central deaths over the horizon: ${fmt(
-        total
-      )}.`}
-    >
+    <div>
+      <div
+        role="img"
+        aria-label={`Area chart of annual deaths from ${data[0]?.Year ?? ""} to ${
+          data[data.length - 1]?.Year ?? ""
+        }, shown as a central estimate with a high-side uncertainty band. Cumulative central deaths over the horizon: ${fmt(
+          total
+        )}.`}
+      >
       <ResponsiveContainer width="100%" height={300}>
         <ComposedChart data={data} margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
           <CartesianGrid strokeDasharray="0" stroke="var(--chart-gridline)" vertical={false} />
@@ -104,6 +105,14 @@ export function DeathsTrajectoryChart({ result }: { result: YearRecord[] }) {
             axisLine={false}
             tickLine={false}
             width={56}
+            label={{
+              value: "deaths / year",
+              angle: -90,
+              position: "insideLeft",
+              fill: "var(--ink-secondary)",
+              fontSize: 11,
+              style: { textAnchor: "middle" },
+            }}
           />
           <Tooltip content={<DeathsTooltip />} />
           <Area
@@ -131,6 +140,26 @@ export function DeathsTrajectoryChart({ result }: { result: YearRecord[] }) {
           />
         </ComposedChart>
       </ResponsiveContainer>
+      </div>
+      <p className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-zinc-500 dark:text-zinc-400">
+        <span className="inline-flex items-center gap-1.5">
+          <span
+            className="inline-block h-0.5 w-4"
+            style={{ background: "var(--mortality)" }}
+          />
+          central estimate
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <span
+            className="inline-block h-2.5 w-4 rounded-sm"
+            style={{
+              background:
+                "color-mix(in srgb, var(--mortality) 16%, transparent)",
+            }}
+          />
+          low–high uncertainty band
+        </span>
+      </p>
     </div>
   );
 }

@@ -21,9 +21,10 @@ function fmt(n: number): string {
 
 // Hatched fill = modeled deaths (pollution/radiation attributions); solid =
 // counted deaths (recorded accidents). Same encoding Level uses; the
-// distinction is not decoration.
+// distinction is not decoration. Uses the mortality hue (not the reserved UI
+// accent) so every deaths mark on the page shares one color.
 const HATCH =
-  "repeating-linear-gradient(45deg, var(--accent) 0 3px, transparent 3px 6px)";
+  "repeating-linear-gradient(45deg, var(--mortality) 0 3px, transparent 3px 6px)";
 
 export function MortalityResults({
   result,
@@ -70,16 +71,22 @@ export function MortalityResults({
             {fmt(deaths.cumulativeCentral)}
           </span>
           <span className="text-sm text-zinc-500 dark:text-zinc-400">
-            central · band {fmt(deaths.cumulativeLow)}–{fmt(deaths.cumulativeHigh)}
+            central{" "}
+            {deaths.cumulativeHigh > deaths.cumulativeCentral && (
+              <>· up to {fmt(deaths.cumulativeHigh)} (high)</>
+            )}
           </span>
         </div>
 
         {/* Counted vs modeled split, solid vs hatched */}
         <div className="mt-4">
-          <div className="flex h-3 w-full overflow-hidden rounded-full border border-accent/40">
+          <div
+            className="flex h-3 w-full overflow-hidden rounded-full"
+            style={{ border: "1px solid color-mix(in srgb, var(--mortality) 40%, transparent)" }}
+          >
             <div
-              className="h-full bg-accent"
-              style={{ width: `${countedPct}%` }}
+              className="h-full"
+              style={{ width: `${countedPct}%`, background: "var(--mortality)" }}
               aria-hidden
             />
             <div
@@ -90,12 +97,15 @@ export function MortalityResults({
           </div>
           <div className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-xs text-zinc-600 dark:text-zinc-400">
             <span className="inline-flex items-center gap-1.5">
-              <span className="inline-block h-2.5 w-2.5 rounded-sm bg-accent" />
+              <span
+                className="inline-block h-2.5 w-2.5 rounded-sm"
+                style={{ background: "var(--mortality)" }}
+              />
               Counted (accidents): {fmt(counted)}
             </span>
             <span className="inline-flex items-center gap-1.5">
               <span
-                className="inline-block h-2.5 w-2.5 rounded-sm border border-accent/40"
+                className="inline-block h-2.5 w-2.5 rounded-sm"
                 style={{ backgroundImage: HATCH }}
               />
               Modeled (pollution/radiation): {fmt(modeled)}
@@ -126,6 +136,11 @@ export function MortalityResults({
           </span>
         </div>
         <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+          For scale: an all-coal grid runs about {MORTALITY.coal.central}, an
+          all-gas grid {MORTALITY.gas.central}, an all-wind grid{" "}
+          {MORTALITY.wind.central} deaths/TWh.
+        </p>
+        <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
           Directly comparable to{" "}
           <a
             href="https://levelmodel.vercel.app"
@@ -141,7 +156,7 @@ export function MortalityResults({
 
       {/* Per-source coefficients, each linked back to Level */}
       <div className="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-800">
-        <table className="w-full min-w-[28rem] text-sm">
+        <table className="w-full min-w-[20rem] text-sm">
           <thead>
             <tr className="border-b border-zinc-200 text-left text-xs uppercase tracking-wide text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
               <th className="px-3 py-2 font-medium">Source</th>
@@ -178,7 +193,7 @@ export function MortalityResults({
                   <td className="px-3 py-2">{s.label}</td>
                   <td className="px-3 py-2 text-right tabular-nums">
                     {coeff.central}
-                    <span className="text-zinc-400">
+                    <span className="hidden text-zinc-400 sm:inline">
                       {" "}
                       ({coeff.low}–{coeff.high})
                     </span>
