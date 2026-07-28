@@ -6,13 +6,20 @@ import type { Lattice } from "@/lib/playground";
 const lattice = latticeData as Lattice;
 
 // Pre-computed demonstration of what pricing each externality does, straight
-// from the playground lattice (no run required). The honest finding: coal
-// collapses and deaths fall ~90% under EITHER price -- and the two regimes
-// reach nearly the same mix, because over this horizon build-rate limits keep
-// gas in both. The disagreement is in the marginal cost ($347 vs $39/MWh
-// above), not yet the built mix.
+// from the playground lattice (no run required). The finding, over the full
+// 25-year horizon: coal collapses and deaths fall ~95%+ under EITHER price --
+// but the two regimes now DIVERGE on gas. A carbon price squeezes gas hard; a
+// mortality price leaves far more of it, because gas is carbon-heavy but
+// comparatively low-mortality. The disagreement ($347 vs $39/MWh in marginal
+// cost) reaches the built mix once the horizon stops binding.
 const CARBON_HI = lattice.carbonPrices.length - 1;
-const MORT_HI = lattice.mortalityPrices.length - 1;
+// Compare at the published high VSL ($21.5M), not the grid's top ($24M, chosen
+// to match the $400 carbon bite), so every regime stays inside HHS's range.
+const MORT_HI = lattice.mortalityPrices.reduce(
+  (best, p, i, arr) =>
+    Math.abs(p - 21_500_000) < Math.abs(arr[best] - 21_500_000) ? i : best,
+  0
+);
 
 const REGIMES: { label: string; ci: number; mi: number }[] = [
   { label: "No pricing", ci: 0, mi: 0 },
@@ -87,11 +94,16 @@ export function DivergenceComparison() {
 
       <figcaption className="mt-4 text-sm text-zinc-600 dark:text-zinc-400">
         Final-year mix for {lattice.region} over {lattice.years} years, from the
-        pre-computed grid. Coal collapses and deaths fall ~90% under{" "}
-        <em>either</em> price. Notice the two single-price columns look almost
-        the same: over this horizon, build-rate limits keep gas in both, so the
-        disagreement stays in the marginal cost ($347 vs $39/MWh) rather than
-        the built mix. Push the horizon or the prices further in the{" "}
+        pre-computed grid. Coal collapses and grid deaths fall ~95%+ under{" "}
+        <em>either</em> price — that&apos;s the robust result. Now look at{" "}
+        <span style={{ color: "var(--series-gas)" }} className="font-medium">
+          gas
+        </span>
+        : the carbon price pushes it far lower than the mortality price does. The
+        two prices genuinely disagree about gas — carbon-heavy but comparatively
+        low-mortality — and over the full horizon that disagreement reaches the{" "}
+        <em>built mix</em>, not just the marginal cost ($347 vs $39/MWh). Move
+        both sliders in the{" "}
         <a href="/playground" className="underline hover:text-accent">
           playground
         </a>

@@ -9,6 +9,8 @@ import {
   CountedModeledNote,
 } from "@/components/SafetyDisclosure";
 import { MORTALITY, VSL_PRESETS, formatVsl } from "@/lib/mortality";
+import latticeData from "@/data/playground_lattice.json";
+import type { Lattice } from "@/lib/playground";
 
 const VSL_CENTRAL = 14_100_000;
 // deaths/TWh × $/death ÷ 1e6 MWh/TWh = $/MWh of mortality cost.
@@ -17,6 +19,23 @@ const coalMortalityPerMwh = Math.round(
 );
 const gasMortalityPerMwh = Math.round(
   (MORTALITY.gas.central * VSL_CENTRAL) / 1_000_000
+);
+
+// Headline numbers, straight from the pre-computed grid (same source as the
+// comparison lower down), so the lead result and the chart never disagree.
+const lattice = latticeData as Lattice;
+const CARBON_HI = lattice.carbonPrices.length - 1;
+const MORT_HI = lattice.mortalityPrices.reduce(
+  (best, p, i, arr) =>
+    Math.abs(p - 21_500_000) < Math.abs(arr[best] - 21_500_000) ? i : best,
+  0
+);
+const baselineDeaths = Math.round(lattice.cells["0_0"].deathsCentral);
+const carbonDeaths = Math.round(lattice.cells[`${CARBON_HI}_0`].deathsCentral);
+const mortDeaths = Math.round(lattice.cells[`0_${MORT_HI}`].deathsCentral);
+// Conservative (smaller) collapse of the two single-price regimes.
+const collapsePct = Math.round(
+  100 * (1 - Math.max(carbonDeaths, mortDeaths) / baselineDeaths)
 );
 
 export const metadata = {
@@ -52,6 +71,50 @@ export default function SafetyPage() {
           you charge for it and watch the cheapest grid change.
         </p>
       </div>
+
+      <section className="mt-10">
+        <div className="rounded-2xl border border-zinc-200 bg-zinc-50/60 p-5 dark:border-zinc-800 dark:bg-zinc-900/40">
+          <p className="text-xs font-semibold tracking-[0.15em] text-[var(--mortality)] uppercase">
+            The headline result
+          </p>
+          <p className="mt-2 text-lg text-zinc-800 dark:text-zinc-200">
+            Put a price on <em>either</em> harm — carbon or mortality — and the
+            coal-heavy Midwest is transformed: coal collapses and grid deaths
+            fall about{" "}
+            <strong className="text-black dark:text-zinc-50">
+              {collapsePct}%
+            </strong>
+            , from ~{baselineDeaths.toLocaleString()} to a few dozen a year. It
+            barely matters <em>which</em> harm you price.
+          </p>
+          <div className="mt-4 grid grid-cols-3 gap-3 text-center">
+            <DeathStat label="No pricing" value={baselineDeaths} tone="bad" />
+            <DeathStat
+              label={`Carbon $${lattice.carbonPrices[CARBON_HI]}`}
+              value={carbonDeaths}
+            />
+            <DeathStat
+              label={`Mortality ${formatVsl(lattice.mortalityPrices[MORT_HI])}`}
+              value={mortDeaths}
+            />
+          </div>
+          <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-400">
+            The subtler, more interesting part is the second act — where the two
+            prices <em>disagree</em>. They part ways on{" "}
+            <span
+              style={{ color: "var(--series-gas)" }}
+              className="font-medium"
+            >
+              gas
+            </span>
+            ,{" "}
+            <a href="#divergence" className="underline hover:text-accent">
+              shown below
+            </a>
+            .
+          </p>
+        </div>
+      </section>
 
       <section className="mt-12">
         <h2 className="text-xl font-medium">The risk ladder</h2>
@@ -125,12 +188,16 @@ export default function SafetyPage() {
           />
         </div>
         <p className="mt-4 text-sm text-zinc-600 dark:text-zinc-400">
-          They don&apos;t fully agree. Coal exits under either. Gas is where
-          they&apos;d part ways — ~9× cleaner than coal on deaths but only ~1.7×
-          cleaner on CO₂, so per MWh a mortality price barely touches gas while a
-          carbon price leans on it hard. Whether that reaches the{" "}
-          <em>built</em> mix depends on how fast clean capacity can replace it;
-          move both sliders in the{" "}
+          They don&apos;t fully agree. Coal exits under either. Gas is where they
+          part ways — ~9× cleaner than coal on deaths but only ~1.7× cleaner on
+          CO₂, so per MWh a mortality price barely touches gas while a carbon
+          price leans on it hard. Over the full 25-year horizon that difference
+          reaches the <em>built</em> mix: a carbon price drives gas far lower
+          than a mortality price does (
+          <a href="#divergence" className="underline hover:text-accent">
+            shown below
+          </a>
+          ). Move both sliders in the{" "}
           <Link href="/playground" className="underline hover:text-accent">
             playground
           </Link>{" "}
@@ -183,32 +250,24 @@ export default function SafetyPage() {
       <section className="mt-12">
         <h2 className="text-xl font-medium">Every number here is a band</h2>
         <p className="mt-3 text-zinc-700 dark:text-zinc-300">
-          You&apos;ll see deaths reported as a{" "}
-          <span className="font-medium">central estimate with a high-side band</span>
-          , not a single figure. That band is real scientific uncertainty, and
-          it comes from two independent places:
-        </p>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <ParallelCard
-            title="How deadly each source is"
-            unit="deaths / TWh"
-            body="Every rate is a central estimate with a much higher upper bound. Coal's depends on how air-pollution exposure is modeled; hydro's high bound includes the 1975 Banqiao dam failure, its central figure excludes it. The risk ladder above shows each source's central rate with its high bound labeled alongside."
-          />
-          <ParallelCard
-            title="What a life is worth"
-            unit="$ / death"
-            body="The VSL is itself a low/central/high range (the three cards above), not a point. It's a separate axis of uncertainty layered on top of the death rates."
-          />
-        </div>
-        <p className="mt-4 text-sm text-zinc-600 dark:text-zinc-400">
-          Deaths inherit the first band. A priced-mortality{" "}
-          <em>cost</em> inherits both — which is why any dollar figure that
-          includes mortality is reported as a band too, never a single number.
-          The honest read is the width of the band, not the midpoint.
+          Deaths are reported as a{" "}
+          <span className="font-medium">
+            central estimate with a high-side band
+          </span>
+          , never a single figure. The band is real scientific uncertainty from
+          two independent places: how deadly each source is (coal&apos;s
+          air-pollution toll is <em>modeled</em>, not counted), and what a life
+          is worth (the VSL is itself a low/central/high range). A
+          priced-mortality cost inherits both — so any dollar figure that
+          includes mortality is a band too. The honest read is the width, not
+          the midpoint.{" "}
+          <Link href="/methodology" className="underline hover:text-accent">
+            How the bands are built →
+          </Link>
         </p>
       </section>
 
-      <section className="mt-12">
+      <section id="divergence" className="mt-12 scroll-mt-20">
         <h2 className="text-xl font-medium">
           What pricing mortality actually does
         </h2>
@@ -235,8 +294,8 @@ export default function SafetyPage() {
         </p>
 
         <div className="mt-6 rounded-xl border border-zinc-200 p-5 dark:border-zinc-800">
-          <div className="mb-3 text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
-            Coal exits under either price — pre-computed, no run required
+          <div className="mb-3 text-xs font-medium tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
+            Coal exits under either price — but gas is where they diverge
           </div>
           <DivergenceComparison />
         </div>
@@ -315,26 +374,19 @@ export default function SafetyPage() {
       <section className="mt-12">
         <h2 className="text-xl font-medium">Where the deaths land</h2>
         <p className="mt-3 text-zinc-700 dark:text-zinc-300">
-          CO₂ is a global pollutant — it doesn&apos;t matter where it&apos;s
-          emitted. Air-pollution deaths are local. Optimize reports{" "}
+          CO₂ is global; air-pollution deaths are local. Optimize reports{" "}
           <span className="font-medium">production-based</span> deaths, attributed
-          to the region that did the generating.
+          to the region that generated the power. Because each region is
+          optimized in isolation with no transmission between regions, every
+          region consumes exactly what it generates — so production- and
+          consumption-based mortality are the same number here, by construction.{" "}
+          <Link href="/methodology" className="underline hover:text-accent">
+            Why, and what would change it →
+          </Link>
         </p>
         <div className="mt-4">
           <AttributionNote />
         </div>
-        <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-400">
-          Because each region is optimized in isolation with{" "}
-          <span className="font-medium">no transmission between regions</span>,
-          every region here consumes exactly what it generates —
-          production-based and consumption-based mortality are the same number
-          by construction. The distinction only becomes meaningful in a model
-          with inter-regional transfers, where a region can import clean-looking
-          power while <em>exporting</em> its mortality. Adding that would mean
-          adding transmission to the optimizer — which would change every result
-          on this site, not just the mortality ones. It&apos;s a change to what
-          the model <em>is</em>, not a bolt-on.
-        </p>
       </section>
 
       <section className="mt-12">
@@ -342,16 +394,6 @@ export default function SafetyPage() {
         <div className="mt-4">
           <SafetyFaq />
         </div>
-      </section>
-
-      <section className="mt-12">
-        <h2 className="text-xl font-medium">Deliberately out of scope</h2>
-        <p className="mt-3 text-zinc-700 dark:text-zinc-300">
-          This lens is mortality only. Morbidity (illness short of death), water
-          use, land use, critical minerals, and equity-weighting of deaths by
-          affected population are all real and all excluded — several are worth
-          adding later; none belong in this first cut.
-        </p>
       </section>
 
       <div className="mt-12 rounded-xl border border-zinc-200 p-6 text-center dark:border-zinc-800">
@@ -403,6 +445,33 @@ function CompareBar({
       <span className="w-20 shrink-0 text-right text-sm tabular-nums">
         {value} <span className="text-zinc-400">/TWh</span>
       </span>
+    </div>
+  );
+}
+
+function DeathStat({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: number;
+  tone?: "bad";
+}) {
+  return (
+    <div className="rounded-xl border border-zinc-200 py-3 dark:border-zinc-800">
+      <div
+        className="font-display text-2xl font-semibold tabular-nums"
+        style={tone === "bad" ? { color: "var(--mortality)" } : undefined}
+      >
+        {value.toLocaleString()}
+      </div>
+      <div className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+        {label}
+      </div>
+      <div className="text-[10px] tracking-wide text-zinc-400 uppercase">
+        deaths / yr
+      </div>
     </div>
   );
 }
