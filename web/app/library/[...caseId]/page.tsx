@@ -26,6 +26,16 @@ export default async function LibraryCasePage({
   const variantPart =
     detail.variant !== "Default" ? ` ${detail.variant.replace(/_/g, " ")}` : "";
 
+  // Mortality price lives in the stored config, not a catalog column.
+  const cfg = detail.config as
+    | { mortality_price?: { initial?: number } }
+    | null;
+  const mortalityInitial = cfg?.mortality_price?.initial ?? 0;
+  const priceLabel =
+    mortalityInitial > 0
+      ? `CO₂ $${detail.co2_initial}/MT · mortality $${(mortalityInitial / 1_000_000).toFixed(1)}M/death`
+      : `CO₂ price $${detail.co2_initial}/MT`;
+
   return (
     <div className="mx-auto max-w-4xl px-6 py-16">
       <Link
@@ -37,7 +47,7 @@ export default async function LibraryCasePage({
 
       <h1 className="mt-2 text-3xl font-semibold tracking-tight">
         {detail.group_name.replace(/_/g, " ")}
-        {variantPart} — CO₂ price ${detail.co2_initial}/MT
+        {variantPart} — {priceLabel}
       </h1>
       <p className="mt-1 text-zinc-600 dark:text-zinc-400">
         {detail.region} · {detail.years} years · {detail.co2_regime.replace("_", " ")}

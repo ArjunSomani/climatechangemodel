@@ -39,6 +39,16 @@ export default async function ComparePage({
         <div className="mt-6">
           <NewHereBanner />
         </div>
+        <Link
+          href={
+            "/compare?cases=" +
+            "mortality/carbon_only/constant_co2/co2_350_0/MIDW," +
+            "mortality/central_vsl/constant_co2/co2_0_0/MIDW"
+          }
+          className="mt-6 inline-flex items-center gap-2 rounded-lg border border-accent/50 px-4 py-2.5 text-sm font-medium text-accent hover:bg-accent/5"
+        >
+          See the example: carbon vs. mortality in the coal-heavy Midwest →
+        </Link>
         <div className="mt-8">
           <CasePicker cases={allCases} />
         </div>

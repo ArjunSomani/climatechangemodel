@@ -4,10 +4,17 @@ import { EnergyMixChart } from "@/components/EnergyMixChart";
 
 export const dynamic = "force-dynamic";
 
-const TEASER_CASE_ID = "default/default/constant_co2/co2_500_0/CAL";
+// Prefer the mortality headline case (coal-heavy Midwest under a mortality
+// price — coal exits); fall back to the classic carbon case so the hero always
+// has a chart even before the mortality cases are seeded into the library.
+const MORTALITY_TEASER_ID = "mortality/central_vsl/constant_co2/co2_0_0/MIDW";
+const FALLBACK_TEASER_ID = "default/default/constant_co2/co2_500_0/CAL";
 
 export default async function Home() {
-  const teaser = await getLibraryCase(TEASER_CASE_ID);
+  const teaser =
+    (await getLibraryCase(MORTALITY_TEASER_ID)) ??
+    (await getLibraryCase(FALLBACK_TEASER_ID));
+  const teaserIsMortality = teaser?.group_name === "Mortality";
 
   // Derive the horizon from the teaser run so the copy never goes stale as the
   // underlying EIA data is refreshed each year (the first simulated year tracks
@@ -87,8 +94,9 @@ export default async function Home() {
         {teaser && (
           <div className="mt-16">
             <p className="mb-2 text-center text-sm text-zinc-500 dark:text-zinc-400">
-              California under a $500/MT CO₂ price — nuclear and wind grow in,
-              gas grows out
+              {teaserIsMortality
+                ? "The coal-heavy Midwest under a mortality price — coal exits, cleaner sources grow in"
+                : "California under a $500/MT CO₂ price — nuclear and wind grow in, gas grows out"}
             </p>
             <div className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
               <EnergyMixChart data={teaser.result} />

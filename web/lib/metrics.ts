@@ -9,6 +9,13 @@ function humanize(s: string): string {
 }
 
 export function caseLabel(c: LibraryCaseSummary): string {
+  // Mortality-priced cases: the catalog columns are CO2-centric and can't hold
+  // the mortality price (it lives in `config`), so identify them by the
+  // self-describing variant instead of a misleading "$0/MT".
+  if (c.group_name === "Mortality") {
+    const carbon = c.co2_initial > 0 ? `$${c.co2_initial}/MT CO₂` : "no carbon";
+    return `${c.region} · ${humanize(c.variant)} · ${carbon}`;
+  }
   const variantPart =
     c.variant !== "Default" ? ` ${humanize(c.variant)}` : "";
   const co2Part =

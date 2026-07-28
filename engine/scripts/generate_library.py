@@ -63,6 +63,10 @@ class CaseGroup:
     source_overrides: dict = field(default_factory=dict)
     interest: tuple[float, float] = (0.12, 1)
     demand: tuple[float, float] = (1.02, 1)
+    # ($/death initial, yearly VSL escalation multiplier). 0 = feature off,
+    # reproducing the pre-mortality model exactly (the default for the whole
+    # standard library below); the Mortality group sets it.
+    mortality: tuple[float, float] = (0, 0)
 
 
 # All 13 EIA regions x every variant x all 4 constant CO2 levels, so the
@@ -94,7 +98,32 @@ VARIANT_TEMPLATES: list[tuple[str, str, dict, tuple[float, float], tuple[float, 
     ('Demand', '3pct_Growth', {}, (0.12, 1), (1.03, 1)),
 ]
 
-GROUPS = [
+# Mortality-priced headline cases: the feature's most illustrative runs,
+# pre-computed so the Library, Compare, and the landing hero can show mortality
+# without asking anyone to configure and wait on a custom run. Two contrasting
+# regions -- CAL (gas-heavy) and MIDW (coal-heavy) -- across a focused set of
+# price regimes. The mortality price lives in each case's stored `config`
+# (mortality_price); the catalog columns stay CO2-centric, and the "Mortality"
+# group_name is how the frontend recognizes them.
+MORTALITY_REGIONS = ['CAL', 'MIDW']
+# (variant, (co2_initial, co2_yearly, regime), (mortality_initial, mortality_yearly))
+MORTALITY_VARIANTS: list[tuple[str, tuple[float, float, str], tuple[float, float]]] = [
+    ('Low_VSL', (0, 0, 'Constant_CO2'), (6_600_000, 1)),
+    ('Central_VSL', (0, 0, 'Constant_CO2'), (14_100_000, 1)),
+    ('High_VSL', (0, 0, 'Constant_CO2'), (21_500_000, 1)),
+    ('Carbon_Only', (350, 0, 'Constant_CO2'), (0, 1)),
+    ('Both', (350, 0, 'Constant_CO2'), (14_100_000, 1)),
+]
+
+MORTALITY_GROUPS = [
+    CaseGroup('Mortality', variant, region, [co2], mortality=mort)
+    for region in MORTALITY_REGIONS
+    for (variant, co2, mort) in MORTALITY_VARIANTS
+]
+
+# Mortality cases first, so a capped run (max_cases) seeds the headline
+# scenarios before grinding through the full standard cross-product.
+GROUPS = MORTALITY_GROUPS + [
     CaseGroup(
         group, variant, region,
         CONSTANT_CO2 + (INCREASING_CO2 if (group, variant, region) == ('Default', 'Default', 'CAL') else []),
@@ -252,6 +281,7 @@ def main() -> None:
                 co2_price=TweakPair(initial=co2_initial, yearly=co2_yearly),
                 interest=TweakPair(initial=g.interest[0], yearly=g.interest[1]),
                 demand=TweakPair(initial=g.demand[0], yearly=g.demand[1]),
+                mortality_price=TweakPair(initial=g.mortality[0], yearly=g.mortality[1]),
                 sources=_build_sources(g.source_overrides),
             )
 
