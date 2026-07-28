@@ -32,15 +32,30 @@ from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
 from optimize_engine import ScenarioConfig, TweakPair, mortality, run_scenario
-from optimize_engine.constants import nrgs
+from optimize_engine.constants import nrgs, CO2_MT_MWh, nrg2nrgx_lu
+from optimize_engine.core import get_specxs_nrgxs
 
 REGION = 'MIDW'  # coal and gas both large -> the carbon-vs-mortality story shows
-YEARS = 6
-# Fine grid so both sliders drag with near-continuous resolution. Carbon in $25
-# steps to $400; mortality in $2M steps to $24M (spanning zero through past the
-# high VSL preset). 17 x 13 = 221 cells.
-CARBON_PRICES = [float(c) for c in range(0, 401, 25)]           # $/ton CO2
-MORTALITY_PRICES = [float(2_000_000 * i) for i in range(0, 13)]  # $/death
+# 25 years, not 6: at a short horizon build-rate caps bind under *both* prices,
+# so carbon and mortality converge on the same mix and the slider shows a null
+# result. Over the full horizon there is finally room for the divergence the
+# page is about (mortality tolerates more gas than carbon does) to appear.
+YEARS = 25
+# 25-yr cells are ~4x slower than 6-yr, so the grid trades some slider stops for
+# the horizon that actually makes the science visible. Carbon spans $0-400 (finer
+# near the coal/gas transitions); mortality spans zero + the three HHS VSL presets
+# + $24M (which matches the bite of $400/ton CO2). 12 x 6 = 72 cells.
+CARBON_PRICES = [0.0, 25.0, 50.0, 75.0, 100.0, 125.0, 150.0, 175.0, 200.0, 250.0, 300.0, 400.0]
+MORTALITY_PRICES = [0.0, 6_600_000.0, 12_000_000.0, 14_100_000.0, 21_500_000.0, 24_000_000.0]
+
+# CO2 intensity per source, straight from the engine's Specs.csv (single source
+# of truth). The engine's per-year `{s}_CO2_MT` output field is summed over
+# sample_years and NOT normalized (faithful to the original Optimize.py, and
+# locked by the golden tests), so it over-reports annual CO2 by that factor.
+# Compute annual CO2 the same way deaths are computed instead: per-year
+# generation x intensity. web/lib/co2.ts mirrors these values.
+_SPECS = get_specxs_nrgxs()
+CO2_INTENSITY = {nrg: float(_SPECS[CO2_MT_MWh, nrg2nrgx_lu[nrg]]) for nrg in nrgs}
 
 OUT = Path(__file__).resolve().parent.parent.parent / 'web' / 'data' / 'playground_lattice.json'
 
@@ -60,7 +75,9 @@ def _cell(result) -> dict:
     region = result.regions[0]
     last = region.years[-1]
     final_mix = {s: round(last.get(f'{s}_MWh', 0.0), 3) for s in nrgs}
-    co2_final = round(sum(last.get(f'{s}_CO2_MT', 0.0) for s in nrgs), 4)
+    # Annual CO2 (Mt) from generation x intensity -- see CO2_INTENSITY note.
+    # NOT sum(`{s}_CO2_MT`), which is the sample_years-inflated engine field.
+    co2_final = round(sum(last.get(f'{s}_MWh', 0.0) * CO2_INTENSITY[s] for s in nrgs), 4)
     deaths_final = region.deaths[-1]
     cumulative = sum(row['deaths_central'] for row in region.deaths)
     return {

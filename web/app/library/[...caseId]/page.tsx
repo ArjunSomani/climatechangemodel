@@ -4,7 +4,7 @@ import { getLibraryCase } from "@/lib/library";
 import { EnergyMixChart } from "@/components/EnergyMixChart";
 import { YearTable } from "@/components/YearTable";
 import { MortalityResults } from "@/components/MortalityResults";
-import { SOURCES } from "@/lib/sources";
+import { co2MtFromGeneration } from "@/lib/co2";
 import { formatCO2, formatEnergy } from "@/lib/format";
 
 // Reflects live Neon/Blob data -- must not be prerendered/cached at build time.
@@ -19,10 +19,7 @@ export default async function LibraryCasePage({
   if (!detail) notFound();
 
   const lastYear = detail.result[detail.result.length - 1];
-  const totalCO2MT = SOURCES.reduce(
-    (sum, s) => sum + (lastYear[`${s.key}_CO2_MT`] ?? 0),
-    0
-  );
+  const totalCO2 = co2MtFromGeneration(lastYear);
   const variantPart =
     detail.variant !== "Default" ? ` ${detail.variant.replace(/_/g, " ")}` : "";
 
@@ -54,7 +51,7 @@ export default async function LibraryCasePage({
       </p>
 
       <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <Stat label="Final-year CO₂" value={formatCO2(totalCO2MT)} />
+        <Stat label="Final-year CO₂" value={formatCO2(totalCO2)} />
         <Stat label="Final-year demand" value={formatEnergy(lastYear.Target_MWh)} />
         <Stat label="Final-year outage" value={formatEnergy(lastYear.Outage_MWh)} />
         <Stat label="Years modeled" value={String(detail.years)} />
