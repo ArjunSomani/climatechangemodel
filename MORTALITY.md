@@ -100,10 +100,33 @@ so that changing a coefficient invalidates cases built under the old numbers.
 The primitive and its tests are in; wiring it into the library schema and
 generation pipeline is a remaining step (below).
 
+## Preview worker (end-to-end mortality-priced runs)
+
+`preview_run_worker.yml` is a manual (`workflow_dispatch`) worker that checks
+out whatever branch it's dispatched on and drains the queue with *that*
+branch's engine. Dispatch it against `feat/mortality-externality` and a
+submitted custom run actually re-optimizes under the mortality price, instead
+of being drained by the scheduled default-branch worker. `run_worker.py` needed
+no change — it already passes the full config (incl. `mortality_price`) into
+`ScenarioConfig(**config)`. Caveat: the scheduled main-branch worker shares the
+`runs` table, so to guarantee a preview run is claimed by the branch engine,
+dispatch right after submitting (schedule fires every 5 min) or pause the
+scheduled worker while testing.
+
+## Two-slider playground
+
+`/playground` drives an instant carbon-vs-mortality explorer off a pre-computed
+lattice (`engine/scripts/generate_playground_lattice.py` →
+`web/data/playground_lattice.json`). Each grid cell is one optimizer run;
+the sliders snap to grid points and read the nearest cell, so response is
+instant with no worker. Shipped as a **coarse one-region demo** (MIDW, a 3×3
+carbon×mortality grid); widening it to more regions / a finer grid is a
+generation-pipeline concern, same as the library. The lattice is stamped with
+`mortalityVersion`.
+
 ## Deferred — exact next steps
 
-These need the Neon/Blob pipeline or external data (can't be run/validated from
-a code sandbox), or hours of optimizer compute:
+These still need the Neon/Blob pipeline or external data:
 
 1. **Persist engine deaths + `mortality_version` in the library.** Add a
    `mortality_version` column in `setup_library_schema.py`; stamp it in
@@ -111,16 +134,12 @@ a code sandbox), or hours of optimizer compute:
    with `eia_version`); optionally store a `deaths_per_twh` summary column so
    the **Library list** can show a per-card deaths chip (the list query carries
    only metadata today). Read them in `web/lib/library.ts`.
-2. **Wire the preview worker to this branch** (`run_worker.yml`) so custom runs
-   submitted on the preview actually re-optimize under the mortality price,
-   end-to-end, instead of being drained by the production worker.
-3. **Consumption-based accounting (EIA-930).** The headline of §2.3 —
+2. **Consumption-based accounting (EIA-930).** The headline of §2.3 —
    imported/exported mortality per region — needs an hourly inter-regional
    interchange dataset the engine doesn't model. Bring in EIA-930 flows, then
    allocate deaths through them; add the accounting-identity test.
-4. **Two-slider playground.** Pre-compute a lattice of (carbon, mortality)
-   price pairs per region in the generation pipeline, then drive an instant
-   carbon-vs-mortality explorer off the lookup surface (no worker wait).
+3. **Widen the playground lattice** to all regions and a finer grid, generated
+   in the offline pipeline rather than by hand.
 
 ## Known preview limitation
 

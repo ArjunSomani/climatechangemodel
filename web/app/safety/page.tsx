@@ -80,19 +80,32 @@ export default function SafetyPage() {
         <h2 className="text-xl font-medium">
           The most surprising number: nuclear
         </h2>
-        <p className="mt-3 text-zinc-700 dark:text-zinc-300">
-          Nuclear sits near the bottom of the ladder at {MORTALITY.nuclear.central}{" "}
-          deaths/TWh — roughly{" "}
-          <span className="font-semibold text-black dark:text-zinc-50">
-            {Math.round(MORTALITY.coal.central / MORTALITY.nuclear.central)}×
-            safer than coal
-          </span>
-          , on par with wind and solar. That figure{" "}
-          <em>includes</em> every death from every nuclear accident, Chernobyl
-          and Fukushima among them. The toll from electricity is dominated by
-          coal&apos;s ordinary, everyday air pollution — not by rare disasters.
-          The number isn&apos;t hiding the accidents; the accidents are just
-          small next to the smog.
+        <div className="mt-4 rounded-xl border border-zinc-200 p-5 dark:border-zinc-800">
+          <CompareBar
+            label="Coal"
+            value={MORTALITY.coal.central}
+            max={MORTALITY.coal.central}
+            colorVar="--series-coal"
+          />
+          <CompareBar
+            label="Nuclear"
+            value={MORTALITY.nuclear.central}
+            max={MORTALITY.coal.central}
+            colorVar="--series-nuclear"
+          />
+          <p className="mt-3 text-center text-sm font-medium">
+            ≈{Math.round(MORTALITY.coal.central / MORTALITY.nuclear.central)}×
+            safer than coal —{" "}
+            <span className="font-normal text-zinc-500 dark:text-zinc-400">
+              accidents included
+            </span>
+          </p>
+        </div>
+        <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-400">
+          Nuclear&apos;s {MORTALITY.nuclear.central} deaths/TWh counts every
+          death from every accident — Chernobyl and Fukushima among them. The
+          toll from electricity is dominated by coal&apos;s everyday air
+          pollution, not by rare disasters.
         </p>
       </section>
 
@@ -122,11 +135,11 @@ export default function SafetyPage() {
           They don&apos;t agree. Coal exits under either. Gas is where they
           diverge: it&apos;s ~9× better than coal on deaths but only ~1.7× better
           on CO₂ — so a mortality price tolerates gas where a carbon price pushes
-          past it. Move both sliders on the{" "}
-          <Link href="/custom-run" className="underline hover:text-accent">
-            custom run
+          past it. Move both sliders in the{" "}
+          <Link href="/playground" className="underline hover:text-accent">
+            playground
           </Link>{" "}
-          page to see it.
+          to watch it happen.
         </p>
       </section>
 
@@ -156,14 +169,11 @@ export default function SafetyPage() {
           ))}
         </div>
         <p className="mt-4 text-zinc-700 dark:text-zinc-300">
-          Where does a number like $14.1M come from? From{" "}
+          That number comes from{" "}
           <span className="font-medium">what people actually pay to avoid risk</span>{" "}
-          — wage premiums for dangerous jobs, spending on safety features —
-          scaled up from small risks to one statistical death. It is emphatically{" "}
-          <span className="font-medium">not the price of your life</span>, or
-          anyone&apos;s in particular. It is what a population&apos;s own choices
-          reveal about avoiding one death somewhere among them. Agencies use it
-          precisely so safety rules aren&apos;t written on gut feeling.
+          — wage premiums for dangerous jobs, spending on safety — scaled up to
+          one statistical death. It is <span className="font-medium">not the
+          price of your life</span>, or anyone&apos;s in particular.
         </p>
         <div className="mt-4">
           <MoralChoiceNote />
@@ -231,8 +241,13 @@ export default function SafetyPage() {
         </p>
       </section>
 
-      <section className="mt-12">
-        <h2 className="text-xl font-medium">Where these numbers come from</h2>
+      <details className="group mt-12 border-t border-zinc-200 pt-6 dark:border-zinc-800">
+        <summary className="flex cursor-pointer list-none items-center justify-between text-xl font-medium marker:content-none">
+          Where these numbers come from
+          <span aria-hidden className="text-base text-zinc-400 transition group-open:rotate-45">
+            +
+          </span>
+        </summary>
         <p className="mt-3 text-zinc-700 dark:text-zinc-300">
           Optimize does not invent death rates. They are imported from{" "}
           <a
@@ -259,12 +274,15 @@ export default function SafetyPage() {
           site links back to its Level source page, and Level to the original
           research.
         </p>
-      </section>
+      </details>
 
-      <section className="mt-12">
-        <h2 className="text-xl font-medium">
+      <details className="group mt-6 border-t border-zinc-200 pt-6 dark:border-zinc-800">
+        <summary className="flex cursor-pointer list-none items-center justify-between text-xl font-medium marker:content-none">
           What could make these numbers wrong
-        </h2>
+          <span aria-hidden className="text-base text-zinc-400 transition group-open:rotate-45">
+            +
+          </span>
+        </summary>
         <p className="mt-3 text-zinc-700 dark:text-zinc-300">
           Stated plainly, because pretending otherwise would be the real error:
         </p>
@@ -291,7 +309,7 @@ export default function SafetyPage() {
             debate is the point — it&apos;s why the price is yours to set.
           </li>
         </ul>
-      </section>
+      </details>
 
       <section className="mt-12">
         <h2 className="text-xl font-medium">Where the deaths land</h2>
@@ -351,6 +369,34 @@ export default function SafetyPage() {
           Price mortality in a custom run →
         </Link>
       </div>
+    </div>
+  );
+}
+
+function CompareBar({
+  label,
+  value,
+  max,
+  colorVar,
+}: {
+  label: string;
+  value: number;
+  max: number;
+  colorVar: string;
+}) {
+  const pct = Math.max(0.6, (value / max) * 100);
+  return (
+    <div className="flex items-center gap-3 py-1.5">
+      <span className="w-16 shrink-0 text-sm font-medium">{label}</span>
+      <div className="h-5 flex-1">
+        <div
+          className="h-full rounded-sm"
+          style={{ width: `${pct}%`, background: `var(${colorVar})` }}
+        />
+      </div>
+      <span className="w-20 shrink-0 text-right text-sm tabular-nums">
+        {value} <span className="text-zinc-400">/TWh</span>
+      </span>
     </div>
   );
 }
