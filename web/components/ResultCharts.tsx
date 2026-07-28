@@ -8,9 +8,11 @@
 import { useState } from "react";
 import { EnergyMixChart } from "@/components/EnergyMixChart";
 import { CapacityChart } from "@/components/CapacityChart";
+import { CapacityFactorChart } from "@/components/CapacityFactorChart";
+import { EmissionsChart } from "@/components/EmissionsChart";
 import type { YearRecord } from "@/lib/library";
 
-type MetricKey = "generation" | "capacity";
+type MetricKey = "generation" | "capacity" | "utilization" | "emissions";
 
 const METRICS: { key: MetricKey; label: string; caption: string }[] = [
   {
@@ -21,9 +23,21 @@ const METRICS: { key: MetricKey; label: string; caption: string }[] = [
   },
   {
     key: "capacity",
-    label: "Installed capacity",
+    label: "Capacity",
     caption:
       "Generating capacity built and standing each year (MW) — what's available, whether or not it runs. Capacity and generation diverge: a plant that rarely runs is large in MW but small in MWh.",
+  },
+  {
+    key: "utilization",
+    label: "Utilization",
+    caption:
+      "Capacity factor by source — the share of the time each source's capacity is actually producing. Nuclear runs almost always; solar only when the sun is up.",
+  },
+  {
+    key: "emissions",
+    label: "Emissions",
+    caption:
+      "Annual CO₂ (Mt), computed from generation × each source's carbon intensity.",
   },
 ];
 
@@ -61,11 +75,10 @@ export function ResultCharts({ data }: { data: YearRecord[] }) {
       </div>
 
       <div className="mt-3">
-        {metric === "generation" ? (
-          <EnergyMixChart data={data} />
-        ) : (
-          <CapacityChart data={data} />
-        )}
+        {metric === "generation" && <EnergyMixChart data={data} />}
+        {metric === "capacity" && <CapacityChart data={data} />}
+        {metric === "utilization" && <CapacityFactorChart data={data} />}
+        {metric === "emissions" && <EmissionsChart data={data} />}
       </div>
       <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
         {active.caption}

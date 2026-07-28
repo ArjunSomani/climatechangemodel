@@ -7,6 +7,7 @@ import { CasePicker } from "@/components/CasePicker";
 import { CO2TrajectoryChart } from "@/components/CO2TrajectoryChart";
 import { CO2VsDeathsChart } from "@/components/CO2VsDeathsChart";
 import { EnergyMixChart } from "@/components/EnergyMixChart";
+import { CapacityChart } from "@/components/CapacityChart";
 import { formatEnergy } from "@/lib/format";
 import { Term } from "@/components/Term";
 import { NewHereBanner } from "@/components/NewHereBanner";
@@ -175,6 +176,29 @@ export default async function ComparePage({
               </p>
               <div className="rounded-lg border border-zinc-200 p-3 dark:border-zinc-800">
                 <EnergyMixChart data={c.result} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-10">
+        <h2 className="flex items-center gap-2 text-lg font-medium">
+          <span className="h-3 w-1 rounded-full bg-accent" aria-hidden />
+          Installed capacity per scenario
+        </h2>
+        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+          What gets <em>built</em> (MW), as opposed to what runs (MWh above) —
+          the two diverge where a source is built but dispatched less.
+        </p>
+        <div className="mt-4 grid gap-6 sm:grid-cols-2">
+          {cases.map((c) => (
+            <div key={c.case_id}>
+              <p className="mb-2 text-sm text-zinc-600 dark:text-zinc-400">
+                {caseLabel(c)}
+              </p>
+              <div className="rounded-lg border border-zinc-200 p-3 dark:border-zinc-800">
+                <CapacityChart data={c.result} />
               </div>
             </div>
           ))}
