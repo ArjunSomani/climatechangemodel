@@ -64,6 +64,25 @@ export function CountedModeledNote({ className = "" }: { className?: string }) {
   );
 }
 
+// What the low–central–high band actually means, wherever a band is shown.
+// Two distinct uncertainties, deliberately named apart.
+export function UncertaintyBandNote({ className = "" }: { className?: string }) {
+  return (
+    <p className={`text-xs text-zinc-500 dark:text-zinc-400 ${className}`}>
+      The <span className="font-medium text-zinc-600 dark:text-zinc-300">band</span>{" "}
+      is scientific uncertainty, not rounding. Each source&apos;s death rate is
+      published as a low–central–high range — coal&apos;s depends on how
+      air-pollution exposure is modeled; hydro&apos;s high bound includes the
+      1975 Banqiao dam failure, its low bound excludes it. Reported deaths sum
+      those ranges across the mix, so a mortality figure is a band, never a
+      single number. Pricing a death adds a{" "}
+      <span className="font-medium text-zinc-600 dark:text-zinc-300">second</span>{" "}
+      range (the VSL is itself a low/central/high), so any priced-mortality cost
+      inherits both.
+    </p>
+  );
+}
+
 export function LevelCreditNote({ className = "" }: { className?: string }) {
   return (
     <p className={`text-xs text-zinc-500 dark:text-zinc-400 ${className}`}>

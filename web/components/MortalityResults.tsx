@@ -3,6 +3,7 @@
 import type { YearRecord } from "@/lib/library";
 import type { ScenarioConfigInput } from "@/lib/scenarioConfig";
 import { DeathsTrajectoryChart } from "@/components/DeathsTrajectoryChart";
+import { UncertaintyBandNote } from "@/components/SafetyDisclosure";
 import { SOURCES } from "@/lib/sources";
 import {
   computeScenarioDeaths,
@@ -102,6 +103,8 @@ export function MortalityResults({
           </div>
         </div>
       </div>
+
+      <UncertaintyBandNote />
 
       {/* Annual deaths over time, as a band */}
       <div className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">

@@ -3,7 +3,11 @@ import { getEiaIndex, getEiaRegionData } from "@/lib/eiaExplorer";
 import { REGIONS } from "@/lib/regions";
 import { EiaExplorerClient } from "@/components/EiaExplorerClient";
 import { mixWeightedDeathsPerTwh } from "@/lib/mortality";
-import { SafetyCallout, AttributionNote } from "@/components/SafetyDisclosure";
+import {
+  SafetyCallout,
+  AttributionNote,
+  UncertaintyBandNote,
+} from "@/components/SafetyDisclosure";
 
 export const metadata = {
   title: "Data Explorer — Optimize",
@@ -105,7 +109,7 @@ function SafetyLens({
             {risk.deathsPerTwh.toFixed(1)}
           </span>
           <span className="text-sm">
-            deaths per TWh — this region&apos;s recent generation mix
+            deaths per TWh (central) — this region&apos;s recent generation mix
           </span>
         </div>
         <p className="mt-2 text-sm">
@@ -120,7 +124,8 @@ function SafetyLens({
           </Link>{" "}
           for the per-source rates.
         </p>
-        <div className="mt-2">
+        <div className="mt-2 space-y-2">
+          <UncertaintyBandNote />
           <AttributionNote />
         </div>
       </SafetyCallout>

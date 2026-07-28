@@ -4,6 +4,7 @@ import {
   CountedModeledNote,
   MoralChoiceNote,
   AttributionNote,
+  UncertaintyBandNote,
 } from "@/components/SafetyDisclosure";
 
 export const metadata = {
@@ -68,6 +69,14 @@ export default function MethodologyPage() {
             electricity it stores.
           </li>
           <li>
+            <strong>The band is uncertainty, not rounding.</strong>{" "}Each
+            source&rsquo;s low–central–high spans genuine disagreement in the
+            epidemiological literature (coal&rsquo;s from air-pollution exposure
+            modeling; hydro&rsquo;s high bound from the 1975 Banqiao failure).
+            Deaths sum those ranges across the mix; a priced-mortality cost adds
+            the VSL range on top, so it is reported as a band, never a point.
+          </li>
+          <li>
             <strong>Value of a statistical life (VSL).</strong>{" "}The price per
             death uses HHS&rsquo;s 2026 published range ($6.6M / $14.1M / $21.5M,
             constant 2025 dollars), optionally escalated ~1.1%/yr in real terms.
@@ -85,6 +94,7 @@ export default function MethodologyPage() {
           </li>
         </ul>
         <div className="space-y-2 pt-1">
+          <UncertaintyBandNote />
           <CountedModeledNote />
           <AttributionNote />
           <MoralChoiceNote />

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getLibraryCases, listLibraryCases } from "@/lib/library";
 import { caseLabel, totalCO2MT } from "@/lib/metrics";
 import { computeYearDeaths } from "@/lib/mortality";
+import { UncertaintyBandNote } from "@/components/SafetyDisclosure";
 import { CasePicker } from "@/components/CasePicker";
 import { CO2TrajectoryChart } from "@/components/CO2TrajectoryChart";
 import { CO2VsDeathsChart } from "@/components/CO2VsDeathsChart";
@@ -142,6 +143,9 @@ export default async function ComparePage({
         </p>
         <div className="mt-4 rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
           <CO2VsDeathsChart cases={cases} />
+        </div>
+        <div className="mt-3">
+          <UncertaintyBandNote />
         </div>
       </section>
 

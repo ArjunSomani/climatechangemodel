@@ -118,6 +118,34 @@ export default function SafetyPage() {
       </section>
 
       <section className="mt-12">
+        <h2 className="text-xl font-medium">Every number here is a band</h2>
+        <p className="mt-3 text-zinc-700 dark:text-zinc-300">
+          You&apos;ll see deaths reported as a{" "}
+          <span className="font-medium">low–central–high</span> range, not a
+          single figure. That band is real scientific uncertainty, and it comes
+          from two independent places:
+        </p>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <ParallelCard
+            title="How deadly each source is"
+            unit="deaths / TWh"
+            body="Every rate is published as a range. Coal's depends on how air-pollution exposure is modeled; hydro's high bound includes the 1975 Banqiao dam failure, its low bound excludes it. The risk ladder above shows each source's central rate with its low–high in the tooltip."
+          />
+          <ParallelCard
+            title="What a life is worth"
+            unit="$ / death"
+            body="The VSL is itself a low/central/high range (the three cards above), not a point. It's a separate axis of uncertainty layered on top of the death rates."
+          />
+        </div>
+        <p className="mt-4 text-sm text-zinc-600 dark:text-zinc-400">
+          Deaths inherit the first band. A priced-mortality{" "}
+          <em>cost</em> inherits both — which is why any dollar figure that
+          includes mortality is reported as a band too, never a single number.
+          The honest read is the width of the band, not the midpoint.
+        </p>
+      </section>
+
+      <section className="mt-12">
         <h2 className="text-xl font-medium">Where the deaths land</h2>
         <p className="mt-3 text-zinc-700 dark:text-zinc-300">
           CO₂ is a global pollutant — it doesn&apos;t matter where it&apos;s
