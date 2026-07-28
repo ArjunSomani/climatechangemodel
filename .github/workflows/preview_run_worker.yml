@@ -1,0 +1,47 @@
+name: Preview custom run worker
+
+# End-to-end preview processing for a feature branch.
+#
+# GitHub's *scheduled* worker (run_worker.yml) always runs the default branch's
+# engine, so custom runs submitted from a preview deployment get drained by the
+# production engine and never see branch-only changes (e.g. the mortality
+# price). Dispatch THIS workflow against a feature branch and it checks out that
+# branch, installs its engine, and drains the queue with it — so a
+# mortality-priced run actually re-optimizes the mix.
+#
+# Manual only. Select the feature branch under "Run workflow". To avoid the
+# scheduled default-branch worker claiming a preview run first, dispatch this
+# right after submitting (the schedule fires every 5 min), or temporarily
+# disable the scheduled worker while testing.
+on:
+  workflow_dispatch: {}
+
+concurrency:
+  # Distinct from the scheduled worker's group so the two never cancel or block
+  # each other; the FOR UPDATE SKIP LOCKED claim still keeps them from grabbing
+  # the same queued row.
+  group: preview-run-worker
+  cancel-in-progress: false
+
+jobs:
+  drain-queue:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: engine
+    steps:
+      # Checks out the ref this workflow was dispatched on (the feature branch),
+      # so the engine below is the branch's engine.
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - run: pip install -e ".[library]"
+
+      - run: python scripts/run_worker.py --once
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
