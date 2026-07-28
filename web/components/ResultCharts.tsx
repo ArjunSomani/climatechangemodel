@@ -10,9 +10,15 @@ import { EnergyMixChart } from "@/components/EnergyMixChart";
 import { CapacityChart } from "@/components/CapacityChart";
 import { CapacityFactorChart } from "@/components/CapacityFactorChart";
 import { EmissionsChart } from "@/components/EmissionsChart";
+import { CostChart } from "@/components/CostChart";
 import type { YearRecord } from "@/lib/library";
 
-type MetricKey = "generation" | "capacity" | "utilization" | "emissions";
+type MetricKey =
+  | "generation"
+  | "capacity"
+  | "utilization"
+  | "emissions"
+  | "cost";
 
 const METRICS: { key: MetricKey; label: string; caption: string }[] = [
   {
@@ -39,9 +45,21 @@ const METRICS: { key: MetricKey; label: string; caption: string }[] = [
     caption:
       "Annual CO₂ (Mt), computed from generation × each source's carbon intensity.",
   },
+  {
+    key: "cost",
+    label: "Cost",
+    caption:
+      "Annual system cost by component (M$): capital + fixed O&M from the engine's annual fields, variable O&M and CO₂ cost recomputed to match the engine, plus mortality cost (deaths × VSL) when the case prices it.",
+  },
 ];
 
-export function ResultCharts({ data }: { data: YearRecord[] }) {
+export function ResultCharts({
+  data,
+  mortalityPrice,
+}: {
+  data: YearRecord[];
+  mortalityPrice?: number;
+}) {
   const [metric, setMetric] = useState<MetricKey>("generation");
   const active = METRICS.find((m) => m.key === metric)!;
 
@@ -79,6 +97,9 @@ export function ResultCharts({ data }: { data: YearRecord[] }) {
         {metric === "capacity" && <CapacityChart data={data} />}
         {metric === "utilization" && <CapacityFactorChart data={data} />}
         {metric === "emissions" && <EmissionsChart data={data} />}
+        {metric === "cost" && (
+          <CostChart data={data} mortalityPrice={mortalityPrice} />
+        )}
       </div>
       <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
         {active.caption}

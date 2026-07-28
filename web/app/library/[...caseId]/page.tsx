@@ -57,8 +57,8 @@ export default async function LibraryCasePage({
         <Stat label="Years modeled" value={String(detail.years)} />
       </div>
 
-      <Section title="Generation & capacity over time">
-        <ResultCharts data={detail.result} />
+      <Section title="Generation, capacity & cost over time">
+        <ResultCharts data={detail.result} mortalityPrice={mortalityInitial} />
       </Section>
 
       <Section title="Mortality">
