@@ -17,8 +17,18 @@ function fmtTwh(mwh: number): string {
 }
 
 export function PlaygroundClient({ lattice }: { lattice: Lattice }) {
+  // Open mid-demonstration rather than at $0/$0 (where every "vs no pricing"
+  // panel is an em-dash and nothing has happened yet): carbon off, mortality at
+  // the grid point nearest the central VSL, so the page loads already showing
+  // coal collapsing under a mortality price.
+  const CENTRAL_VSL = 14_100_000;
+  const defaultMi = lattice.mortalityPrices.reduce(
+    (best, p, i, arr) =>
+      Math.abs(p - CENTRAL_VSL) < Math.abs(arr[best] - CENTRAL_VSL) ? i : best,
+    0
+  );
   const [ci, setCi] = useState(0); // carbon price index
-  const [mi, setMi] = useState(0); // mortality price index
+  const [mi, setMi] = useState(defaultMi); // mortality price index
 
   const cell = cellAt(lattice, ci, mi);
   const baseline = cellAt(lattice, 0, 0);
@@ -132,7 +142,7 @@ export function PlaygroundClient({ lattice }: { lattice: Lattice }) {
         <Metric
           label="Deaths, final year"
           value={fmt(cell.deathsCentral)}
-          sub={`band ${fmt(cell.deathsLow)}–${fmt(cell.deathsHigh)}`}
+          sub={`up to ${fmt(cell.deathsHigh)}`}
           tone="mortality"
         />
         <Metric

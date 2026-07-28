@@ -192,7 +192,7 @@ export default function SafetyPage() {
           <ParallelCard
             title="How deadly each source is"
             unit="deaths / TWh"
-            body="Every rate is a central estimate with a much higher upper bound. Coal's depends on how air-pollution exposure is modeled; hydro's high bound includes the 1975 Banqiao dam failure, its central figure excludes it. The risk ladder above shows each source's central rate; hover a bar for its high bound."
+            body="Every rate is a central estimate with a much higher upper bound. Coal's depends on how air-pollution exposure is modeled; hydro's high bound includes the 1975 Banqiao dam failure, its central figure excludes it. The risk ladder above shows each source's central rate with its high bound labeled alongside."
           />
           <ParallelCard
             title="What a life is worth"
