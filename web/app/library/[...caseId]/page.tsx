@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getLibraryCase } from "@/lib/library";
-import { EnergyMixChart } from "@/components/EnergyMixChart";
+import { ResultCharts } from "@/components/ResultCharts";
 import { YearTable } from "@/components/YearTable";
 import { MortalityResults } from "@/components/MortalityResults";
 import { co2MtFromGeneration } from "@/lib/co2";
@@ -57,8 +57,8 @@ export default async function LibraryCasePage({
         <Stat label="Years modeled" value={String(detail.years)} />
       </div>
 
-      <Section title="Energy mix over time">
-        <EnergyMixChart data={detail.result} />
+      <Section title="Generation & capacity over time">
+        <ResultCharts data={detail.result} />
       </Section>
 
       <Section title="Mortality">

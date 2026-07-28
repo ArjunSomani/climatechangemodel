@@ -173,7 +173,7 @@ const STEPS: { icon: keyof typeof ICONS; title: string; body: string }[] = [
   {
     icon: "cash",
     title: "The bill gets tallied",
-    body: "Building, running, and any outages all cost money. The optimizer keeps adjusting until it finds the cheapest year.",
+    body: "Building, running, and any outages all cost money. The optimizer keeps adjusting what is built until it finds the cheapest hours over one year.",
   },
 ];
 
@@ -203,7 +203,7 @@ const KNOBS: { icon: keyof typeof ICONS; title: string; body: string }[] = [
 const GLOSSARY = [
   {
     term: "MW vs. MWh",
-    body: "MW is how big a power plant is. MWh is how much energy it actually produced. A big plant that rarely runs still makes little MWh.",
+    body: "MW is how big a power plant is, the maximum power it can possibly produce. MWh is how much energy it actually produces. A big plant that rarely runs still makes little MWh.",
   },
   {
     term: "Capacity factor",
@@ -211,7 +211,7 @@ const GLOSSARY = [
   },
   {
     term: "Outage",
-    body: "Electricity demand that went unmet. A well-run scenario keeps this at zero.",
+    body: "Electricity demand that went unmet. Keeping the cost for this high keeps Outages near zero.",
   },
 ];
 
@@ -248,11 +248,12 @@ export default function HowItWorksPage() {
       <Section title="Where the data comes from">
         <p>
           The model is grounded in six years of real US electricity data
-          (2020&ndash;2025) — nearly 700,000 hourly readings across 13
-          regions, broken down by source.
+          (2020&ndash;2025) — about 4.1 million hourly readings: six sources,
+          every hour, across 13 regions, over six years.
         </p>
-        <div className="mt-4 grid grid-cols-3 gap-3 text-center">
-          <Stat value="~684K" label="hourly readings" />
+        <div className="mt-4 grid grid-cols-2 gap-3 text-center sm:grid-cols-4">
+          <Stat value="~4.1M" label="hourly readings" />
+          <Stat value="6" label="sources" />
           <Stat value="13" label="US regions" />
           <Stat value="6" label="years of data" />
         </div>
