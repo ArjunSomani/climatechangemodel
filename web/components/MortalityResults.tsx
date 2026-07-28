@@ -52,8 +52,8 @@ export function MortalityResults({
         ) : (
           <>
             Mortality is <span className="font-medium">reported but not priced</span>{" "}
-            here — these deaths did not change what got built. Set a mortality
-            price to let the optimizer respond to them.
+            here — the mortality price was zero, so these deaths did not change
+            what got built.
           </>
         )}
       </p>

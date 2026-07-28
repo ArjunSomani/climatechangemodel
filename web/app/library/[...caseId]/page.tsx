@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getLibraryCase } from "@/lib/library";
 import { EnergyMixChart } from "@/components/EnergyMixChart";
 import { YearTable } from "@/components/YearTable";
+import { MortalityResults } from "@/components/MortalityResults";
 import { SOURCES } from "@/lib/sources";
 import { formatCO2, formatEnergy } from "@/lib/format";
 
@@ -51,6 +52,10 @@ export default async function LibraryCasePage({
 
       <Section title="Energy mix over time">
         <EnergyMixChart data={detail.result} />
+      </Section>
+
+      <Section title="Mortality">
+        <MortalityResults result={detail.result} config={null} />
       </Section>
 
       <Section title="Year-by-year data">

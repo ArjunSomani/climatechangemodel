@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getLibraryCases, listLibraryCases } from "@/lib/library";
 import { caseLabel, totalCO2MT } from "@/lib/metrics";
+import { computeYearDeaths } from "@/lib/mortality";
 import { CasePicker } from "@/components/CasePicker";
 import { CO2TrajectoryChart } from "@/components/CO2TrajectoryChart";
 import { EnergyMixChart } from "@/components/EnergyMixChart";
@@ -84,6 +85,11 @@ export default async function ComparePage({
                   Unmet demand (outage)
                 </Term>
               </th>
+              <th className="px-3 py-2 text-left font-semibold text-zinc-500 dark:text-zinc-400">
+                <Term definition="Production-based deaths in the final year (central estimate), attributed to this region's generation mix — mostly modeled air-pollution deaths, some counted accidents. Coefficients from Level.">
+                  Deaths (final year)
+                </Term>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -102,6 +108,9 @@ export default async function ComparePage({
                   </td>
                   <td className="whitespace-nowrap px-3 py-2 tabular-nums text-black dark:text-zinc-50">
                     {formatEnergy(last.Outage_MWh)}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-2 tabular-nums text-black dark:text-zinc-50">
+                    {Math.round(computeYearDeaths(last).central).toLocaleString()}
                   </td>
                 </tr>
               );
