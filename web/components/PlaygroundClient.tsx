@@ -30,6 +30,7 @@ export function PlaygroundClient({ lattice }: { lattice: Lattice }) {
     0
   );
   const deathsAvoided = baseline.deathsCentral - cell.deathsCentral;
+  const co2Avoided = baseline.co2FinalMT - cell.co2FinalMT;
 
   return (
     <div className="space-y-8">
@@ -125,18 +126,14 @@ export function PlaygroundClient({ lattice }: { lattice: Lattice }) {
         </div>
       </div>
 
-      {/* Metrics */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+      {/* Metrics -- each externality paired with what pricing avoids vs the
+          no-pricing baseline (top-left cell). */}
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         <Metric
           label="Deaths, final year"
           value={fmt(cell.deathsCentral)}
           sub={`band ${fmt(cell.deathsLow)}–${fmt(cell.deathsHigh)}`}
           tone="mortality"
-        />
-        <Metric
-          label="CO₂, final year"
-          value={`${fmt(cell.co2FinalMT)}`}
-          sub="MT"
         />
         <Metric
           label="Deaths vs no pricing"
@@ -149,6 +146,22 @@ export function PlaygroundClient({ lattice }: { lattice: Lattice }) {
           }
           sub={deathsAvoided > 0.5 ? "avoided / yr" : "vs $0 / $0"}
           tone="mortality"
+        />
+        <Metric
+          label="CO₂, final year"
+          value={`${fmt(cell.co2FinalMT)}`}
+          sub="MT"
+        />
+        <Metric
+          label="CO₂ vs no pricing"
+          value={
+            co2Avoided > 0.5
+              ? `−${fmt(co2Avoided)} MT`
+              : co2Avoided < -0.5
+                ? `+${fmt(-co2Avoided)} MT`
+                : "—"
+          }
+          sub={co2Avoided > 0.5 ? "avoided / yr" : "vs $0 / $0"}
         />
       </div>
 
