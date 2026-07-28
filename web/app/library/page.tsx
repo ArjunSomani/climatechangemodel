@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { listLibraryCases } from "@/lib/library";
 import { LibraryPickerClient } from "@/components/LibraryPickerClient";
 import { NewHereBanner } from "@/components/NewHereBanner";
@@ -18,7 +19,11 @@ export default async function LibraryPage() {
     <div className="mx-auto max-w-4xl px-6 py-16">
       <h1 className="text-3xl font-semibold tracking-tight">Scenario library</h1>
       <p className="mt-2 text-zinc-600 dark:text-zinc-400">
-        Narrow down by region, scenario, and CO₂ price to find a run.
+        Narrow down by region, scenario, and CO₂ price to find a run — or see the{" "}
+        <Link href="/us" className="underline hover:text-accent">
+          United States total
+        </Link>{" "}
+        with every region combined.
       </p>
       <div className="mt-4">
         <AssumptionsBadges />
