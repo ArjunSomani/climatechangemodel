@@ -115,6 +115,58 @@ export function riskLadder(): RiskLadderRow[] {
 // (~10.8 MWh/home/yr, EIA). Lets deaths/TWh be stated at human scale.
 export const HOMES_PER_TWH = 92_600;
 
+// EIA reports three sources Optimize doesn't dispatch (Hydro, Oil, Other).
+// Hydro and Oil have Level coefficients; "Other" is a grab-bag with no single
+// rate, so it's excluded and its share reported as uncovered.
+export const EIA_SOURCE_TO_MORTALITY_KEY: Record<string, string | null> = {
+  Solar: "solar",
+  Wind: "wind",
+  Nuclear: "nuclear",
+  Gas: "gas",
+  Coal: "coal",
+  Hydro: "hydro",
+  Oil: "oil",
+  Other: null,
+};
+
+export interface MixRisk {
+  deathsPerTwh: number; // central, over the covered mix
+  modeledShare: number; // fraction of those deaths that are modeled
+  coveredShare: number; // share of generation that has a coefficient
+}
+
+// Descriptive: the deaths/TWh a generation mix implies, weighting each source's
+// rate by its share of generation. Takes generation-proportional weights per
+// source (e.g. average MW). "Other" carries no coefficient and is reported via
+// coveredShare rather than silently assumed safe.
+export function mixWeightedDeathsPerTwh(
+  weightBySource: Record<string, number>
+): MixRisk {
+  let totalWeight = 0;
+  let coveredWeight = 0;
+  let weightedRate = 0;
+  let weightedModeled = 0;
+
+  for (const w of Object.values(weightBySource)) {
+    if (w > 0) totalWeight += w;
+  }
+  for (const [src, w] of Object.entries(weightBySource)) {
+    if (!(w > 0)) continue;
+    const key = EIA_SOURCE_TO_MORTALITY_KEY[src];
+    if (key == null) continue;
+    const c = MORTALITY[key];
+    coveredWeight += w;
+    weightedRate += w * c.central;
+    weightedModeled += w * c.central * c.modeledShare;
+  }
+
+  return {
+    deathsPerTwh: coveredWeight > 0 ? weightedRate / coveredWeight : 0,
+    modeledShare: weightedRate > 0 ? weightedModeled / weightedRate : 0,
+    coveredShare: totalWeight > 0 ? coveredWeight / totalWeight : 0,
+  };
+}
+
 export function coalVsSolarFactor(): number {
   return MORTALITY.coal.central / MORTALITY.solar.central;
 }

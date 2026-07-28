@@ -2,6 +2,8 @@ import Link from "next/link";
 import { getEiaIndex, getEiaRegionData } from "@/lib/eiaExplorer";
 import { REGIONS } from "@/lib/regions";
 import { EiaExplorerClient } from "@/components/EiaExplorerClient";
+import { mixWeightedDeathsPerTwh } from "@/lib/mortality";
+import { SafetyCallout, AttributionNote } from "@/components/SafetyDisclosure";
 
 export const metadata = {
   title: "Data Explorer — Optimize",
@@ -44,6 +46,8 @@ export default async function DataExplorerPage({
         ))}
       </div>
 
+      {data && <SafetyLens data={data} />}
+
       {data ? (
         <div className="mt-8">
           <EiaExplorerClient
@@ -71,6 +75,55 @@ export default async function DataExplorerPage({
           {index.eia_version}.
         </p>
       )}
+    </div>
+  );
+}
+
+// Descriptive safety lens: what this region's *actual* recent generation mix
+// implies in deaths per TWh, weighting each source's rate by its share of a
+// typical day's output. Not a model run -- a read on the real grid.
+function SafetyLens({
+  data,
+}: {
+  data: import("@/lib/eiaExplorer").EiaRegionData;
+}) {
+  const avgMw: Record<string, number> = {};
+  for (const row of data.typical_day) {
+    for (const [k, v] of Object.entries(row)) {
+      if (k === "hour" || typeof v !== "number") continue;
+      avgMw[k] = (avgMw[k] ?? 0) + v;
+    }
+  }
+  const risk = mixWeightedDeathsPerTwh(avgMw);
+  if (risk.coveredShare === 0) return null;
+
+  return (
+    <div className="mt-8">
+      <SafetyCallout tone="grave">
+        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <span className="text-2xl font-semibold tabular-nums text-black dark:text-zinc-50">
+            {risk.deathsPerTwh.toFixed(1)}
+          </span>
+          <span className="text-sm">
+            deaths per TWh — this region&apos;s recent generation mix
+          </span>
+        </div>
+        <p className="mt-2 text-sm">
+          A mix-weighted read on the real grid: coal-heavy regions sit higher,
+          renewable- and nuclear-heavy regions lower. About{" "}
+          {Math.round(risk.modeledShare * 100)}% of it is modeled
+          (air-pollution/radiation) rather than counted accidents. Covers{" "}
+          {Math.round(risk.coveredShare * 100)}% of generation (the rest is
+          &ldquo;other,&rdquo; which has no single coefficient). See the{" "}
+          <Link href="/safety" className="underline hover:text-accent">
+            risk ladder
+          </Link>{" "}
+          for the per-source rates.
+        </p>
+        <div className="mt-2">
+          <AttributionNote />
+        </div>
+      </SafetyCallout>
     </div>
   );
 }

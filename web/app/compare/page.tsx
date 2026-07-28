@@ -4,6 +4,7 @@ import { caseLabel, totalCO2MT } from "@/lib/metrics";
 import { computeYearDeaths } from "@/lib/mortality";
 import { CasePicker } from "@/components/CasePicker";
 import { CO2TrajectoryChart } from "@/components/CO2TrajectoryChart";
+import { CO2VsDeathsChart } from "@/components/CO2VsDeathsChart";
 import { EnergyMixChart } from "@/components/EnergyMixChart";
 import { formatEnergy } from "@/lib/format";
 import { Term } from "@/components/Term";
@@ -126,6 +127,21 @@ export default async function ComparePage({
         </h2>
         <div className="mt-4 rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
           <CO2TrajectoryChart cases={cases} />
+        </div>
+      </section>
+
+      <section className="mt-10">
+        <h2 className="flex items-center gap-2 text-lg font-medium">
+          <span className="h-3 w-1 rounded-full bg-accent" aria-hidden />
+          Carbon vs. mortality
+        </h2>
+        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+          Each scenario placed by its final-year CO₂ and its final-year deaths.
+          Down-and-left is better on both; the spread shows where the two
+          externalities pull apart.
+        </p>
+        <div className="mt-4 rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
+          <CO2VsDeathsChart cases={cases} />
         </div>
       </section>
 
