@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { RiskLadder } from "@/components/RiskLadder";
+import { DivergenceComparison } from "@/components/DivergenceComparison";
 import { SafetyFaq } from "@/components/SafetyFaq";
 import { Term } from "@/components/Term";
 import {
@@ -7,12 +8,7 @@ import {
   AttributionNote,
   CountedModeledNote,
 } from "@/components/SafetyDisclosure";
-import {
-  MORTALITY,
-  VSL_PRESETS,
-  coalVsSolarFactor,
-  formatVsl,
-} from "@/lib/mortality";
+import { MORTALITY, VSL_PRESETS, formatVsl } from "@/lib/mortality";
 
 const VSL_CENTRAL = 14_100_000;
 // deaths/TWh × $/death ÷ 1e6 MWh/TWh = $/MWh of mortality cost.
@@ -30,8 +26,6 @@ export const metadata = {
 };
 
 export default function SafetyPage() {
-  const coalVsSolar = Math.round(coalVsSolarFactor());
-
   return (
     <div className="mx-auto max-w-3xl px-6 py-16">
       <p className="text-xs font-semibold tracking-[0.2em] text-accent uppercase">
@@ -43,12 +37,12 @@ export default function SafetyPage() {
       <p className="mt-5 text-lg text-zinc-600 dark:text-zinc-400">
         Every source of power carries a death toll: mining and drilling
         accidents, and — far larger — the air pollution that shortens lives
-        downwind. Per unit of energy, coal is roughly{" "}
+        downwind. Per unit of energy, coal is{" "}
         <span className="font-semibold text-black dark:text-zinc-50">
-          {coalVsSolar}×
+          more than 1,000×
         </span>{" "}
-        deadlier than solar. The electricity market never charges for any of it.
-        Optimize lets you put a price on it.
+        deadlier than solar — three orders of magnitude. The electricity market
+        never charges for any of it. Optimize lets you put a price on it.
       </p>
 
       <div className="mt-6 rounded-xl border-l-2 border-[var(--mortality)] bg-zinc-50/60 px-4 py-3 dark:bg-zinc-900/40">
@@ -94,8 +88,7 @@ export default function SafetyPage() {
             colorVar="--series-nuclear"
           />
           <p className="mt-3 text-center text-sm font-medium">
-            ≈{Math.round(MORTALITY.coal.central / MORTALITY.nuclear.central)}×
-            safer than coal —{" "}
+            hundreds of times safer than coal —{" "}
             <span className="font-normal text-zinc-500 dark:text-zinc-400">
               accidents included
             </span>
@@ -132,14 +125,16 @@ export default function SafetyPage() {
           />
         </div>
         <p className="mt-4 text-sm text-zinc-600 dark:text-zinc-400">
-          They don&apos;t agree. Coal exits under either. Gas is where they
-          diverge: it&apos;s ~9× better than coal on deaths but only ~1.7× better
-          on CO₂ — so a mortality price tolerates gas where a carbon price pushes
-          past it. Move both sliders in the{" "}
+          They don&apos;t fully agree. Coal exits under either. Gas is where
+          they&apos;d part ways — ~9× cleaner than coal on deaths but only ~1.7×
+          cleaner on CO₂, so per MWh a mortality price barely touches gas while a
+          carbon price leans on it hard. Whether that reaches the{" "}
+          <em>built</em> mix depends on how fast clean capacity can replace it;
+          move both sliders in the{" "}
           <Link href="/playground" className="underline hover:text-accent">
             playground
           </Link>{" "}
-          to watch it happen.
+          to explore.
         </p>
       </section>
 
@@ -234,11 +229,17 @@ export default function SafetyPage() {
           />
         </div>
         <p className="mt-4 text-sm text-zinc-600 dark:text-zinc-400">
-          That&apos;s the whole story in one comparison: the same price is a
-          death sentence for coal and a tax for gas. A carbon price, which sees
-          coal and gas as far more alike, lands very differently — which is why
-          it&apos;s worth pricing both and watching where they disagree.
+          That&apos;s the disagreement in one comparison: per MWh, the same price
+          is a death sentence for coal and a tax for gas. A carbon price, which
+          sees coal and gas as far more alike, weighs them differently.
         </p>
+
+        <div className="mt-6 rounded-xl border border-zinc-200 p-5 dark:border-zinc-800">
+          <div className="mb-3 text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+            Coal exits under either price — pre-computed, no run required
+          </div>
+          <DivergenceComparison />
+        </div>
       </section>
 
       <details className="group mt-12 border-t border-zinc-200 pt-6 dark:border-zinc-800">
@@ -323,11 +324,16 @@ export default function SafetyPage() {
           <AttributionNote />
         </div>
         <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-400">
-          A <span className="font-medium">consumption-based</span> account — which
-          region <em>used</em> the electricity, so a region can import clean-looking
-          power while exporting its mortality — needs an hourly inter-regional
-          transfer matrix Optimize doesn&apos;t yet model. It&apos;s the marquee
-          next step, not done here.
+          Because each region is optimized in isolation with{" "}
+          <span className="font-medium">no transmission between regions</span>,
+          every region here consumes exactly what it generates —
+          production-based and consumption-based mortality are the same number
+          by construction. The distinction only becomes meaningful in a model
+          with inter-regional transfers, where a region can import clean-looking
+          power while <em>exporting</em> its mortality. Adding that would mean
+          adding transmission to the optimizer — which would change every result
+          on this site, not just the mortality ones. It&apos;s a change to what
+          the model <em>is</em>, not a bolt-on.
         </p>
       </section>
 

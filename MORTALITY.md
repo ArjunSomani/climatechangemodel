@@ -124,9 +124,34 @@ carbon×mortality grid); widening it to more regions / a finer grid is a
 generation-pipeline concern, same as the library. The lattice is stamped with
 `mortalityVersion`.
 
+## Preview-review fixes (2026-07-27)
+
+- **Regional intensity bug (P1).** The Data Explorer lens weighted the mix by
+  capacity *fraction* (from `typical_day`) instead of *generation*, over-weighting
+  small-but-often-running coal/oil (CA read 6.3 deaths/TWh; correct is ~2.0).
+  Fixed to weight by `fraction × capacity MW`. Guarded by
+  `test_regional_intensity.py` (every region's intensity must lie within the
+  min/max of its present sources; CA modest, MIDW higher) against a reference
+  `mortality.mix_weighted_deaths_per_twh`.
+- **Headline precision (P0).** "2460×"/"820×" implied precision a one-sig-fig
+  denominator can't support → "more than 1,000×" / "hundreds of times."
+- **Consumption framing (P2).** With no transmission, production == consumption
+  by construction; a real consumption account needs adding transmission to the
+  optimizer, not a transfer-matrix bolt-on. Rewritten on Safety + Methodology.
+- **Divergence demonstration.** The Safety page now shows the pre-computed
+  regimes (from the lattice) instead of asking for three runs — and honestly
+  notes the built mixes converge over this horizon (build-rate limits keep gas
+  in both); the disagreement lives in the marginal cost ($347 vs $39/MWh).
+
 ## Deferred — exact next steps
 
 These still need the Neon/Blob pipeline or external data:
+
+0. **Seed the Library + a default Compare + a mortality-first hero** (review
+   elevation #3/#4/#5). All need cases written to Neon/Blob (can't be done from
+   a code sandbox): seed 8–12 curated runs incl. the mortality presets across
+   CAL and MIDW; land Compare with a default carbon-vs-mortality pair; and swap
+   the landing hero to a mortality-priced (or carbon-vs-mortality) teaser case.
 
 1. **Persist engine deaths + `mortality_version` in the library.** Add a
    `mortality_version` column in `setup_library_schema.py`; stamp it in

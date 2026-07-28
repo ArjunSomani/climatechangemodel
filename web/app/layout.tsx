@@ -80,6 +80,14 @@ export default function RootLayout({
               <Link href="/data-explorer" className="hover:text-accent">
                 Data sources
               </Link>
+              <a
+                href="https://levelmodel.vercel.app"
+                className="hover:text-accent"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Level
+              </a>
             </div>
             <div>
               Modeling engine and data from cliffgold/Optimize. No open

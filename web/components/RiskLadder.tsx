@@ -93,7 +93,7 @@ export function RiskLadder() {
                   </a>
                 </div>
                 {r.high > r.central && (
-                  <div className="hidden text-[11px] text-zinc-400 sm:block">
+                  <div className="text-[11px] text-zinc-400">
                     up to {fmtRate(r.high)} (high)
                   </div>
                 )}
@@ -124,7 +124,9 @@ export function RiskLadder() {
         </span>
         <span>
           <span className="rounded bg-zinc-200 px-1 dark:bg-zinc-800">n/a</span> = not
-          built by Optimize (rides along with demand)
+          among Optimize&apos;s optimized technologies (rides along with demand)
+          — still carries a real death toll, counted in the Data Explorer&apos;s
+          read of the actual grid, but never in an optimized scenario&apos;s mix
         </span>
       </figcaption>
     </figure>

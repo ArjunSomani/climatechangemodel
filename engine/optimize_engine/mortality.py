@@ -129,6 +129,51 @@ def objective_intensity_nrgxs(band: str = 'central',
     return intensity
 
 
+# EIA reports three sources Optimize doesn't dispatch (Hydro, Oil, Other) but
+# which the descriptive Data Explorer lens still weighs. Hydro and Oil have
+# Level coefficients; "Other" is a grab-bag with no single rate. Mirrors the
+# web's EIA_SOURCE_TO_MORTALITY_KEY.
+EIA_SOURCE_TO_MORTALITY_KEY: dict[str, Optional[str]] = {
+    'Solar': 'solar', 'Wind': 'wind', 'Nuclear': 'nuclear', 'Gas': 'gas',
+    'Coal': 'coal', 'Hydro': 'hydro', 'Oil': 'oil', 'Other': None,
+}
+
+
+def mix_weighted_deaths_per_twh(weight_by_source: dict[str, float],
+                               coeffs: Optional[dict] = None) -> dict:
+    """Deaths/TWh a generation mix implies, weighting each source's rate by its
+    share of generation.
+
+    `weight_by_source` must be GENERATION-proportional (e.g. capacity fraction ×
+    capacity MW) -- weighting by capacity fraction alone over-weights
+    small-but-often-running sources like coal and oil. Returns the central rate
+    over the covered sources (a weighted average, so always within their
+    min/max), plus the modeled fraction and the share of weight that has a
+    coefficient. Mirrors the web's mixWeightedDeathsPerTwh, which drives the
+    Data Explorer's descriptive safety lens.
+    """
+    coeffs = coeffs if coeffs is not None else load_coefficients()
+    total = covered = weighted = weighted_modeled = 0.0
+    for w in weight_by_source.values():
+        if w > 0:
+            total += w
+    for src, w in weight_by_source.items():
+        if not (w > 0):
+            continue
+        key = EIA_SOURCE_TO_MORTALITY_KEY.get(src)
+        if key is None:
+            continue
+        rec = coeffs[key]
+        covered += w
+        weighted += w * rec['central']
+        weighted_modeled += w * rec['central'] * rec['modeledShare']
+    return {
+        'deaths_per_twh': weighted / covered if covered else 0.0,
+        'modeled_share': weighted_modeled / weighted if weighted else 0.0,
+        'covered_share': covered / total if total else 0.0,
+    }
+
+
 def deaths_from_mwh(mwh: float, rate_per_twh: float) -> float:
     """deaths = generation[TWh] * rate[deaths/TWh].
 

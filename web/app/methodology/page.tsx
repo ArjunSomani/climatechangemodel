@@ -83,10 +83,14 @@ export default function MethodologyPage() {
             Presented as published values, never as endorsement.
           </li>
           <li>
-            <strong>Production-based attribution.</strong>{" "}Deaths are assigned
-            to the region that generated the power. A consumption-based account
-            (allocating through inter-regional transfers) would need a transfer
-            matrix the engine doesn&rsquo;t model, and is not implemented.
+            <strong>Production == consumption here, by construction.</strong>{" "}
+            Deaths are assigned to the region that generated the power. Because
+            regions are optimized independently with no transmission between
+            them, each consumes exactly what it generates, so production- and
+            consumption-based mortality are identical. A meaningful
+            consumption-based account would require adding inter-regional
+            transmission to the optimizer — which would change every result on
+            the site, not just the mortality ones.
           </li>
           <li>
             <strong>Mortality only.</strong>{" "}Morbidity, water, land, minerals,

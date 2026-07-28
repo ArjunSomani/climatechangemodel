@@ -91,14 +91,34 @@ function SafetyLens({
 }: {
   data: import("@/lib/eiaExplorer").EiaRegionData;
 }) {
-  const avgMw: Record<string, number> = {};
+  // typical_day holds capacity *fractions* (0–1), not generation. Weighting the
+  // mix by fraction alone over-weights small-but-often-running sources (coal,
+  // oil) and understates big low-capacity-factor ones (solar). Generation ≈
+  // capacity fraction × capacity MW, so combine typical_day with the peak-MW
+  // table to get a generation-proportional weight per source.
+  const hours = data.typical_day.length || 1;
+  const avgFrac: Record<string, number> = {};
   for (const row of data.typical_day) {
     for (const [k, v] of Object.entries(row)) {
       if (k === "hour" || typeof v !== "number") continue;
-      avgMw[k] = (avgMw[k] ?? 0) + v;
+      avgFrac[k] = (avgFrac[k] ?? 0) + v / hours;
     }
   }
-  const risk = mixWeightedDeathsPerTwh(avgMw);
+
+  const years = data.yearly_max_mw.length || 1;
+  const avgMaxMw: Record<string, number> = {};
+  for (const row of data.yearly_max_mw) {
+    for (const [k, v] of Object.entries(row)) {
+      if (k === "year" || typeof v !== "number") continue;
+      avgMaxMw[k] = (avgMaxMw[k] ?? 0) + v / years;
+    }
+  }
+
+  const genWeight: Record<string, number> = {};
+  for (const k of Object.keys(avgFrac)) {
+    genWeight[k] = avgFrac[k] * (avgMaxMw[k] ?? 0);
+  }
+  const risk = mixWeightedDeathsPerTwh(genWeight);
   if (risk.coveredShare === 0) return null;
 
   return (

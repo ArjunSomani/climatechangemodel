@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { getLibraryCase } from "@/lib/library";
 import { EnergyMixChart } from "@/components/EnergyMixChart";
-import { coalVsSolarFactor } from "@/lib/mortality";
 
 export const dynamic = "force-dynamic";
 
@@ -74,9 +73,8 @@ export default async function Home() {
           </p>
           <p className="mx-auto mt-6 max-w-xl text-sm text-zinc-500 dark:text-zinc-400">
             It prices <span className="text-zinc-700 dark:text-zinc-300">two</span>{" "}
-            harms the market ignores — carbon <em>and</em> mortality. Coal is
-            roughly {Math.round(coalVsSolarFactor())}× deadlier than solar per
-            unit of energy;{" "}
+            harms the market ignores — carbon <em>and</em> mortality. Per unit of
+            energy, coal is more than 1,000× deadlier than solar;{" "}
             <Link href="/safety" className="underline hover:text-accent">
               see the risk ladder
             </Link>

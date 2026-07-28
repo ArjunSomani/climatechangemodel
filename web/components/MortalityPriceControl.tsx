@@ -65,14 +65,16 @@ export function MortalityPriceControl({
 
         <div className="mt-3 flex flex-wrap gap-2">
           <PresetButton
-            label="$0"
+            value="$0"
+            tier="off"
             active={price === 0}
             onClick={() => setPrice(0)}
           />
           {VSL_PRESETS.map((p) => (
             <PresetButton
               key={p.label}
-              label={`${p.label} · ${formatVsl(p.value)}`}
+              value={formatVsl(p.value)}
+              tier={p.label}
               active={price === p.value}
               onClick={() => setPrice(p.value)}
             />
@@ -108,11 +110,13 @@ export function MortalityPriceControl({
 }
 
 function PresetButton({
-  label,
+  value,
+  tier,
   active,
   onClick,
 }: {
-  label: string;
+  value: string;
+  tier: string;
   active: boolean;
   onClick: () => void;
 }) {
@@ -122,13 +126,16 @@ function PresetButton({
       onClick={onClick}
       aria-pressed={active}
       className={
-        "rounded-md border px-3 py-1.5 text-xs font-medium transition-colors " +
+        "flex min-w-16 flex-col items-center rounded-md border px-3 py-1.5 transition-colors " +
         (active
           ? "border-accent text-accent"
           : "border-zinc-300 text-zinc-600 hover:border-accent dark:border-zinc-700 dark:text-zinc-300")
       }
     >
-      {label}
+      <span className="text-sm font-semibold tabular-nums">{value}</span>
+      <span className="text-[10px] uppercase tracking-wide text-zinc-400">
+        {tier}
+      </span>
     </button>
   );
 }
