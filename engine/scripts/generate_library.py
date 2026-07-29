@@ -28,6 +28,7 @@ import psycopg
 from dotenv import dotenv_values
 
 from optimize_engine import ScenarioConfig, SourceTweaks, TweakPair, run_scenario
+from optimize_engine.demand import region_demand_multiplier
 from optimize_engine.blob import upload_json_blob
 from optimize_engine.schemas import SOURCES
 
@@ -121,9 +122,23 @@ MORTALITY_GROUPS = [
     for (variant, co2, mort) in MORTALITY_VARIANTS
 ]
 
-# Mortality cases first, so a capped run (max_cases) seeds the headline
-# scenarios before grinding through the full standard cross-product.
-GROUPS = MORTALITY_GROUPS + [
+# Per-region demand growth: one national cross-section (all 13 regions, no
+# carbon price) where each region grows at its own historical rate rather than a
+# uniform US number -- this is what the /us aggregate sums into a per-region
+# national total. Rates from data/region_demand_growth.json (clipped historical
+# endpoint CAGR; see MORTALITY.md), via optimize_engine.demand.
+REGIONAL_GROWTH_GROUPS = [
+    CaseGroup(
+        'Regional_Growth', 'Historical', region,
+        [(0, 0, 'Constant_CO2')],
+        demand=(region_demand_multiplier(region), 1),
+    )
+    for region in REGIONS
+]
+
+# Mortality + regional-growth cases first, so a capped run (max_cases) seeds the
+# headline scenarios before grinding through the full standard cross-product.
+GROUPS = MORTALITY_GROUPS + REGIONAL_GROWTH_GROUPS + [
     CaseGroup(
         group, variant, region,
         CONSTANT_CO2 + (INCREASING_CO2 if (group, variant, region) == ('Default', 'Default', 'CAL') else []),

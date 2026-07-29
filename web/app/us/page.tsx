@@ -18,7 +18,14 @@ export const dynamic = "force-dynamic";
 
 export default async function USPage() {
   const all = await listLibraryCases();
-  const { caseIds, regionCount } = mostCompleteConfigCaseIds(all);
+  // Prefer the per-region-growth cross-section (each region at its own historical
+  // demand rate) when it's seeded; otherwise fall back to the most complete
+  // uniform-growth config.
+  const regional = all.filter((c) => c.group_name === "Regional_Growth");
+  const perRegionGrowth = regional.length >= 2;
+  const { caseIds, regionCount } = perRegionGrowth
+    ? { caseIds: regional.map((c) => c.case_id), regionCount: regional.length }
+    : mostCompleteConfigCaseIds(all);
   const cases = await getLibraryCases(caseIds);
   const result = aggregateRegions(cases);
 
@@ -64,8 +71,10 @@ export default async function USPage() {
         Because the model optimizes each region independently with no
         transmission between them, the national grid here is exactly the{" "}
         <span className="font-medium">sum of its regions</span> — an aggregate of
-        independent optimizations, not a co-optimized national grid, and every
-        region used the same demand-growth assumption.
+        independent optimizations, not a co-optimized national grid.{" "}
+        {perRegionGrowth
+          ? "Each region grows at its own historical demand rate (clipped 2020–2025 estimate)."
+          : "Every region used the same demand-growth assumption."}
       </div>
 
       <div className="mt-8 grid grid-cols-3 gap-4">
