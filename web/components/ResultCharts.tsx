@@ -13,6 +13,16 @@ import { EmissionsChart } from "@/components/EmissionsChart";
 import { CostChart } from "@/components/CostChart";
 import type { YearRecord } from "@/lib/library";
 
+// Static imports on purpose. Only one metric renders at a time, so lazy-loading
+// the four non-default charts looks like an obvious win -- it was measured and it
+// isn't. All five share Recharts, which is the overwhelming majority of the
+// weight (~125 KB gzipped), and the default Generation chart needs it for the
+// first paint regardless. Splitting the siblings moved 4 KB over the wire and
+// bought four extra chunks plus four loading states. The floor on a chart route
+// is Recharts itself; the only thing that would actually move it is deferring the
+// whole panel below the fold, which costs the SSR'd chart on a page whose entire
+// purpose is that chart.
+
 type MetricKey =
   | "generation"
   | "capacity"
@@ -65,10 +75,23 @@ export function ResultCharts({
 
   return (
     <div>
+      {/* A group of toggle buttons, not an ARIA tablist. The tablist role
+          carries a keyboard contract -- roving tabindex, Arrow/Home/End moving
+          selection, each tab owning an aria-controls'd tabpanel -- and claiming
+          the role without honoring it is worse than not claiming it: the screen
+          reader announces "tab 1 of 5", the user presses Right, nothing moves.
+          Five chart metrics don't need that contract, so we use the affordance
+          that's true here: pressed buttons, native Tab between them, one live
+          region announcing what changed.
+
+          flex-wrap matters: the five labels measure ~419px, which overflowed a
+          360px viewport and put a horizontal scrollbar on the whole page. It
+          stays inline-flex so the group still hugs its content on wide screens
+          rather than stretching into a full-width segmented control. */}
       <div
-        role="tablist"
+        role="group"
         aria-label="Chart metric"
-        className="inline-flex rounded-lg border border-zinc-200 p-0.5 dark:border-zinc-800"
+        className="inline-flex max-w-full flex-wrap gap-0.5 rounded-lg border border-zinc-200 p-0.5 dark:border-zinc-800"
       >
         {METRICS.map((m) => {
           const selected = m.key === metric;
@@ -76,14 +99,13 @@ export function ResultCharts({
             <button
               key={m.key}
               type="button"
-              role="tab"
-              aria-selected={selected}
+              aria-pressed={selected}
               onClick={() => setMetric(m.key)}
               className={
-                "rounded-md px-3 py-1.5 text-sm font-medium transition-colors " +
+                "min-h-9 rounded-md px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-colors " +
                 (selected
                   ? "bg-accent text-accent-foreground"
-                  : "text-zinc-600 hover:text-black dark:text-zinc-400 dark:hover:text-zinc-50")
+                  : "text-zinc-600 hover:bg-zinc-100 hover:text-black dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-50")
               }
             >
               {m.label}
@@ -101,7 +123,15 @@ export function ResultCharts({
           <CostChart data={data} mortalityPrice={mortalityPrice} />
         )}
       </div>
-      <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
+      {/* The caption is the only text that changes when the metric does, so it
+          doubles as the announcement -- a screen-reader user gets the new
+          metric's description instead of silence after a swap. */}
+      <p
+        role="status"
+        aria-live="polite"
+        className="mt-2 text-sm text-zinc-500 dark:text-zinc-400"
+      >
+        <span className="sr-only">{active.label}: </span>
         {active.caption}
       </p>
     </div>

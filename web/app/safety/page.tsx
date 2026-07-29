@@ -11,6 +11,9 @@ import {
 import { MORTALITY, VSL_PRESETS, formatVsl } from "@/lib/mortality";
 import latticeData from "@/data/playground_lattice.json";
 import type { Lattice } from "@/lib/playground";
+import { KeyPoint } from "@/components/KeyPoint";
+import { Standfirst } from "@/components/Standfirst";
+import { ChartCaption } from "@/components/ChartCaption";
 
 const VSL_CENTRAL = 14_100_000;
 // deaths/TWh × $/death ÷ 1e6 MWh/TWh = $/MWh of mortality cost.
@@ -47,9 +50,7 @@ export const metadata = {
 export default function SafetyPage() {
   return (
     <div className="mx-auto max-w-3xl px-6 py-16">
-      <p className="text-xs font-semibold tracking-[0.2em] text-accent uppercase">
-        The second externality
-      </p>
+      <Standfirst>The second externality</Standfirst>
       <h1 className="font-display mt-3 text-4xl font-semibold tracking-tight text-balance">
         Electricity kills people — unevenly
       </h1>
@@ -64,19 +65,19 @@ export default function SafetyPage() {
         never charges for any of it. Optimize lets you put a price on it.
       </p>
 
-      <div className="mt-6 rounded-xl border-l-2 border-[var(--mortality)] bg-zinc-50/60 px-4 py-3 dark:bg-zinc-900/40">
-        <p className="text-sm text-zinc-700 dark:text-zinc-300">
-          <span className="font-medium">In one line:</span> electricity kills
-          people, very unevenly, and the market never charges for it — so we let
-          you charge for it and watch the cheapest grid change.
-        </p>
-      </div>
+      <KeyPoint label="In one line:">
+        electricity kills people, very unevenly, and the market never charges
+        for it — so we let you charge for it and watch the cheapest grid change.
+      </KeyPoint>
 
       <section className="mt-10">
         <div className="rounded-2xl border border-zinc-200 bg-zinc-50/60 p-5 dark:border-zinc-800 dark:bg-zinc-900/40">
-          <p className="text-xs font-semibold tracking-[0.15em] text-[var(--mortality)] uppercase">
+          {/* A real heading, not a 12px uppercase tracked pseudo-label: this
+              panel is the most important thing on the page and had no entry in
+              the document outline at all. */}
+          <h2 className="text-xl font-medium text-[var(--mortality)]">
             The headline result
-          </p>
+          </h2>
           <p className="mt-2 text-lg text-zinc-800 dark:text-zinc-200">
             Put a price on <em>either</em> harm — carbon or mortality — and the
             coal-heavy Midwest is transformed: coal collapses and grid deaths
@@ -102,7 +103,7 @@ export default function SafetyPage() {
             The subtler, more interesting part is the second act — where the two
             prices <em>disagree</em>. They part ways on{" "}
             <span
-              style={{ color: "var(--series-gas)" }}
+              style={{ color: "var(--series-gas-text)" }}
               className="font-medium"
             >
               gas
@@ -221,7 +222,7 @@ export default function SafetyPage() {
               key={p.label}
               className="rounded-xl border border-zinc-200 py-4 dark:border-zinc-800"
             >
-              <div className="font-display text-2xl font-semibold">
+              <div className="font-sans text-2xl font-semibold tabular-nums">
                 {formatVsl(p.value)}
               </div>
               <div className="text-xs text-zinc-500 dark:text-zinc-400">
@@ -294,9 +295,9 @@ export default function SafetyPage() {
         </p>
 
         <div className="mt-6 rounded-xl border border-zinc-200 p-5 dark:border-zinc-800">
-          <div className="mb-3 text-xs font-medium tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
+          <ChartCaption className="mb-3">
             Coal exits under either price — but gas is where they diverge
-          </div>
+          </ChartCaption>
           <DivergenceComparison />
         </div>
       </section>
@@ -304,7 +305,7 @@ export default function SafetyPage() {
       <details className="group mt-12 border-t border-zinc-200 pt-6 dark:border-zinc-800">
         <summary className="flex cursor-pointer list-none items-center justify-between text-xl font-medium marker:content-none">
           Where these numbers come from
-          <span aria-hidden className="text-base text-zinc-400 transition group-open:rotate-45">
+          <span aria-hidden className="text-base text-zinc-500 dark:text-zinc-400 transition group-open:rotate-45">
             +
           </span>
         </summary>
@@ -339,7 +340,7 @@ export default function SafetyPage() {
       <details className="group mt-6 border-t border-zinc-200 pt-6 dark:border-zinc-800">
         <summary className="flex cursor-pointer list-none items-center justify-between text-xl font-medium marker:content-none">
           What could make these numbers wrong
-          <span aria-hidden className="text-base text-zinc-400 transition group-open:rotate-45">
+          <span aria-hidden className="text-base text-zinc-500 dark:text-zinc-400 transition group-open:rotate-45">
             +
           </span>
         </summary>
@@ -443,7 +444,7 @@ function CompareBar({
         />
       </div>
       <span className="w-20 shrink-0 text-right text-sm tabular-nums">
-        {value} <span className="text-zinc-400">/TWh</span>
+        {value} <span className="text-zinc-500 dark:text-zinc-400">/TWh</span>
       </span>
     </div>
   );
@@ -461,7 +462,7 @@ function DeathStat({
   return (
     <div className="rounded-xl border border-zinc-200 py-3 dark:border-zinc-800">
       <div
-        className="font-display text-2xl font-semibold tabular-nums"
+        className="font-sans text-2xl font-semibold tabular-nums"
         style={tone === "bad" ? { color: "var(--mortality)" } : undefined}
       >
         {value.toLocaleString()}
@@ -469,7 +470,7 @@ function DeathStat({
       <div className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
         {label}
       </div>
-      <div className="text-[10px] tracking-wide text-zinc-400 uppercase">
+      <div className="text-[10px] tracking-wide text-zinc-500 dark:text-zinc-400 uppercase">
         deaths / yr
       </div>
     </div>
@@ -489,7 +490,7 @@ function ParallelCard({
     <div className="rounded-xl border border-zinc-200 p-4 dark:border-zinc-800">
       <div className="flex items-baseline justify-between">
         <h3 className="font-medium text-black dark:text-zinc-50">{title}</h3>
-        <span className="font-mono text-xs text-zinc-500 dark:text-zinc-400">
+        <span className="text-xs tabular-nums text-zinc-500 dark:text-zinc-400">
           {unit}
         </span>
       </div>

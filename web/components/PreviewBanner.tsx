@@ -11,9 +11,15 @@
 export function PreviewBanner() {
   if (process.env.VERCEL_ENV === "production") return null;
 
+  // Not role="alert": that's an assertive live region, meant for something that
+  // just happened and must interrupt. This bar is static and present on every
+  // page load, so alert made screen readers announce it ahead of the page on
+  // every navigation. A labelled region puts it in the landmark list, where a
+  // user can reach it once and then move on.
   return (
     <div
-      role="alert"
+      role="region"
+      aria-label="Build notice"
       className="border-b border-amber-300 bg-amber-50 px-4 py-2.5 text-center text-sm text-amber-900 dark:border-amber-500/40 dark:bg-amber-950/60 dark:text-amber-100"
     >
       <span className="font-semibold">Preview build.</span>{" "}

@@ -63,39 +63,63 @@ export default function CustomRunStatusPage({
 
       <h1 className="mt-2 text-3xl font-semibold tracking-tight">Custom run</h1>
 
-      {pending && (
-        <div className="mt-8 rounded-lg border border-zinc-200 p-6 dark:border-zinc-800">
-          <div className="flex items-center gap-3">
-            <span
-              aria-hidden
-              className="h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-accent border-t-transparent"
-            />
-            <p className="text-zinc-600 dark:text-zinc-400">
-              {status === "queued"
-                ? "Queued — waiting for a worker to pick this up…"
-                : "Running the scenario through the engine…"}
+      {/* This page's whole job is to report a state change that arrives minutes
+          later, unprompted, while the user is looking elsewhere. Without a live
+          region a screen-reader user is never told the run finished -- the DOM
+          just quietly swaps. The wrapper is always mounted so the region exists
+          before the content it announces; polite, because "your run is done"
+          shouldn't interrupt mid-sentence.
+
+          The elapsed counter is deliberately NOT inside it: it ticks every
+          second, and a live region containing it would talk over everything
+          else forever. aria-hidden on the counter, with the phase sentence
+          carrying the announcement. */}
+      <div role="status" aria-live="polite" aria-atomic="false">
+        {pending && (
+          <div className="mt-8 rounded-lg border border-zinc-200 p-6 dark:border-zinc-800">
+            <div className="flex items-center gap-3">
+              <span
+                aria-hidden
+                className="h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-accent border-t-transparent"
+              />
+              <p className="text-zinc-600 dark:text-zinc-400">
+                {status === "queued"
+                  ? "Queued — waiting for a worker to pick this up…"
+                  : "Running the scenario through the engine…"}
+              </p>
+            </div>
+            <div className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
+              <div className="animate-indeterminate h-full w-1/3 rounded-full bg-accent" />
+            </div>
+            <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
+              {elapsed > 0 && (
+                <span aria-hidden className="tabular-nums">
+                  {elapsed}s elapsed ·{" "}
+                </span>
+              )}
+              {estimateText}
             </p>
           </div>
-          <div className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
-            <div className="animate-indeterminate h-full w-1/3 rounded-full bg-accent" />
-          </div>
-          <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
-            {elapsed > 0 && (
-              <span className="tabular-nums">{elapsed}s elapsed · </span>
-            )}
-            {estimateText}
-          </p>
-        </div>
-      )}
+        )}
 
-      {status === "error" && (
-        <div className="mt-8 rounded-lg border border-red-300 p-6 dark:border-red-800">
-          <p className="font-medium text-red-600 dark:text-red-400">Run failed</p>
-          <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-            {errorMessage ?? "Unknown error"}
-          </p>
-        </div>
-      )}
+        {status === "done" && result && (
+          <p className="sr-only">Run finished. Results are below.</p>
+        )}
+      </div>
+
+      {/* A failed run is an error, not a status: assertive. */}
+      <div role="alert" aria-atomic="true">
+        {status === "error" && (
+          <div className="mt-8 rounded-lg border border-red-300 p-6 dark:border-red-800">
+            <p className="font-medium text-red-700 dark:text-red-400">
+              Run failed
+            </p>
+            <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+              {errorMessage ?? "Unknown error"}
+            </p>
+          </div>
+        )}
+      </div>
 
       {status === "done" && result && (
         <>

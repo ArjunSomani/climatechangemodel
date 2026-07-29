@@ -13,6 +13,7 @@ import {
 import type { LibraryCaseDetail } from "@/lib/library";
 import { caseLabel, totalCO2MT } from "@/lib/metrics";
 import { useForceResizeOnMount } from "@/lib/useForceResizeOnMount";
+import { legendLabel } from "@/lib/chartLegend";
 
 // Same 8-slot categorical palette as the energy-mix chart, but a
 // different identity dimension here (case, not energy source) --
@@ -134,7 +135,9 @@ export function CO2TrajectoryChart({ cases }: { cases: LibraryCaseDetail[] }) {
         <Tooltip content={<CO2Tooltip labels={labels} />} />
         <Legend
           wrapperStyle={{ color: "var(--ink-secondary)", fontSize: 13 }}
-          formatter={(_value, entry) => labels[(entry as { dataKey?: string }).dataKey ?? ""] ?? ""}
+          formatter={(_value, entry) =>
+            legendLabel(labels[(entry as { dataKey?: string }).dataKey ?? ""] ?? "")
+          }
         />
         {cases.map((c, i) => (
           <Line

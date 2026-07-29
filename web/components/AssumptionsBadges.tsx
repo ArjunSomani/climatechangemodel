@@ -17,7 +17,10 @@ export function AssumptionsBadges() {
           {a}
         </span>
       ))}
-      <Link href="/methodology" className="underline">
+      <Link
+        href="/methodology"
+        className="inline-flex min-h-6 items-center underline"
+      >
         Full list of assumptions →
       </Link>
     </div>

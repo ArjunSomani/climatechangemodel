@@ -13,6 +13,7 @@ import {
 import { EIA_SOURCES, type EiaSourceKey } from "@/lib/sources";
 import { useForceResizeOnMount } from "@/lib/useForceResizeOnMount";
 import type { EiaWeekRow } from "@/lib/eiaExplorer";
+import { legendLabel } from "@/lib/chartLegend";
 
 export function EiaWeeklyChart({
   data,
@@ -63,6 +64,7 @@ export function EiaWeeklyChart({
           iconType="plainline"
           wrapperStyle={{ color: "var(--ink-secondary)", fontSize: 13 }}
           itemSorter={(item) => EIA_SOURCES.findIndex((s) => s.label === item.value)}
+          formatter={legendLabel}
         />
         {shown.map((s) => (
           <Line

@@ -38,10 +38,15 @@ export function CasePicker({ cases }: { cases: LibraryCaseSummary[] }) {
 
       <div className="mt-6 rounded-lg border border-zinc-200 p-5 dark:border-zinc-800">
         <ScenarioPicker cases={cases} onChange={setCurrent} />
+        {/* "Already added" is state the user needs to read, so the disabled
+            style can't be opacity -- at 30% it composited to well under 3:1.
+            A neutral fill plus not-allowed reads as unavailable while keeping
+            the label legible. */}
         <button
+          type="button"
           onClick={addCurrent}
           disabled={!current || !!alreadyAdded}
-          className="mt-4 min-h-11 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground disabled:opacity-30"
+          className="mt-4 min-h-11 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-600 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-300"
         >
           {alreadyAdded ? "Already added" : "Add to comparison"}
         </button>
@@ -60,7 +65,7 @@ export function CasePicker({ cases }: { cases: LibraryCaseSummary[] }) {
                   <button
                     onClick={() => remove(c.case_id)}
                     aria-label={`Remove ${caseLabel(c)}`}
-                    className="flex h-6 w-6 items-center justify-center rounded-full text-lg leading-none text-zinc-500 hover:bg-zinc-200 dark:hover:bg-zinc-800"
+                    className="flex h-6 w-6 items-center justify-center rounded-full text-lg leading-none text-zinc-500 hover:bg-zinc-200 dark:text-zinc-400 dark:hover:bg-zinc-800"
                   >
                     ×
                   </button>
@@ -72,9 +77,10 @@ export function CasePicker({ cases }: { cases: LibraryCaseSummary[] }) {
                 {added.length} selected
               </span>
               <button
+                type="button"
                 onClick={goCompare}
                 disabled={added.length < 2}
-                className="min-h-11 rounded-full bg-black px-5 py-2.5 text-sm font-medium text-white disabled:opacity-30 dark:bg-white dark:text-black"
+                className="min-h-11 rounded-full bg-black px-5 py-2.5 text-sm font-medium text-white disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-600 dark:bg-white dark:text-black dark:disabled:bg-zinc-800 dark:disabled:text-zinc-300"
               >
                 Compare selected ({added.length})
               </button>

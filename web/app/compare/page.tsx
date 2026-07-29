@@ -76,7 +76,7 @@ export default async function ComparePage({
         <AssumptionsBadges />
       </div>
 
-      <p className="mt-8 text-xs text-zinc-400 sm:hidden">
+      <p className="mt-8 text-xs text-zinc-500 dark:text-zinc-400 sm:hidden">
         Scroll the table sideways to see every column →
       </p>
       <section className="mt-2 overflow-x-auto sm:mt-8">

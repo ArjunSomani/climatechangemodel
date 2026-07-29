@@ -14,6 +14,7 @@ import { SOURCES } from "@/lib/sources";
 import { formatEnergyIn, pickEnergyUnit, type EnergyUnit } from "@/lib/format";
 import type { YearRecord } from "@/lib/library";
 import { useForceResizeOnMount } from "@/lib/useForceResizeOnMount";
+import { legendLabel } from "@/lib/chartLegend";
 
 interface TooltipPayloadEntry {
   dataKey: string;
@@ -131,6 +132,7 @@ export function EnergyMixChart({ data }: { data: YearRecord[] }) {
           itemSorter={(item) =>
             SOURCES.findIndex((s) => s.label === item.value)
           }
+          formatter={legendLabel}
         />
         {SOURCES.map((source) => (
           <Area

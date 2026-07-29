@@ -66,11 +66,7 @@ const ICON_MAP = Object.freeze({
   ),
 });
 
-const PRESETS: {
-  label: string;
-  blurb: string;
-  apply: (c: ScenarioConfigInput) => ScenarioConfigInput;
-}[] = [
+const PRESETS: Preset[] = [
   {
     label: "No carbon price",
     blurb: "Today's rules — CO₂ pollution is free.",
@@ -92,11 +88,7 @@ const PRESETS: {
 // they disagree. A mortality-only price tolerates gas (gas is ~9x cleaner than
 // coal on deaths); a carbon-only price at comparable stringency pushes past it
 // (gas is only ~1.7x cleaner on CO2). Flip between these to see it move.
-const COMPARISON_PRESETS: {
-  label: string;
-  blurb: string;
-  apply: (c: ScenarioConfigInput) => ScenarioConfigInput;
-}[] = [
+const COMPARISON_PRESETS: Preset[] = [
   {
     label: "Carbon price only",
     blurb: "$400/ton CO₂, no mortality price.",
@@ -183,55 +175,22 @@ export default function CustomRunPage() {
         a minute; you&apos;ll be redirected to a live status page to watch it.
       </p>
 
-      <div className="mt-6 rounded-xl border border-zinc-200 p-4 dark:border-zinc-800">
-        <p className="text-sm font-medium text-black dark:text-zinc-50">
-          Not sure where to start? Try a preset:
-        </p>
-        <div className="mt-3 grid gap-2 sm:grid-cols-3">
-          {PRESETS.map((p) => (
-            <button
-              key={p.label}
-              type="button"
-              onClick={() => setConfig((c) => p.apply(c))}
-              className="rounded-lg border border-zinc-200 p-3 text-left text-sm hover:border-accent dark:border-zinc-800"
-            >
-              <div className="font-medium text-black dark:text-zinc-50">
-                {p.label}
-              </div>
-              <div className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
-                {p.blurb}
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
+      {/* Both preset groups used to sit inside their own bordered box, so every
+          preset was a bordered card nested in a bordered card. The buttons need
+          the border -- it's the affordance -- so the outer box is what goes; a
+          heading and space do its grouping job without the second frame. */}
+      <PresetGroup
+        heading="Not sure where to start? Try a preset:"
+        presets={PRESETS}
+        onPick={(apply) => setConfig(apply)}
+      />
 
-      <div className="mt-4 rounded-xl border border-zinc-200 p-4 dark:border-zinc-800">
-        <p className="text-sm font-medium text-black dark:text-zinc-50">
-          Or compare pricing carbon vs. mortality:
-        </p>
-        <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
-          Coal exits under either. Gas is where they disagree — flip between
-          these and watch the gas build move.
-        </p>
-        <div className="mt-3 grid gap-2 sm:grid-cols-3">
-          {COMPARISON_PRESETS.map((p) => (
-            <button
-              key={p.label}
-              type="button"
-              onClick={() => setConfig((c) => p.apply(c))}
-              className="rounded-lg border border-zinc-200 p-3 text-left text-sm hover:border-accent dark:border-zinc-800"
-            >
-              <div className="font-medium text-black dark:text-zinc-50">
-                {p.label}
-              </div>
-              <div className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
-                {p.blurb}
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
+      <PresetGroup
+        heading="Or compare pricing carbon vs. mortality:"
+        note="Coal exits under either. Gas is where they disagree — flip between these and watch the gas build move."
+        presets={COMPARISON_PRESETS}
+        onPick={(apply) => setConfig(apply)}
+      />
 
       <div className="mt-6 flex flex-col gap-2 border-t border-zinc-200 pt-6 dark:border-zinc-800 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-zinc-500 dark:text-zinc-400">
@@ -351,14 +310,32 @@ export default function CustomRunPage() {
           </div>
         </details>
 
-        {error && (
-          <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-        )}
+        {/* Submitting is an async POST with no page change on failure, so the
+            error has to be announced, not just rendered. role=alert on a
+            container that's always present (rather than mounting the <p>
+            itself) is what makes assistive tech read it -- a live region added
+            to the DOM at the same moment as its content is often missed. */}
+        <div role="alert" aria-atomic="true">
+          {error && (
+            <p className="text-sm font-medium text-red-700 dark:text-red-400">
+              {error}
+            </p>
+          )}
+        </div>
 
+        {/* text-accent-foreground, not text-white: the shared token is the one
+            measured against --accent in both themes (4.81:1 light). Plain white
+            on the light accent was 4.47:1 and on the dark accent 2.79:1.
+            No opacity in the disabled state -- the disabled label IS the status
+            message ("Starting run…"), and any opacity below 1 composites it
+            toward the page background: 0.8 measured 3.45:1 in light. The
+            pending state reads instead from the text swap, aria-busy, and the
+            cursor. */}
         <button
           type="submit"
           disabled={submitting}
-          className="min-h-11 rounded-md bg-accent px-5 py-2.5 text-sm font-medium text-white disabled:opacity-50"
+          aria-busy={submitting}
+          className="min-h-11 rounded-md bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground disabled:cursor-progress"
         >
           {submitting ? "Starting run…" : "Run scenario"}
         </button>
@@ -367,25 +344,86 @@ export default function CustomRunPage() {
   );
 }
 
+// Every knob on this page is an initial/yearly pair, and this form renders 33
+// of them (3 top-level + 6 sources x 5 fields). Naming the inputs from their
+// visible "Initial"/"Yearly" captions alone left 33 spinbuttons called
+// "Initial" and 33 called "Yearly" -- a screen-reader user could hear the whole
+// form and never learn which knob they were editing. The group's own label
+// (e.g. "CO2 price ($/MT)") has to reach the input, so:
+//   - fieldset/legend puts it in the accessibility tree as a real grouping, and
+//   - aria-label composes the full name on each input, because a legend alone
+//     is announced on entering the group, not re-announced per field.
+// `group` is the caller's disambiguator when the same field label repeats
+// across sources ("Capital cost" under Solar vs under Coal).
+type Preset = {
+  label: string;
+  blurb: string;
+  apply: (c: ScenarioConfigInput) => ScenarioConfigInput;
+};
+
+function PresetGroup({
+  heading,
+  note,
+  presets,
+  onPick,
+}: {
+  heading: string;
+  note?: string;
+  presets: Preset[];
+  onPick: (apply: (c: ScenarioConfigInput) => ScenarioConfigInput) => void;
+}) {
+  return (
+    <section className="mt-6">
+      <h2 className="text-sm font-medium text-black dark:text-zinc-50">
+        {heading}
+      </h2>
+      {note && (
+        <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">{note}</p>
+      )}
+      <div className="mt-3 grid gap-2 sm:grid-cols-3">
+        {presets.map((p) => (
+          <button
+            key={p.label}
+            type="button"
+            onClick={() => onPick(p.apply)}
+            className="rounded-lg border border-zinc-200 p-3 text-left text-sm hover:border-accent dark:border-zinc-800"
+          >
+            <span className="block font-medium text-black dark:text-zinc-50">
+              {p.label}
+            </span>
+            <span className="mt-0.5 block text-xs text-zinc-500 dark:text-zinc-400">
+              {p.blurb}
+            </span>
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function TweakPairFields({
   label,
+  group,
   value,
   onChange,
 }: {
   label: string;
+  group?: string;
   value: TweakPairInput;
   onChange: (patch: Partial<TweakPairInput>) => void;
 }) {
+  const qualified = group ? `${group} — ${label}` : label;
   return (
-    <div>
-      <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+    <fieldset className="min-w-0 border-0 p-0">
+      <legend className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
         {label}
-      </span>
+      </legend>
       <div className="mt-1 grid grid-cols-2 gap-2">
         <Field label="Initial">
           <input
             type="number"
             step="any"
+            aria-label={`${qualified}, initial value`}
             className={inputClass}
             value={value.initial}
             onChange={(e) => onChange({ initial: Number(e.target.value) })}
@@ -395,13 +433,14 @@ function TweakPairFields({
           <input
             type="number"
             step="any"
+            aria-label={`${qualified}, yearly change`}
             className={inputClass}
             value={value.yearly}
             onChange={(e) => onChange({ yearly: Number(e.target.value) })}
           />
         </Field>
       </div>
-    </div>
+    </fieldset>
   );
 }
 
@@ -413,6 +452,9 @@ const SOURCE_TWEAK_FIELDS: { key: keyof SourceTweaksInput; label: string }[] = [
   { key: "max_pct", label: "Max %" },
 ];
 
+// No border on the wrapper: this sits inside the already-bordered <details>
+// panel, so a bordered card per source was a card inside a card. A hairline rule
+// between sources and the source name carry the grouping instead.
 function SourceTweaksFields({
   label,
   value,
@@ -423,13 +465,14 @@ function SourceTweaksFields({
   onChange: (next: SourceTweaksInput) => void;
 }) {
   return (
-    <div className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
+    <div className="border-t border-zinc-200 pt-5 first:border-t-0 first:pt-0 dark:border-zinc-800">
       <h3 className="font-medium">{label}</h3>
       <div className="mt-3 grid min-w-0 gap-4 sm:grid-cols-3 lg:grid-cols-5">
         {SOURCE_TWEAK_FIELDS.map(({ key, label: fieldLabel }) => (
           <TweakPairFields
             key={key}
             label={fieldLabel}
+            group={label}
             value={value[key]}
             onChange={(patch) =>
               onChange({ ...value, [key]: { ...value[key], ...patch } })

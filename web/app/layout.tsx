@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
-import { Fraunces, Geist, Geist_Mono } from "next/font/google";
+import { Fraunces, Geist } from "next/font/google";
 import { Nav } from "@/components/Nav";
 import { PreviewBanner } from "@/components/PreviewBanner";
 import "./globals.css";
@@ -8,20 +8,27 @@ import "./globals.css";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  display: "swap",
 });
 
 // Display serif for headings only -- gives the site an editorial,
 // energy-and-climate-storytelling feel instead of generic app chrome.
-// Body copy and UI stay on Geist for legibility at small sizes.
+// Body copy, UI, and all numeric data stay on Geist.
+//
+// Axes: opsz only. The variable file also ships SOFT and WONK, and requesting
+// them cost 118 KB on every page -- more than the entire gzipped JS bundle on
+// the static routes -- while nothing in the CSS ever varied either one
+// (`font-optical-sizing: auto` uses opsz; SOFT and WONK appear nowhere). If a
+// future design deliberately varies them, add them back and re-measure.
+//
+// Geist Mono is gone for the same reason: a whole family fetched to style four
+// numeric readouts, each of which already carried `tabular-nums`. Geist's own
+// tabular figures line up columns just as well without a second download.
 const fraunces = Fraunces({
   variable: "--font-fraunces",
   subsets: ["latin"],
-  axes: ["opsz", "SOFT", "WONK"],
+  axes: ["opsz"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -36,6 +43,9 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
+const footerLink =
+  "flex min-h-6 items-center px-1 hover:text-accent hover:underline";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -49,7 +59,7 @@ export default function RootLayout({
       // and the client value can legitimately differ -- hence suppressHydrationWarning.
       data-theme="dark"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${fraunces.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans">
         {/* Apply the stored theme before anything paints so a light-mode visitor
@@ -60,38 +70,44 @@ export default function RootLayout({
               "(function(){try{var t=localStorage.getItem('theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');}catch(e){}})();",
           }}
         />
+        <a href="#main-content" className="skip-link">
+          Skip to content
+        </a>
         <PreviewBanner />
         <Nav />
-        <main className="flex min-w-0 flex-1 flex-col">
+        <main id="main-content" className="flex min-w-0 flex-1 flex-col">
           <div className="min-w-0">{children}</div>
         </main>
         <footer className="border-t border-zinc-200 dark:border-zinc-800">
           <div className="mx-auto flex max-w-4xl flex-col gap-2 px-6 py-8 text-sm text-zinc-500 sm:flex-row sm:justify-between dark:text-zinc-400">
-            <div className="flex flex-wrap gap-x-4 gap-y-1">
-              <Link href="/about" className="hover:text-accent">
+            {/* py-1 -mx-1 px-1 gives each link a >=24px hit box (WCAG 2.5.8)
+                without changing where the text sits, and the negative margin
+                keeps the row's visual alignment flush. */}
+            <nav
+              aria-label="Site information"
+              className="-mx-1 flex flex-wrap gap-x-3 gap-y-0"
+            >
+              <Link href="/about" className={footerLink}>
                 About
               </Link>
-              <a
-                href="https://github.com/cliffgold/Optimize"
-                className="hover:text-accent"
-              >
+              <a href="https://github.com/cliffgold/Optimize" className={footerLink}>
                 GitHub
               </a>
-              <Link href="/methodology" className="hover:text-accent">
+              <Link href="/methodology" className={footerLink}>
                 Methodology
               </Link>
-              <Link href="/data-explorer" className="hover:text-accent">
+              <Link href="/data-explorer" className={footerLink}>
                 Data sources
               </Link>
               <a
                 href="https://levelmodel.vercel.app"
-                className="hover:text-accent"
+                className={footerLink}
                 target="_blank"
                 rel="noreferrer"
               >
                 Level
               </a>
-            </div>
+            </nav>
             <div>
               Modeling engine and data from cliffgold/Optimize. No open
               source license specified.

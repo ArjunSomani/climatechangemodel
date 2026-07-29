@@ -95,7 +95,7 @@ export function SafetyFaq() {
             {item.q}
             <span
               aria-hidden
-              className="shrink-0 text-zinc-400 transition group-open:rotate-45"
+              className="shrink-0 text-zinc-500 dark:text-zinc-400 transition group-open:rotate-45"
             >
               +
             </span>

@@ -17,9 +17,6 @@ export default function PlaygroundPage() {
   const regionName = REGIONS[lattice.region] ?? lattice.region;
   return (
     <div className="mx-auto max-w-3xl px-6 py-16">
-      <p className="text-xs font-semibold tracking-[0.2em] text-accent uppercase">
-        Two harms, two sliders
-      </p>
       <h1 className="font-display mt-3 text-4xl font-semibold tracking-tight text-balance">
         Move the prices, watch the grid
       </h1>

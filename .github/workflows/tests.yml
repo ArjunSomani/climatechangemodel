@@ -33,3 +33,31 @@ jobs:
       - run: pip install -e ".[dev]"
 
       - run: pytest tests/ -v
+
+  # The web suite existed but never ran anywhere: playwright.config.ts hard-coded
+  # a Chromium path from one specific image, and `playwright` wasn't even in
+  # package.json. Both are fixed, so the smoke + a11y specs now gate PRs.
+  # DB-free routes only -- no Neon/Blob secrets needed.
+  web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - run: npm ci
+
+      - run: npx playwright install --with-deps chromium
+
+      - run: npm run build
+
+      # Reuses the built app via the config's webServer block (`npm start`).
+      - run: npm run test:e2e

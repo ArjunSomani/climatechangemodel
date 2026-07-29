@@ -108,10 +108,14 @@ export function ConfigSaveLoad({
           <UploadIcon />
           Load configuration
         </button>
+        {/* Visually hidden and driven by the button above, but still a real
+            focusable control in some AT navigation modes -- so it needs its own
+            name rather than inheriting nothing. */}
         <input
           ref={fileInputRef}
           type="file"
           accept="application/json,.json"
+          aria-label="Choose a saved scenario configuration file"
           onChange={handleFile}
           className="hidden"
         />

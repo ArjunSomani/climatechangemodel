@@ -4,6 +4,7 @@ import { useState } from "react";
 import { SOURCES } from "@/lib/sources";
 import { formatVsl } from "@/lib/mortality";
 import { cellAt, type Lattice } from "@/lib/playground";
+import { ChartCaption } from "@/components/ChartCaption";
 
 function fmt(n: number): string {
   if (n < 10) return n.toLocaleString(undefined, { maximumFractionDigits: 1 });
@@ -51,10 +52,16 @@ export function PlaygroundClient({ lattice }: { lattice: Lattice }) {
             <label htmlFor="pg-carbon" className="text-sm font-medium">
               Carbon price
             </label>
-            <span className="font-mono text-sm tabular-nums">
+            <span className="text-sm tabular-nums">
               ${carbon.toLocaleString()}/ton
             </span>
           </div>
+          {/* These sliders are index sliders -- their value is a position in the
+              pre-computed lattice, not a price -- so without aria-valuetext a
+              screen reader announces "7" while the screen reads "$400/ton".
+              aria-valuetext replaces the number with the thing it means.
+              min-h-6 gives the control a >=24px pointer target (WCAG 2.5.8);
+              the native track is 16px. */}
           <input
             id="pg-carbon"
             type="range"
@@ -62,8 +69,9 @@ export function PlaygroundClient({ lattice }: { lattice: Lattice }) {
             max={lattice.carbonPrices.length - 1}
             step={1}
             value={ci}
+            aria-valuetext={`$${carbon.toLocaleString()} per ton`}
             onChange={(e) => setCi(Number(e.target.value))}
-            className="mt-2 w-full"
+            className="mt-2 min-h-6 w-full"
             style={{ accentColor: "var(--series-coal)" }}
           />
         </div>
@@ -72,7 +80,7 @@ export function PlaygroundClient({ lattice }: { lattice: Lattice }) {
             <label htmlFor="pg-mort" className="text-sm font-medium">
               Mortality price
             </label>
-            <span className="font-mono text-sm tabular-nums">
+            <span className="text-sm tabular-nums">
               {formatVsl(mort)}/death
             </span>
           </div>
@@ -83,8 +91,9 @@ export function PlaygroundClient({ lattice }: { lattice: Lattice }) {
             max={lattice.mortalityPrices.length - 1}
             step={1}
             value={mi}
+            aria-valuetext={`${formatVsl(mort)} per death`}
             onChange={(e) => setMi(Number(e.target.value))}
-            className="mt-2 w-full"
+            className="mt-2 min-h-6 w-full"
             style={{ accentColor: "var(--mortality)" }}
           />
         </div>
@@ -92,9 +101,9 @@ export function PlaygroundClient({ lattice }: { lattice: Lattice }) {
 
       {/* Resulting final-year mix */}
       <div>
-        <div className="mb-2 text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+        <ChartCaption className="mb-2">
           Final-year generation mix ({lattice.region}, year {lattice.years})
-        </div>
+        </ChartCaption>
         <div
           className="flex h-8 w-full overflow-hidden rounded-md"
           role="img"
@@ -128,7 +137,7 @@ export function PlaygroundClient({ lattice }: { lattice: Lattice }) {
                 style={{ background: s.color }}
               />
               {s.label}{" "}
-              <span className="tabular-nums text-zinc-400">
+              <span className="tabular-nums text-zinc-500 dark:text-zinc-400">
                 {fmtTwh(cell.finalMixMWh[s.key] ?? 0)} TWh
               </span>
             </span>
@@ -206,7 +215,7 @@ function Metric({
         {value}
       </div>
       {sub && (
-        <div className="text-xs text-zinc-400">{sub}</div>
+        <div className="text-xs text-zinc-500 dark:text-zinc-400">{sub}</div>
       )}
     </div>
   );

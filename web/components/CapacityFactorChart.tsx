@@ -17,6 +17,7 @@ import {
 import { SOURCES } from "@/lib/sources";
 import type { YearRecord } from "@/lib/library";
 import { useForceResizeOnMount } from "@/lib/useForceResizeOnMount";
+import { legendLabel } from "@/lib/chartLegend";
 
 interface TooltipEntry {
   dataKey: string;
@@ -117,7 +118,7 @@ export function CapacityFactorChart({ data }: { data: YearRecord[] }) {
             wrapperStyle={{ color: "var(--ink-secondary)", fontSize: 13 }}
             formatter={(_v, entry) => {
               const key = (entry as { dataKey?: string }).dataKey ?? "";
-              return SOURCES.find((s) => `${s.key}_cf` === key)?.label ?? "";
+              return legendLabel(SOURCES.find((s) => `${s.key}_cf` === key)?.label ?? "");
             }}
           />
           {SOURCES.map((s) => (

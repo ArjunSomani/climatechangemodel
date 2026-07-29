@@ -22,6 +22,7 @@ import { computeYearDeaths } from "@/lib/mortality";
 import { formatMoney } from "@/lib/format";
 import type { YearRecord } from "@/lib/library";
 import { useForceResizeOnMount } from "@/lib/useForceResizeOnMount";
+import { legendLabel } from "@/lib/chartLegend";
 
 const SERIES: { key: string; label: string; color: string }[] = [
   { key: "capital", label: "Capital", color: "var(--compare-1)" },
@@ -141,7 +142,7 @@ export function CostChart({
             wrapperStyle={{ color: "var(--ink-secondary)", fontSize: 13 }}
             formatter={(_v, entry) => {
               const key = (entry as { dataKey?: string }).dataKey ?? "";
-              return SERIES.find((s) => s.key === key)?.label ?? "";
+              return legendLabel(SERIES.find((s) => s.key === key)?.label ?? "");
             }}
           />
           {series.map((s) => (
