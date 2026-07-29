@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { REGIONS } from "@/lib/regions";
+import { regionDemandGrowth, regionDemandMultiplier } from "@/lib/regionDemand";
 import { SOURCES, type SourceKey } from "@/lib/sources";
 import { ConfigSaveLoad } from "@/components/ConfigSaveLoad";
 import { MortalityPriceControl } from "@/components/MortalityPriceControl";
@@ -127,7 +128,15 @@ const COMPARISON_PRESETS: {
 
 export default function CustomRunPage() {
   const router = useRouter();
-  const [config, setConfig] = useState<ScenarioConfigInput>(defaultScenarioConfig());
+  // Demand growth defaults to the selected region's own historical rate rather
+  // than one US-wide number; changing region re-applies its default (overridable).
+  const [config, setConfig] = useState<ScenarioConfigInput>(() => {
+    const c = defaultScenarioConfig();
+    return {
+      ...c,
+      demand: { ...c.demand, initial: regionDemandMultiplier(c.region) },
+    };
+  });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -239,7 +248,17 @@ export default function CustomRunPage() {
               <select
                 className={selectClass}
                 value={config.region}
-                onChange={(e) => setConfig((c) => ({ ...c, region: e.target.value }))}
+                onChange={(e) => {
+                  const region = e.target.value;
+                  setConfig((c) => ({
+                    ...c,
+                    region,
+                    demand: {
+                      ...c.demand,
+                      initial: regionDemandMultiplier(region),
+                    },
+                  }));
+                }}
               >
                 {Object.entries(REGIONS).map(([code, label]) => (
                   <option key={code} value={code}>
@@ -286,6 +305,13 @@ export default function CustomRunPage() {
               onChange={(patch) => updateTweakPair("demand", patch)}
             />
           </div>
+          <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
+            Demand growth defaults to {config.region}&apos;s historical average
+            (~{(regionDemandGrowth(config.region) * 100).toFixed(1)}%/yr, an
+            initial multiplier of {regionDemandMultiplier(config.region).toFixed(3)}).
+            Each region carries its own; change the initial value above to
+            override.
+          </p>
         </Section>
 
         <MortalityPriceControl

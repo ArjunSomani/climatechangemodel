@@ -1,0 +1,76 @@
+{
+  "note": "Per-region annual demand-growth defaults, endpoint CAGR of total generation 2020-2025, clipped to [0.5%, 4.0%]. Approximate historical estimates from a short, noisy window; overridable per run.",
+  "window": [
+    2020,
+    2025
+  ],
+  "min_growth": 0.005,
+  "max_growth": 0.04,
+  "regions": {
+    "CAL": {
+      "growth": 0.04,
+      "raw_cagr": 0.0409,
+      "clipped": true
+    },
+    "CAR": {
+      "growth": 0.013,
+      "raw_cagr": 0.0128,
+      "clipped": false
+    },
+    "CENT": {
+      "growth": 0.023,
+      "raw_cagr": 0.023,
+      "clipped": false
+    },
+    "FLA": {
+      "growth": 0.005,
+      "raw_cagr": 0.0047,
+      "clipped": true
+    },
+    "MIDA": {
+      "growth": 0.014,
+      "raw_cagr": 0.0143,
+      "clipped": false
+    },
+    "MIDW": {
+      "growth": 0.025,
+      "raw_cagr": 0.0247,
+      "clipped": false
+    },
+    "NE": {
+      "growth": 0.024,
+      "raw_cagr": 0.024,
+      "clipped": false
+    },
+    "NW": {
+      "growth": 0.027,
+      "raw_cagr": 0.0271,
+      "clipped": false
+    },
+    "NY": {
+      "growth": 0.022,
+      "raw_cagr": 0.0218,
+      "clipped": false
+    },
+    "SE": {
+      "growth": 0.04,
+      "raw_cagr": 0.1356,
+      "clipped": true
+    },
+    "SW": {
+      "growth": 0.04,
+      "raw_cagr": 0.0544,
+      "clipped": true
+    },
+    "TEN": {
+      "growth": 0.021,
+      "raw_cagr": 0.0213,
+      "clipped": false
+    },
+    "TEX": {
+      "growth": 0.023,
+      "raw_cagr": 0.0232,
+      "clipped": false
+    }
+  }
+}
