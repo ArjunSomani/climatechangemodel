@@ -166,6 +166,31 @@ These still need the Neon/Blob pipeline or external data:
 3. **Widen the playground lattice** to all regions and a finer grid, generated
    in the offline pipeline rather than by hand.
 
+## Per-region demand growth (decision recorded 2026-07-28)
+
+Historically demand growth was one US-wide number. We now derive a per-region
+default from each region's own history:
+`scripts/compute_region_demand_growth.py` → `data/region_demand_growth.json`
+(endpoint CAGR of total generation 2020–2025, **clipped to [0.5%, 4%]** because
+the short window has real artifacts — SE jumps ~60% in 2025, unclipped 13.6%;
+FLA spikes mid-window). `optimize_engine/demand.py` exposes the rate; the web
+mirror is `web/lib/regionDemand.ts`.
+
+**Where it's used:** the interactive **Custom Run** defaults demand growth to
+the selected region's rate (overridable). **The pre-computed library and the
+`/us` aggregate deliberately do NOT use it** — they keep the standard uniform
+assumption (with the existing 1%/3% demand-sensitivity variants). Rationale:
+the clipped-historical rates are rough, and approximate assumptions are fine in
+a what-if tool the user drives but shouldn't be presented as settled results in
+the authoritative library.
+
+**If we later want the library/`/us` per-region:** the engine helper is ready —
+point `generate_library.py`'s demand at `demand.region_demand_multiplier(region)`
+for a `Regional_Growth` variant and re-seed (13 cases power a per-region `/us`;
+a full rewrite is ~90+). Better first: **swap the rate source to EIA AEO
+regional projections** (authoritative), which needs an AEO-region → 13-region
+mapping.
+
 ## Known preview limitation
 
 Custom runs submitted from the preview site are drained by the production
