@@ -31,6 +31,37 @@ async function withTheme(page: Page, theme: string) {
   }, theme);
 }
 
+// Wait for a definite readiness signal instead of a fixed sleep.
+//
+// These assertions measure computed styles and laid-out geometry, both of which
+// are only stable once the stylesheet has applied and webfonts have settled. A
+// flat `waitForTimeout(300)` encodes a guess about machine speed, and it lost
+// that bet once under load (a contrast assertion failed on a run where the whole
+// suite took 4x its usual wall-clock, then passed 6/6 on rerun). A test that
+// depends on how busy the machine is cannot distinguish a real regression from a
+// slow moment, which makes its failures worthless -- so wait on the conditions
+// that actually matter.
+async function settle(page: Page, theme?: string) {
+  await page.waitForFunction(
+    (expected) => {
+      // Stylesheet applied: the theme tokens resolve to real values.
+      const root = getComputedStyle(document.documentElement);
+      if (!root.getPropertyValue("--background").trim()) return false;
+      if (!root.getPropertyValue("--accent").trim()) return false;
+      // Requested theme is the one actually in effect.
+      if (expected && document.documentElement.dataset.theme !== expected) {
+        return false;
+      }
+      // Body has taken its themed background rather than the UA default.
+      const bodyBg = getComputedStyle(document.body).backgroundColor;
+      if (!bodyBg || bodyBg === "rgba(0, 0, 0, 0)") return false;
+      return document.fonts.status === "loaded";
+    },
+    theme,
+    { timeout: 15_000 }
+  );
+}
+
 // --- Contrast -------------------------------------------------------------
 //
 // Resolves each element's computed color through a canvas rather than parsing
@@ -124,7 +155,7 @@ for (const theme of THEMES) {
     test(`${theme} theme: text on ${route} meets WCAG AA contrast`, async ({ page }) => {
       await withTheme(page, theme);
       await page.goto(route, { waitUntil: "load" });
-      await page.waitForTimeout(300);
+      await settle(page, theme);
       const failures = await page.evaluate(CONTRAST_PROBE);
       expect(
         failures,
@@ -143,7 +174,7 @@ for (const route of ROUTES) {
   test(`no horizontal page scroll on ${route} at 360px`, async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 780 });
     await page.goto(route, { waitUntil: "load" });
-    await page.waitForTimeout(300);
+    await settle(page);
     const { scrollW, docW, offenders } = await page.evaluate(() => {
       const docW = document.documentElement.clientWidth;
       const offenders: string[] = [];
@@ -309,7 +340,7 @@ test("the 404 page passes contrast in both themes", async ({ page }) => {
   for (const theme of THEMES) {
     await withTheme(page, theme);
     await page.goto("/definitely-not-a-real-page", { waitUntil: "load" });
-    await page.waitForTimeout(200);
+    await settle(page, theme);
     const failures = await page.evaluate(CONTRAST_PROBE);
     expect(
       failures,
@@ -483,7 +514,7 @@ test("nothing overflows when text is scaled to 200%", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto(route, { waitUntil: "load" });
     await page.addStyleTag({ content: "html{font-size:32px !important}" });
-    await page.waitForTimeout(300);
+    await settle(page);
     const { scrollW, docW, offenders } = await page.evaluate(() => {
       const docW = document.documentElement.clientWidth;
       const offenders: string[] = [];
@@ -512,7 +543,7 @@ test("content reflows at a 320px viewport", async ({ page }) => {
   for (const route of ROUTES) {
     await page.setViewportSize({ width: 320, height: 640 });
     await page.goto(route, { waitUntil: "load" });
-    await page.waitForTimeout(300);
+    await settle(page);
     const { scrollW, docW } = await page.evaluate(() => ({
       scrollW: document.documentElement.scrollWidth,
       docW: document.documentElement.clientWidth,

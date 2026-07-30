@@ -21,6 +21,7 @@ then generate_library.py to regenerate every case against the new
 first_year baseline.
 """
 import datetime as dt
+import os
 import time
 from pathlib import Path
 
@@ -181,6 +182,27 @@ def refresh_region(region: str, target_end: dt.datetime, api_key: str) -> bool:
         print(f'{region}: already up to date through {last_existing} -- skipping')
         return False
 
+    # Refuse to append a partial year. Capacity fractions are normalized per
+    # calendar year against that year's observed max, and _normalize_new_years
+    # only ever sees the newly fetched range -- so resuming from mid-year would
+    # normalize the tail of a year against the tail's own max while the rows
+    # already on disk were normalized against a different one. The result is a
+    # silent discontinuity inside a single year, plus a duplicate row for that
+    # year in max_vals, which downstream code (compute_region_demand_growth's
+    # .loc[year]) reads as a Series instead of a scalar.
+    #
+    # The module docstring already promises "only complete past calendar years";
+    # this is the check that makes that true rather than incidental.
+    if not (fetch_start.month == 1 and fetch_start.day == 1
+            and fetch_start.hour == 0):
+        raise SystemExit(
+            f'{region}: existing data ends at {last_existing}, which is not a '
+            f'year boundary. Appending from {fetch_start} would normalize a '
+            f'partial year against its own max and duplicate {fetch_start.year} '
+            f'in max_vals. Re-fetch {fetch_start.year} whole, or trim the CSV '
+            f'back to {fetch_start.year - 1}-12-31T23 first.'
+        )
+
     print(f'{region}: fetching {fetch_start} through {target_end} (exclusive)')
     raw = _fetch_region_range(region, fetch_start.to_pydatetime(), target_end, api_key)
     normalized, new_max = _normalize_new_years(raw)
@@ -194,8 +216,31 @@ def refresh_region(region: str, target_end: dt.datetime, api_key: str) -> bool:
     )
     combined_max = pd.concat([existing_max, new_max.rename(columns={'year': 'years'})], ignore_index=True)
 
-    combined_hourly.to_csv(hourly_path, index=False)
-    combined_max.to_csv(max_path, index=False)
+    overlap = combined_max['years'][combined_max['years'].duplicated()].tolist()
+    if overlap:
+        raise SystemExit(
+            f'{region}: refusing to write -- year(s) {overlap} would appear twice '
+            f'in {max_path.name}. Every consumer assumes one max row per year.'
+        )
+
+    # Write both files or neither. These two must agree: the hourly CSV holds
+    # fractions that only mean anything against the matching year's max. Dying
+    # between the two plain to_csv calls left the hourly file carrying a year the
+    # max file had never heard of, which is not a state anything downstream
+    # checks for. Staged to siblings first, then moved into place -- os.replace
+    # is atomic within a filesystem, so the worst interruption leaves both
+    # originals untouched.
+    hourly_tmp = hourly_path.with_suffix('.csv.tmp')
+    max_tmp = max_path.with_suffix('.csv.tmp')
+    try:
+        combined_hourly.to_csv(hourly_tmp, index=False)
+        combined_max.to_csv(max_tmp, index=False)
+        os.replace(hourly_tmp, hourly_path)
+        os.replace(max_tmp, max_path)
+    finally:
+        hourly_tmp.unlink(missing_ok=True)
+        max_tmp.unlink(missing_ok=True)
+
     print(f'{region}: wrote {len(new_hourly_rows)} new hourly rows, {len(new_max)} new yearly-max rows')
     return True
 
