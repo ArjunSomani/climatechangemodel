@@ -1,4 +1,4 @@
-import { get } from "@vercel/blob";
+import { readBlobText } from "@/lib/blobRead";
 import { pool, type LibraryCaseRow } from "@/lib/db";
 
 export type LibraryCaseSummary = Omit<
@@ -81,12 +81,13 @@ export async function getLibraryCases(
 async function hydrateCase(
   caseRow: LibraryCaseRow
 ): Promise<LibraryCaseDetail | null> {
-  const blobResult = await get(caseRow.result_blob_url, { access: "private" });
-  if (!blobResult || blobResult.statusCode !== 200) return null;
+  // Throws (rather than degrading to null) on a transport failure after its
+  // retry: a missing case silently vanishing from /compare would make the
+  // comparison quietly wrong, which is worse than an error page you can retry.
+  const body = await readBlobText(caseRow.result_blob_url);
+  if (body === null) return null;
 
-  const result: YearRecord[] = JSON.parse(
-    await new Response(blobResult.stream).text()
-  );
+  const result: YearRecord[] = JSON.parse(body);
 
   return {
     case_id: caseRow.case_id,

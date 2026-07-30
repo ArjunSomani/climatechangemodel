@@ -160,6 +160,23 @@
   --hatch: rgba(255, 255, 255, 0.42);
 }
 
+/* An em-based breakpoint for the main nav, in place of Tailwind's px `lg`.
+
+   The nine desktop links collapse to a hamburger below `lg` (1024px) because
+   that's roughly where they stop fitting -- at the default text size. But a
+   viewport-px breakpoint can't see text size, so a visitor who scales text to
+   200% (WCAG 1.4.4, which requires no loss of content or functionality at 2x)
+   still got the desktop row: the links needed twice the width, the breakpoint
+   said "desktop anyway", and the header overflowed the page by ~330px.
+
+   64em is the same 1024px at default text size, but it tracks the user's font
+   size, so at 200% it becomes 2048px and the hamburger appears on its own. The
+   breakpoint now answers the question it was always meant to ("do the links
+   fit?") rather than a proxy for it. */
+@theme {
+  --breakpoint-navwide: 64em;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -290,12 +307,34 @@ a {
   }
 }
 
-/* A single, consistent keyboard-focus ring in the accent color for every
-   interactive element -- the UA default is inconsistent across the many
-   rounded-full buttons and pill links. :focus-visible keeps it keyboard-only
-   so mouse/touch taps don't show a ring. */
+/* A single, consistent keyboard-focus ring for every interactive element -- the
+   UA default is inconsistent across the many rounded-full buttons and pill links.
+   :focus-visible keeps it keyboard-only so mouse/touch taps don't show a ring.
+   No border-radius here: forcing 4px squared off the rounded-full pills, and the
+   ring follows the element's own radius on its own.
+
+   Two rings, not one. A plain `outline: 2px solid var(--accent)` is invisible on
+   any control whose background IS --accent -- the primary CTA, the active region
+   pill, the skip link -- where it measured 1:1. The inner --background ring is a
+   spacer: against the page it disappears (same colour), and against an accent
+   fill it separates the control from the accent ring so the ring reads. One rule
+   that works on every surface, instead of a per-component exception each time a
+   new accent-filled control appears.
+
+   box-shadow rather than outline+outline-offset because two concentric rings need
+   two layers, and box-shadow already follows border-radius exactly. */
 :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-  border-radius: 4px;
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--background),
+    0 0 0 4px var(--accent);
+}
+
+/* Forced-colors mode discards box-shadow entirely, so restore a real outline
+   there -- otherwise Windows High Contrast users get no focus indicator at all. */
+@media (forced-colors: active) {
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 3px solid CanvasText;
+    outline-offset: 2px;
+  }
 }

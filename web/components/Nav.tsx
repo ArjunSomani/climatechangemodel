@@ -37,7 +37,14 @@ export function Nav() {
 
   return (
     <header className="border-b border-zinc-200 dark:border-zinc-800">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+      {/* flex-wrap is the structural guarantee. The navwide breakpoint decides
+          when the desktop row *should* appear, but a breakpoint is always a guess
+          about whether nine links fit, and em in a media query resolves against
+          the initial font size rather than :root -- so it tracks the browser's
+          font-size setting but not every text-scaling route. Wrapping means that
+          when the guess is wrong the nav drops to a second line instead of
+          overflowing the page, which is the failure mode that actually matters. */}
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-6 py-4">
         <Link
           href="/"
           className="font-display text-lg font-semibold tracking-tight"
@@ -46,11 +53,17 @@ export function Nav() {
           Optimize
         </Link>
 
-        <div className="flex items-center gap-2 lg:gap-5">
-          {/* Desktop nav -- 8 links need real width, so it only appears at lg+
-              (1024px). Below that the row would overflow, so we show the
-              hamburger instead (tablets included). */}
-          <nav aria-label="Main" className="hidden items-center gap-5 lg:flex">
+        <div className="flex min-w-0 items-center gap-2 navwide:gap-5">
+          {/* Desktop nav -- nine links need real width, so it only appears at
+              `navwide` (64em, defined in globals.css). Below that the row would
+              overflow, so we show the hamburger instead (tablets included).
+              The breakpoint is in em rather than px on purpose: it has to track
+              the user's text size, not just the viewport, or scaling text to
+              200% keeps the desktop row and overflows the header. */}
+          <nav
+            aria-label="Main"
+            className="hidden flex-wrap items-center gap-x-5 gap-y-1 navwide:flex"
+          >
             {LINKS.map(([href, label]) => {
               const active = isActive(pathname, href);
               return (
@@ -81,7 +94,7 @@ export function Nav() {
             aria-expanded={open}
             aria-controls="mobile-nav"
             onClick={() => setOpen((v) => !v)}
-            className="-mr-2.5 flex h-11 w-11 items-center justify-center lg:hidden"
+            className="-mr-2.5 flex h-11 w-11 items-center justify-center navwide:hidden"
           >
             <svg
               width="20"
@@ -113,7 +126,7 @@ export function Nav() {
         aria-label="Main"
         className={
           "border-t border-zinc-200 px-6 py-3 dark:border-zinc-800 " +
-          (open ? "block lg:hidden" : "hidden")
+          (open ? "block navwide:hidden" : "hidden")
         }
       >
         <ul className="flex flex-col gap-1">

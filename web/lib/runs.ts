@@ -1,4 +1,4 @@
-import { get } from "@vercel/blob";
+import { tryReadBlobText } from "@/lib/blobRead";
 import { pool } from "@/lib/db";
 import type { YearRecord } from "@/lib/library";
 import type { ScenarioConfigInput } from "@/lib/scenarioConfig";
@@ -49,7 +49,18 @@ export interface RunStatusDetail {
   result: YearRecord[] | null;
 }
 
+// `runs.id` is a uuid column, so Postgres rejects anything that isn't one with
+// `invalid input syntax for type uuid` -- an exception, not an empty result. The
+// id arrives from a URL path segment, so any hand-typed or stale link (e.g.
+// /custom-run/does-not-exist) turned a should-be-404 into a 500 plus a database
+// error in the logs, repeated on every poll of the status page. Shape-check first
+// and treat a non-uuid as simply not found, which is what it is.
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export async function getRunStatus(id: string): Promise<RunStatusDetail | null> {
+  if (!UUID_RE.test(id)) return null;
+
   const { rows } = await pool.query<RunRow>(`SELECT * FROM runs WHERE id = $1`, [id]);
   const row = rows[0];
   if (!row) return null;
@@ -63,8 +74,12 @@ export async function getRunStatus(id: string): Promise<RunStatusDetail | null> 
     };
   }
 
-  const blobResult = await get(row.result_blob_url, { access: "private" });
-  if (!blobResult || blobResult.statusCode !== 200) {
+  // tryReadBlobText, not readBlobText: this function already has a graceful
+  // "Result blob unavailable" status below, and the status page polls -- so
+  // degrading lets the next poll succeed, where throwing would replace a live
+  // status page with an error page.
+  const blobBody = await tryReadBlobText(row.result_blob_url);
+  if (blobBody === null) {
     return {
       status: "error",
       errorMessage: "Result blob unavailable",
@@ -73,6 +88,6 @@ export async function getRunStatus(id: string): Promise<RunStatusDetail | null> 
     };
   }
 
-  const result: YearRecord[] = JSON.parse(await new Response(blobResult.stream).text());
+  const result: YearRecord[] = JSON.parse(blobBody);
   return { status: "done", errorMessage: null, config: row.config, result };
 }
