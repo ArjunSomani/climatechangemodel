@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+import { resolve } from "node:path";
 import { test, expect } from "playwright/test";
 import {
   aggregateRegions,
@@ -276,4 +278,47 @@ test("a saved scenario file round-trips and rejects junk", () => {
       JSON.stringify({ config: { ...config, region: "constructor" } })
     )
   ).toBeNull();
+});
+
+// --- Shipped preset sanity ------------------------------------------------
+
+test("a carbon-price preset that claims to rise actually rises", async () => {
+  // The engine reads co2_price as (year-one price AND annual increment) and
+  // (ceiling) -- see engine/tests/test_co2_price_ramp.py. Reading the two fields
+  // as (start, step) is the natural but wrong interpretation, and it fails
+  // silently: a ceiling below the start simply never increments.
+  //
+  // The shipped "Rising carbon price" preset was {initial: 50, yearly: 10},
+  // labelled "Starts at $50/ton, climbs $10 every year". It held flat at $50 for
+  // the whole 25-year horizon. Parsed from source rather than imported, because
+  // the presets live inside a "use client" page module.
+  const src = await readFile(resolve("app/custom-run/page.tsx"), "utf8");
+
+  const presets = [
+    ...src.matchAll(
+      /label:\s*"([^"]+)",\s*\n\s*blurb:\s*"([^"]+)",\s*\n\s*apply:[\s\S]*?co2_price:\s*\{\s*initial:\s*([\d_]+),\s*yearly:\s*([\d_]+)\s*\}/g
+    ),
+  ].map((m) => ({
+    label: m[1],
+    blurb: m[2],
+    initial: Number(m[3].replace(/_/g, "")),
+    yearly: Number(m[4].replace(/_/g, "")),
+  }));
+
+  expect(presets.length, "no co2_price presets parsed").toBeGreaterThan(0);
+
+  for (const p of presets) {
+    const claimsToRise = /ris|climb|increas|adds another/i.test(
+      `${p.label} ${p.blurb}`
+    );
+    // The engine only increments while price < yearly, so a ramp requires the
+    // ceiling to sit above the first year's price.
+    const actuallyRises = p.yearly > p.initial;
+    expect(
+      actuallyRises,
+      `preset "${p.label}" is described as rising ("${p.blurb}") but ` +
+        `initial=${p.initial} >= yearly=${p.yearly}, so the engine holds it ` +
+        `flat at $${p.initial} for the whole horizon`
+    ).toBe(claimsToRise);
+  }
 });

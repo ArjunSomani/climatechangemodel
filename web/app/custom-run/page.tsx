@@ -82,9 +82,15 @@ const PRESETS: Preset[] = [
     apply: (c) => ({ ...c, co2_price: { initial: 100, yearly: 0 } }),
   },
   {
+    // The engine reads these two numbers as (year-1 price AND annual increment)
+    // and (ceiling) -- NOT as (start) and (increment). This preset used to be
+    // {initial: 50, yearly: 10}, which made the ramp condition
+    // `if price < yearly: price += initial` read `if 50 < 10`, false on every
+    // year: the price sat flat at $50 for the whole horizon while the label
+    // promised it climbed. Verified against core.fig_tweakxs directly.
     label: "Rising carbon price",
-    blurb: "Starts at $50/ton, climbs $10 every year.",
-    apply: (c) => ({ ...c, co2_price: { initial: 50, yearly: 10 } }),
+    blurb: "Starts at $50/ton and adds another $50 each year, up to $500.",
+    apply: (c) => ({ ...c, co2_price: { initial: 50, yearly: 500 } }),
   },
 ];
 
@@ -265,10 +271,30 @@ export default function CustomRunPage() {
         </Section>
 
         <Section title="CO₂ price, interest, and demand" icon="sliders">
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            Each knob has an <strong>initial</strong> value (year 0) and a{" "}
-            <strong>yearly</strong> change applied every year after that.
-          </p>
+          {/* "Yearly" does two different things depending on the knob, and this
+              paragraph used to describe it as one thing ("a yearly change
+              applied every year after that"), which is wrong for all three.
+              For CO2 it is a ceiling and the *initial* value doubles as the
+              annual step; for interest and demand it is a multiplier. */}
+          <div className="space-y-1 text-sm text-zinc-500 dark:text-zinc-400">
+            <p>
+              <strong>Initial</strong> is the year-one value.{" "}
+              <strong>Yearly</strong> means something different per knob:
+            </p>
+            <ul className="ml-4 list-disc space-y-0.5">
+              <li>
+                <strong>CO₂ price</strong> — the ceiling the price climbs to. It
+                rises by the <em>initial</em> amount each year until it gets
+                there. So $50 initial with a $500 yearly reaches $500 in year 10
+                and stays there; a yearly below the initial never rises at all.
+              </li>
+              <li>
+                <strong>Interest</strong> and <strong>demand</strong> — a
+                multiplier applied each year. 1.02 compounds at 2%/yr; 1.0 holds
+                flat.
+              </li>
+            </ul>
+          </div>
           <div className="mt-4 grid gap-4 sm:grid-cols-3">
             <TweakPairFields
               label="CO₂ price ($/MT)"

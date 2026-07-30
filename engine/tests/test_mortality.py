@@ -166,3 +166,29 @@ def test_counted_and_modeled_split_reconstructs_the_total():
             assert row['deaths_modeled_central'] > row['deaths_counted_central']
         if row['source'] in ('Solar', 'Wind'):
             assert row['deaths_modeled_central'] == 0.0
+
+
+def test_year_deaths_rejects_an_unknown_source():
+    """A typo must fail loudly rather than contribute zero deaths.
+
+    death_rate() has always raised KeyError for an unrecognised engine source,
+    but year_deaths() used dict.get() and so treated "Coel" exactly like
+    "Battery" -- a source with no coefficient, silently skipped. Those are very
+    different situations: one is a modeling decision, the other is a bug that
+    would quietly under-report the death toll of whatever was misspelled.
+    """
+    import pytest
+
+    from optimize_engine import mortality
+
+    with pytest.raises(KeyError):
+        mortality.year_deaths({'Coel': 1_000_000.0})
+
+    # Battery stays a deliberate skip, not an error.
+    result = mortality.year_deaths({'Battery': 1_000_000.0})
+    assert result['deaths_central'] == 0.0
+    assert result['by_source'] == []
+
+    # And a real source still counts.
+    coal = mortality.year_deaths({'Coal': 1_000_000.0})
+    assert coal['deaths_central'] > 0

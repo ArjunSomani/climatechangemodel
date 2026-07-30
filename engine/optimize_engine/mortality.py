@@ -208,10 +208,21 @@ def year_deaths(annual_mwh_by_source: dict[str, float],
     by_source = []
 
     for source, mwh in annual_mwh_by_source.items():
-        key = ENGINE_SOURCE_TO_MORTALITY_KEY.get(source)
+        # .get() would return None for BOTH "Battery" (a deliberate no-coefficient
+        # source) and "Coel" (a typo), silently contributing zero deaths in the
+        # second case. death_rate() above already raises on an unknown source for
+        # exactly this reason; this loop has to agree with it, or the module's
+        # loud-failure guarantee holds in one entry point and not the other.
+        if source not in ENGINE_SOURCE_TO_MORTALITY_KEY:
+            raise KeyError(
+                f'unknown engine source {source!r} in annual_mwh_by_source; '
+                f'expected one of {sorted(ENGINE_SOURCE_TO_MORTALITY_KEY)}'
+            )
+        key = ENGINE_SOURCE_TO_MORTALITY_KEY[source]
         if key is None:
-            # Battery (or any non-death-bearing tech): contributes nothing,
-            # by design. Skipped rather than emitted as a zero row.
+            # Battery: contributes nothing, by design (a battery time-shifts
+            # electricity whose deaths were counted when it was generated).
+            # Skipped rather than emitted as a zero row.
             continue
         rec = coeffs[key]
         share = float(rec['modeledShare'])
