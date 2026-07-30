@@ -66,6 +66,11 @@ export default function GlobalError({
             >
               Try again
             </button>
+            {/* A plain <a>, not next/link, on purpose: this boundary catches a
+                failure in the root layout and renders its own <html>/<body>
+                outside the router, so router-dependent navigation is the last
+                thing to rely on here. A full document load is what we want. */}
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
             <a
               href="/"
               style={{

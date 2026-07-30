@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { listLibraryCases, getLibraryCases } from "@/lib/library";
-import { aggregateRegions, mostCompleteConfigCaseIds } from "@/lib/aggregate";
+import {
+  aggregateRegions,
+  dedupeByRegion,
+  mostCompleteConfigCaseIds,
+} from "@/lib/aggregate";
 import { ResultCharts } from "@/components/ResultCharts";
 import { co2MtFromGeneration } from "@/lib/co2";
 import { computeYearDeaths } from "@/lib/mortality";
@@ -24,11 +28,17 @@ export default async function USPage() {
   // uniform-growth config.
   const regional = all.filter((c) => c.group_name === "Regional_Growth");
   const perRegionGrowth = regional.length >= 2;
-  const { caseIds, regionCount } = perRegionGrowth
-    ? { caseIds: regional.map((c) => c.case_id), regionCount: regional.length }
+  const { caseIds } = perRegionGrowth
+    ? { caseIds: regional.map((c) => c.case_id) }
     : mostCompleteConfigCaseIds(all);
   const cases = await getLibraryCases(caseIds);
-  const result = aggregateRegions(cases);
+  // Count what was actually summed, not what was requested: a case whose blob
+  // failed to load is dropped by getLibraryCases, and a repeated region is
+  // dropped by the aggregator, so `caseIds.length` could overstate both. The
+  // headline says "Summed across N regions" and now N is that same N.
+  const summed = dedupeByRegion(cases);
+  const result = aggregateRegions(summed);
+  const summedRegionCount = summed.length;
 
   if (result.length === 0) {
     return (
@@ -61,7 +71,7 @@ export default async function USPage() {
         The United States grid
       </h1>
       <p className="mt-2 text-zinc-600 dark:text-zinc-400">
-        Summed across {regionCount} regions · scenario:{" "}
+        Summed across {summedRegionCount} regions · scenario:{" "}
         <span className="text-zinc-800 dark:text-zinc-200">{scenario}</span>
       </p>
 

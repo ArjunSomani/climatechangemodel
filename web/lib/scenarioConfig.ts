@@ -31,6 +31,77 @@ export interface ScenarioConfigInput {
   sources: Record<SourceKey, SourceTweaksInput>;
 }
 
+// ---------------------------------------------------------------------------
+// Draft types: the shape the custom-run FORM holds, as distinct from the shape
+// that goes over the wire.
+//
+// A numeric field being empty is a real state and it is not the same state as
+// zero. Conflating them (`Number(e.target.value)` returns 0 for "") meant a
+// cleared capital-cost box submitted as a 0x multiplier -- valid to the
+// validator, free power plants to the engine, silent to the user. The draft
+// carries `null` for empty so the form can refuse to submit and say which field.
+export type TweakPairDraft = {
+  initial: number | null;
+  yearly: number | null;
+};
+
+export type SourceTweaksDraft = Record<keyof SourceTweaksInput, TweakPairDraft>;
+
+export interface ScenarioDraft {
+  region: string;
+  years: number | null;
+  co2_price: TweakPairDraft;
+  interest: TweakPairDraft;
+  demand: TweakPairDraft;
+  // Slider- and preset-driven only, never free text, so it cannot be empty.
+  mortality_price: TweakPairInput;
+  sources: Record<SourceKey, SourceTweaksDraft>;
+}
+
+const TWEAK_PAIR_LABELS: Record<string, string> = {
+  co2_price: "CO\u2082 price",
+  interest: "Interest rate",
+  demand: "Demand growth",
+};
+
+// Collects EVERY empty/invalid field rather than stopping at the first, so the
+// user gets one complete list instead of fixing them one submit at a time.
+export function draftIssues(draft: ScenarioDraft): string[] {
+  const issues: string[] = [];
+
+  if (draft.years === null) issues.push("Years");
+
+  for (const field of ["co2_price", "interest", "demand"] as const) {
+    const pair = draft[field];
+    const name = TWEAK_PAIR_LABELS[field];
+    if (pair.initial === null) issues.push(`${name} (initial)`);
+    if (pair.yearly === null) issues.push(`${name} (yearly)`);
+  }
+
+  for (const s of SOURCES) {
+    const tweaks = draft.sources[s.key];
+    for (const key of Object.keys(tweaks) as (keyof SourceTweaksInput)[]) {
+      const pair = tweaks[key];
+      if (pair.initial === null) issues.push(`${s.label} ${key} (initial)`);
+      if (pair.yearly === null) issues.push(`${s.label} ${key} (yearly)`);
+    }
+  }
+
+  return issues;
+}
+
+// Narrows a draft to the wire type. Returns null when anything is still empty --
+// callers should use draftIssues() to tell the user what.
+export function draftToConfig(draft: ScenarioDraft): ScenarioConfigInput | null {
+  if (draftIssues(draft).length > 0) return null;
+  return draft as ScenarioConfigInput;
+}
+
+// The form's starting draft. Same numbers as defaultScenarioConfig, widened.
+export function defaultScenarioDraft(): ScenarioDraft {
+  return defaultScenarioConfig() as ScenarioDraft;
+}
+
 export function defaultTweakPair(initial: number, yearly = 1): TweakPairInput {
   return { initial, yearly };
 }
@@ -88,7 +159,12 @@ export function validateScenarioConfig(v: unknown): ScenarioConfigInput | null {
   if (typeof v !== "object" || v === null) return null;
   const c = v as Record<string, unknown>;
 
-  if (typeof c.region !== "string" || !(c.region in REGIONS)) return null;
+  // Object.hasOwn, not `in`: `"constructor" in REGIONS` is true via the
+  // prototype chain, so `in` accepted "constructor", "toString", "valueOf" and
+  // friends as region codes -- exactly the "bad input crashes run_worker.py"
+  // case this check exists to prevent.
+  if (typeof c.region !== "string" || !Object.hasOwn(REGIONS, c.region))
+    return null;
   if (!isFiniteNumber(c.years) || c.years <= 0 || c.years > 50) return null;
   if (!isValidTweakPair(c.co2_price)) return null;
   if (!isValidTweakPair(c.interest)) return null;

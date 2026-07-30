@@ -23,7 +23,13 @@ export const REGION_DEMAND_GROWTH: Record<string, number> = {
 const DEFAULT_GROWTH = 0.02;
 
 export function regionDemandGrowth(region: string): number {
-  return REGION_DEMAND_GROWTH[region] ?? DEFAULT_GROWTH;
+  // Object.hasOwn rather than a bare lookup with ??: for a prototype key like
+  // "constructor" the lookup returns the Object constructor *function*, which is
+  // not null or undefined, so ?? never fires -- and regionDemandMultiplier's
+  // `1 + growth` then string-concatenates into "1function Object()...".
+  return Object.hasOwn(REGION_DEMAND_GROWTH, region)
+    ? REGION_DEMAND_GROWTH[region]
+    : DEFAULT_GROWTH;
 }
 
 // As a yearly multiplier for the demand TweakPair (e.g. 1.025 for 2.5%/yr).

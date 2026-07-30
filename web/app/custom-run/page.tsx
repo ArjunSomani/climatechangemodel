@@ -7,11 +7,15 @@ import { regionDemandGrowth, regionDemandMultiplier } from "@/lib/regionDemand";
 import { SOURCES, type SourceKey } from "@/lib/sources";
 import { ConfigSaveLoad } from "@/components/ConfigSaveLoad";
 import { MortalityPriceControl } from "@/components/MortalityPriceControl";
+import { NumberField } from "@/components/NumberField";
 import {
-  defaultScenarioConfig,
-  type ScenarioConfigInput,
+  defaultScenarioDraft,
+  draftIssues,
+  draftToConfig,
+  type ScenarioDraft,
+  type SourceTweaksDraft,
   type SourceTweaksInput,
-  type TweakPairInput,
+  type TweakPairDraft,
 } from "@/lib/scenarioConfig";
 
 // text-base (16px) on mobile prevents iOS Safari from zooming the page when a
@@ -122,8 +126,8 @@ export default function CustomRunPage() {
   const router = useRouter();
   // Demand growth defaults to the selected region's own historical rate rather
   // than one US-wide number; changing region re-applies its default (overridable).
-  const [config, setConfig] = useState<ScenarioConfigInput>(() => {
-    const c = defaultScenarioConfig();
+  const [config, setConfig] = useState<ScenarioDraft>(() => {
+    const c = defaultScenarioDraft();
     return {
       ...c,
       demand: { ...c.demand, initial: regionDemandMultiplier(c.region) },
@@ -134,24 +138,42 @@ export default function CustomRunPage() {
 
   function updateTweakPair(
     field: "co2_price" | "interest" | "demand",
-    patch: Partial<TweakPairInput>
+    patch: Partial<TweakPairDraft>
   ) {
     setConfig((c) => ({ ...c, [field]: { ...c[field], ...patch } }));
   }
 
-  function updateSourceTweaks(source: SourceKey, next: SourceTweaksInput) {
+  function updateSourceTweaks(source: SourceKey, next: SourceTweaksDraft) {
     setConfig((c) => ({ ...c, sources: { ...c.sources, [source]: next } }));
   }
 
+  // Every empty field, not just the first, so one submit produces the whole list.
+  const issues = draftIssues(config);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    // The bug this guards: a cleared field used to arrive as 0. For the
+    // per-source multipliers 0 passes validation, so the run was queued and
+    // computed with that technology free to build -- no error, no warning,
+    // meaningless output that looked exactly like real output.
+    const valid = draftToConfig(config);
+    if (!valid) {
+      setError(
+        issues.length === 1
+          ? `${issues[0]} needs a number before this can run.`
+          : `${issues.length} fields need a number before this can run: ${issues.join(", ")}.`
+      );
+      return;
+    }
+
     setSubmitting(true);
     setError(null);
     try {
       const res = await fetch("/api/runs", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ config }),
+        body: JSON.stringify({ config: valid }),
       });
       const body = await res.json();
       if (!res.ok) {
@@ -197,7 +219,7 @@ export default function CustomRunPage() {
           Save this scenario to reuse or share it — or load one you saved
           earlier.
         </p>
-        <ConfigSaveLoad config={config} onLoad={setConfig} />
+        <ConfigSaveLoad config={draftToConfig(config)} onLoad={setConfig} />
       </div>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-10">
@@ -228,15 +250,15 @@ export default function CustomRunPage() {
             </Field>
 
             <Field label="Years">
-              <input
-                type="number"
+              <NumberField
+                label="Years to simulate"
                 min={1}
                 max={50}
+                step={1}
                 className={inputClass}
                 value={config.years}
-                onChange={(e) =>
-                  setConfig((c) => ({ ...c, years: Number(e.target.value) }))
-                }
+                invalidMessage="Enter a whole number of years from 1 to 50"
+                onChange={(n) => setConfig((c) => ({ ...c, years: n }))}
               />
             </Field>
           </div>
@@ -331,14 +353,23 @@ export default function CustomRunPage() {
             toward the page background: 0.8 measured 3.45:1 in light. The
             pending state reads instead from the text swap, aria-busy, and the
             cursor. */}
-        <button
-          type="submit"
-          disabled={submitting}
-          aria-busy={submitting}
-          className="min-h-11 rounded-md bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground disabled:cursor-progress"
-        >
-          {submitting ? "Starting run…" : "Run scenario"}
-        </button>
+        <div>
+          <button
+            type="submit"
+            disabled={submitting || issues.length > 0}
+            aria-busy={submitting}
+            className="min-h-11 rounded-md bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-600 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-300"
+          >
+            {submitting ? "Starting run…" : "Run scenario"}
+          </button>
+          {issues.length > 0 && (
+            <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+              {issues.length === 1
+                ? `Waiting on one field: ${issues[0]}.`
+                : `Waiting on ${issues.length} empty fields: ${issues.slice(0, 3).join(", ")}${issues.length > 3 ? `, and ${issues.length - 3} more` : ""}.`}
+            </p>
+          )}
+        </div>
       </form>
     </div>
   );
@@ -358,7 +389,7 @@ export default function CustomRunPage() {
 type Preset = {
   label: string;
   blurb: string;
-  apply: (c: ScenarioConfigInput) => ScenarioConfigInput;
+  apply: (c: ScenarioDraft) => ScenarioDraft;
 };
 
 function PresetGroup({
@@ -370,7 +401,7 @@ function PresetGroup({
   heading: string;
   note?: string;
   presets: Preset[];
-  onPick: (apply: (c: ScenarioConfigInput) => ScenarioConfigInput) => void;
+  onPick: (apply: (c: ScenarioDraft) => ScenarioDraft) => void;
 }) {
   return (
     <section className="mt-6">
@@ -409,8 +440,10 @@ function TweakPairFields({
 }: {
   label: string;
   group?: string;
-  value: TweakPairInput;
-  onChange: (patch: Partial<TweakPairInput>) => void;
+  value: TweakPairDraft;
+  // null means "the box is empty or not a number" -- deliberately distinct from
+  // 0, which is a legitimate value for every one of these knobs.
+  onChange: (patch: Partial<TweakPairDraft>) => void;
 }) {
   const qualified = group ? `${group} — ${label}` : label;
   return (
@@ -420,23 +453,19 @@ function TweakPairFields({
       </legend>
       <div className="mt-1 grid grid-cols-2 gap-2">
         <Field label="Initial">
-          <input
-            type="number"
-            step="any"
-            aria-label={`${qualified}, initial value`}
+          <NumberField
+            label={`${qualified}, initial value`}
             className={inputClass}
             value={value.initial}
-            onChange={(e) => onChange({ initial: Number(e.target.value) })}
+            onChange={(n) => onChange({ initial: n })}
           />
         </Field>
         <Field label="Yearly">
-          <input
-            type="number"
-            step="any"
-            aria-label={`${qualified}, yearly change`}
+          <NumberField
+            label={`${qualified}, yearly change`}
             className={inputClass}
             value={value.yearly}
-            onChange={(e) => onChange({ yearly: Number(e.target.value) })}
+            onChange={(n) => onChange({ yearly: n })}
           />
         </Field>
       </div>
@@ -461,8 +490,8 @@ function SourceTweaksFields({
   onChange,
 }: {
   label: string;
-  value: SourceTweaksInput;
-  onChange: (next: SourceTweaksInput) => void;
+  value: SourceTweaksDraft;
+  onChange: (next: SourceTweaksDraft) => void;
 }) {
   return (
     <div className="border-t border-zinc-200 pt-5 first:border-t-0 first:pt-0 dark:border-zinc-800">

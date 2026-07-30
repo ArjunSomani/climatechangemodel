@@ -53,7 +53,10 @@ export function ConfigSaveLoad({
   config,
   onLoad,
 }: {
-  config: ScenarioConfigInput;
+  // null while the form has an empty field. Saving then would write a file whose
+  // own loader rejects it -- so Save is unavailable until the form is complete,
+  // which is also just the honest state of "there is no scenario to save yet".
+  config: ScenarioConfigInput | null;
   onLoad: (config: ScenarioConfigInput) => void;
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -62,6 +65,7 @@ export function ConfigSaveLoad({
   >(null);
 
   function handleSave() {
+    if (!config) return; // button is disabled, but the type must be narrowed too
     setStatus(null);
     triggerDownload(
       `custom-run-config-${config.region}.json`,
@@ -96,7 +100,15 @@ export function ConfigSaveLoad({
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-wrap gap-2">
-        <button type="button" onClick={handleSave} className={buttonClass}>
+        <button
+          type="button"
+          onClick={handleSave}
+          disabled={config === null}
+          title={
+            config === null ? "Fill in the empty fields first" : undefined
+          }
+          className={`${buttonClass} disabled:cursor-not-allowed disabled:border-zinc-200 disabled:text-zinc-400 dark:disabled:border-zinc-800 dark:disabled:text-zinc-600`}
+        >
           <DownloadIcon />
           Save configuration
         </button>

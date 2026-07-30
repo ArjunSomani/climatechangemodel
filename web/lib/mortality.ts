@@ -230,6 +230,15 @@ export function computeYearDeaths(record: YearRecord): YearDeaths {
     const key = ENGINE_SOURCE_TO_MORTALITY_KEY[s.key];
     if (key === null) continue; // Battery: no direct coefficient.
     const coeff = MORTALITY[key];
+    // A Python test keeps engine/data/mortality.json and data/mortality.json
+    // identical, but nothing checks that the five keys this map points at are
+    // actually present in it. Missing one would have been a bare TypeError on
+    // coeff.central; say what's wrong instead.
+    if (!coeff) {
+      throw new Error(
+        `mortality.json is missing the "${key}" coefficient required by source ${s.key}`
+      );
+    }
     const c = deathsFromMwh(mwh, coeff.central);
     const sd: SourceYearDeaths = {
       source: s.key,
