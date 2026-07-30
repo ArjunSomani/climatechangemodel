@@ -322,3 +322,26 @@ test("a carbon-price preset that claims to rise actually rises", async () => {
     ).toBe(claimsToRise);
   }
 });
+
+test("the run lease is the same number in the worker and the web", async () => {
+  // The worker reclaims a 'running' row once it is older than LEASE_MINUTES;
+  // the web stops counting one toward the outstanding-runs cap on the same
+  // schedule. If those drift apart the queue either blocks while rows are
+  // reclaimable (web window longer) or accepts work against slots a worker may
+  // still be using (web window shorter). Nothing else ties the two files
+  // together, so this does.
+  const worker = await readFile(
+    resolve("../engine/scripts/run_worker.py"),
+    "utf8"
+  );
+  const web = await readFile(resolve("lib/runs.ts"), "utf8");
+
+  const workerLease = worker.match(/^LEASE_MINUTES\s*=\s*(\d+)/m)?.[1];
+  const webLease = web.match(/RUN_LEASE_MINUTES\s*=\s*(\d+)/)?.[1];
+
+  expect(workerLease, "LEASE_MINUTES not found in run_worker.py").toBeTruthy();
+  expect(webLease, "RUN_LEASE_MINUTES not found in lib/runs.ts").toBeTruthy();
+  expect(webLease, "run lease drifted between the worker and the web").toBe(
+    workerLease
+  );
+});

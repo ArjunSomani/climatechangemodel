@@ -21,9 +21,24 @@ export interface RunRow {
 
 const MAX_OUTSTANDING_RUNS = 5;
 
+// Must match LEASE_MINUTES in engine/scripts/run_worker.py.
+//
+// A run only occupies a slot while someone might still be working on it. The
+// worker marks a row 'running' when it claims one and nothing marks it back on
+// an abnormal exit, so a crashed or timed-out worker used to leave a row
+// 'running' forever -- and five of those permanently pinned this counter at the
+// cap, rejecting every submission from every user with a 429 that would never
+// clear. Counting only fresh 'running' rows means an abandoned run stops
+// blocking the queue at the same moment the worker becomes free to reclaim it.
+const RUN_LEASE_MINUTES = 45;
+
 export async function countOutstandingRuns(): Promise<number> {
   const { rows } = await pool.query<{ count: string }>(
-    `SELECT count(*) FROM runs WHERE status IN ('queued', 'running')`
+    `SELECT count(*) FROM runs
+      WHERE status = 'queued'
+         OR (status = 'running'
+             AND updated_at > now() - make_interval(mins => $1))`,
+    [RUN_LEASE_MINUTES]
   );
   return Number(rows[0].count);
 }

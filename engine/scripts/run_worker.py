@@ -34,12 +34,32 @@ from optimize_engine.schemas import SOURCES
 
 POLL_INTERVAL_SECONDS = 3
 
+# How long a claimed run may sit in 'running' before another worker may take it.
+#
+# Claiming flipped a row to 'running' and nothing ever flipped it back on an
+# abnormal exit, so a crash, an OOM, a Render restart, or a GitHub Actions job
+# hitting its 30-minute cap left that row 'running' forever. Two consequences,
+# both permanent without manual database surgery:
+#
+#   * the submitter's status page waits on a run nobody is working on, and
+#   * the web caps outstanding runs at 5 counting queued + running, so five
+#     stranded rows block EVERY user from submitting anything, ever.
+#
+# A lease fixes both: a row whose updated_at is older than this is assumed
+# abandoned and becomes claimable again. 45 minutes sits comfortably above the
+# ~1 minute a real run takes and above the workflow's own 30-minute ceiling, so
+# a live run is never stolen from a worker that is genuinely still going.
+# lib/runs.ts must use the same window when counting outstanding runs.
+LEASE_MINUTES = 45
+
 CLAIM_SQL = """
 UPDATE runs
 SET status = 'running', updated_at = now()
 WHERE id = (
     SELECT id FROM runs
     WHERE status = 'queued'
+       OR (status = 'running'
+           AND updated_at < now() - make_interval(mins => %(lease_minutes)s))
     ORDER BY created_at
     LIMIT 1
     FOR UPDATE SKIP LOCKED
@@ -89,7 +109,7 @@ def _clean_records(records: list[dict]) -> list[dict]:
 def _claim_job(database_url: str) -> tuple[str, dict] | None:
     with psycopg.connect(database_url) as conn:
         with conn.cursor() as cur:
-            cur.execute(CLAIM_SQL)
+            cur.execute(CLAIM_SQL, {'lease_minutes': LEASE_MINUTES})
             row = cur.fetchone()
         conn.commit()
     if row is None:
