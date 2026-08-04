@@ -53,7 +53,7 @@ export default function AboutPage() {
             </div>
           ))}
         </div>
-        <p className="text-sm text-zinc-500 dark:text-zinc-500">
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">
           New here? Start with{" "}
           <Link href="/how-it-works" className="underline">
             How it works
@@ -138,7 +138,7 @@ export default function AboutPage() {
           (EIA) hourly generation data across 13 regions — not synthetic or
           illustrative numbers.
         </p>
-        <p className="text-sm text-zinc-500 dark:text-zinc-500">
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">
           For licensing and versioning details, see the{" "}
           <Link href="/methodology" className="underline">
             methodology page

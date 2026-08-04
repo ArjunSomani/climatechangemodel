@@ -7,10 +7,12 @@ import { test, expect, type Page } from "playwright/test";
 // by other in-flight work (/about, /findings) we don't assert exact copy — we
 // just require that some <h1> is visible.
 const STATIC_PAGES: Array<{ path: string; heading?: string }> = [
+  { path: "/", heading: "The cheapest way to decarbonize" },
   { path: "/how-it-works", heading: "How it works" },
   { path: "/safety", heading: "Electricity kills people — unevenly" },
   { path: "/playground", heading: "Move the prices, watch the grid" },
   { path: "/methodology", heading: "Methodology" },
+  { path: "/custom-run", heading: "Custom run" },
   // Added by other work; assert a generic visible <h1> rather than exact copy.
   { path: "/about" },
   { path: "/findings" },
@@ -18,12 +20,17 @@ const STATIC_PAGES: Array<{ path: string; heading?: string }> = [
 
 // DB-backed pages depend on Neon/Postgres + Vercel Blob env and will error
 // without it, so they are intentionally NOT smoke-tested here:
-//   /            (home — pulls from the library/runs data)
-//   /library     (reads case data from the DB)
-//   /compare     (reads runs from the DB)
-//   /custom-run  (creates/reads runs in the DB + Blob)
+//   /library        (reads case data from the DB)
+//   /compare        (reads runs from the DB)
+//   /us             (aggregates all 13 regions from the DB)
+//   /data-explorer  (reads the EIA snapshot)
 // Re-enable these once a test DB/Blob fixture is available.
-const DB_BACKED_PAGES = ["/", "/library", "/compare", "/custom-run"];
+//
+// `/` and `/custom-run` used to be on this list. They are not DB-backed any
+// more -- the landing page dropped its live library teaser and both now
+// prerender as static (confirmed by `next build` marking them ○) -- so they
+// moved up into STATIC_PAGES.
+const DB_BACKED_PAGES = ["/library", "/compare", "/us", "/data-explorer"];
 
 for (const path of DB_BACKED_PAGES) {
   test.skip(`DB-backed page ${path} (needs Neon/Blob env)`, () => {
@@ -43,6 +50,16 @@ function collectConsoleErrors(page: Page): string[] {
   });
   return errors;
 }
+
+test("landing page leads with one primary action", async ({ page }) => {
+  // The four entry points were a 2x2 of identical cards; they are now one
+  // primary CTA plus a secondary list. Guard that the CTA is actually there and
+  // points where it should, so a future edit can't quietly flatten it back.
+  await page.goto("/", { waitUntil: "load" });
+  const cta = page.getByRole("link", { name: /Run your own scenario/i });
+  await expect(cta).toBeVisible();
+  await expect(cta).toHaveAttribute("href", "/custom-run");
+});
 
 for (const { path, heading } of STATIC_PAGES) {
   test(`static page ${path} loads without errors`, async ({ page }) => {

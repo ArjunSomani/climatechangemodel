@@ -7,6 +7,13 @@ import { riskLadder, levelSourceUrl, HOMES_PER_TWH } from "@/lib/mortality";
 // and under our control. Bar color is the source's own identity color, the
 // same one it wears in every energy-mix chart.
 
+// The counted/modeled texture. Uses the theme-aware --hatch token rather than a
+// literal rgba(0,0,0,.28): a fixed black hatch is tuned for the light theme's
+// darker bar colors and goes nearly invisible over the dark theme's lighter
+// ones, so the split it encodes disappeared in exactly one of the two themes.
+const HATCH =
+  "repeating-linear-gradient(45deg, var(--hatch) 0 2px, transparent 2px 5px)";
+
 function logWidthPct(value: number, min: number, max: number): number {
   // Position on a log axis, floored so the smallest bars stay visible.
   const t = (Math.log10(value) - Math.log10(min)) / (Math.log10(max) - Math.log10(min));
@@ -27,11 +34,24 @@ export function RiskLadder() {
     <figure className="my-0">
       <div
         role="img"
+        // The uncertainty band and the counted/modeled split were only ever in
+        // `title` attributes, which never reach keyboard or touch users and are
+        // inconsistently surfaced by screen readers. They're part of the
+        // chart's meaning, so they belong in its text alternative.
         aria-label={
-          "Deaths per terawatt-hour by electricity source, on a log scale, ranked from " +
+          "Deaths per terawatt-hour by electricity source, on a log scale, " +
+          "ranked from deadliest. " +
           rows
-            .map((r) => `${r.label} ${fmtRate(r.central)}`)
-            .join(", ") +
+            .map(
+              (r) =>
+                `${r.label}: ${fmtRate(r.central)} deaths per terawatt-hour` +
+                (r.high > r.central
+                  ? `, range ${fmtRate(r.low)} to ${fmtRate(r.high)}`
+                  : "") +
+                `, ${Math.round((1 - r.modeledShare) * 100)}% counted accidents and ` +
+                `${Math.round(r.modeledShare * 100)}% modeled pollution`
+            )
+            .join(". ") +
           ". Coal is the deadliest, solar the safest."
         }
         className="space-y-2.5"
@@ -47,7 +67,7 @@ export function RiskLadder() {
                 {!r.dispatched && (
                   <span
                     title="Not built by Optimize's optimizer; rides along with demand in reality."
-                    className="rounded bg-zinc-200 px-1 text-[10px] font-medium text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"
+                    className="rounded bg-zinc-200 px-1 text-[10px] font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
                   >
                     n/a
                   </span>
@@ -72,7 +92,7 @@ export function RiskLadder() {
                     style={{
                       width: `${100 - countedPct}%`,
                       backgroundColor: color,
-                      backgroundImage: `repeating-linear-gradient(45deg, rgba(0,0,0,0.28) 0 2px, transparent 2px 5px)`,
+                      backgroundImage: HATCH,
                     }}
                     aria-hidden
                   />
@@ -82,10 +102,15 @@ export function RiskLadder() {
               <div className="w-28 shrink-0 text-right text-sm tabular-nums sm:w-36">
                 <div>
                   <span className="font-medium">{fmtRate(r.central)}</span>
-                  <span className="text-zinc-400"> /TWh</span>
+                  <span className="text-zinc-500 dark:text-zinc-400"> /TWh</span>
+                  {/* Eight links reading "src" told a screen-reader user
+                      running through the link list nothing at all (SC 2.4.4).
+                      The visible text stays compact; the accessible name says
+                      which source and which row it belongs to. */}
                   <a
                     href={levelSourceUrl(r.source)}
-                    className="ml-2 text-xs text-zinc-400 underline hover:text-accent"
+                    aria-label={`Source for ${r.label}: ${r.source} (opens in a new tab)`}
+                    className="ml-1 inline-flex min-h-6 min-w-6 items-center justify-center text-xs text-zinc-500 underline hover:text-accent dark:text-zinc-400"
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -93,7 +118,7 @@ export function RiskLadder() {
                   </a>
                 </div>
                 {r.high > r.central && (
-                  <div className="text-[11px] text-zinc-400">
+                  <div className="text-[11px] text-zinc-500 dark:text-zinc-400">
                     up to {fmtRate(r.high)} (high)
                   </div>
                 )}
@@ -112,10 +137,7 @@ export function RiskLadder() {
         <span className="inline-flex items-center gap-1.5">
           <span
             className="inline-block h-2.5 w-4 rounded-sm bg-zinc-400"
-            style={{
-              backgroundImage:
-                "repeating-linear-gradient(45deg, rgba(0,0,0,0.28) 0 2px, transparent 2px 5px)",
-            }}
+            style={{ backgroundImage: HATCH }}
           />
           modeled (pollution/radiation)
         </span>
@@ -123,7 +145,7 @@ export function RiskLadder() {
           1 TWh ≈ powering {Math.round(HOMES_PER_TWH / 1000)}k homes for a year
         </span>
         <span>
-          <span className="rounded bg-zinc-200 px-1 dark:bg-zinc-800">n/a</span> = not
+          <span className="rounded bg-zinc-200 px-1 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">n/a</span> = not
           among Optimize&apos;s optimized technologies (rides along with demand)
           — still carries a real death toll, counted in the Data Explorer&apos;s
           read of the actual grid, but never in an optimized scenario&apos;s mix

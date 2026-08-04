@@ -19,26 +19,32 @@ import os
 from pathlib import Path
 
 import psycopg
+from dotenv import dotenv_values
 
 from optimize_engine.blob import delete_blobs
 
 
 def _load_env() -> dict:
+    """Read both secrets from the environment, falling back to web/.env.local.
+
+    Two fixes over the original here. It only consulted the file when
+    DATABASE_URL was missing, so a shell with DATABASE_URL exported but no
+    BLOB_READ_WRITE_TOKEN never read the file and silently skipped blob cleanup
+    ("BLOB_READ_WRITE_TOKEN not set") even though the token was sitting right
+    there. And it hand-rolled a .env parser that mishandles quoting and `export`
+    prefixes, while python-dotenv is already a dependency and is what every
+    sibling script uses.
+    """
     env = {
         'DATABASE_URL': os.environ.get('DATABASE_URL'),
         'BLOB_READ_WRITE_TOKEN': os.environ.get('BLOB_READ_WRITE_TOKEN'),
     }
-    if not env['DATABASE_URL']:
-        local = Path(__file__).resolve().parent.parent.parent / 'web' / '.env.local'
-        if local.exists():
-            for line in local.read_text().splitlines():
-                line = line.strip()
-                if not line or line.startswith('#') or '=' not in line:
-                    continue
-                k, v = line.split('=', 1)
-                v = v.strip().strip('"').strip("'")
-                if k.strip() in env and not env[k.strip()]:
-                    env[k.strip()] = v
+    if not all(env.values()):
+        local_path = Path(__file__).resolve().parent.parent.parent / 'web' / '.env.local'
+        local = dotenv_values(local_path) if local_path.exists() else {}
+        for key in env:
+            env[key] = env[key] or local.get(key)
+
     if not env['DATABASE_URL']:
         raise SystemExit('DATABASE_URL not set in env or web/.env.local')
     return env
@@ -70,9 +76,21 @@ def main() -> None:
             print('\nDRY RUN -- pass --confirm to delete these rows and their blobs.')
             return
 
-        conn.execute("DELETE FROM library_cases WHERE group_name = 'Mortality'")
+        # Delete by the exact case_ids listed above, not by re-running the
+        # predicate. Re-evaluating `group_name = 'Mortality'` at delete time
+        # means anything seeded between the dry run and the confirm gets removed
+        # without ever being shown or approved -- and the count printed
+        # afterwards came from the earlier SELECT, so it could be wrong in either
+        # direction. Deleting a known id list makes the confirmation prompt an
+        # accurate description of what happens.
+        case_ids = [case_id for case_id, _ in rows]
+        deleted = conn.execute(
+            "DELETE FROM library_cases WHERE case_id = ANY(%s)", (case_ids,)
+        ).rowcount
         conn.commit()
-        print(f'\nDeleted {len(rows)} catalog row(s).')
+        print(f'\nDeleted {deleted} catalog row(s).')
+        if deleted != len(rows):
+            print(f'  (listed {len(rows)}; {len(rows) - deleted} had already gone)')
 
     # Best-effort blob cleanup -- orphaned private blobs are harmless.
     token = env.get('BLOB_READ_WRITE_TOKEN')

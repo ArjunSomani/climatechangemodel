@@ -5,22 +5,25 @@ The Data Explorer must never ship raw hourly EIA data to the browser
 This reads the Parquet store built by convert_eia_to_parquet.py and
 uploads one JSON blob per region containing:
   - typical_day: 24-hour average capacity fraction per source, averaged
-    across all 5 years (the "what does a normal day look like" view)
+    across every year in the store (the "what does a normal day look
+    like" view)
   - weekly: weekly-average capacity fraction per source across the full
-    2020-2024 span (~261 points/source -- the "how does it change
-    across seasons/years" view)
+    span (~52 points per year, per source -- the "how does it change
+    across seasons/years" view). The span is whatever the Parquet store
+    holds; it reached 2025 after a refresh, so hard-coded year counts
+    here went stale and are now described relatively.
   - yearly_max_mw: yearly max MW per source, straight from the source data
 
 Requires engine/data/eia_parquet/ to exist locally (see
-convert_eia_to_parquet.py) and `vercel` CLI linked in web/.
+convert_eia_to_parquet.py) and BLOB_READ_WRITE_TOKEN in web/.env.local.
 """
 import json
-import subprocess
-import tempfile
 from pathlib import Path
 
 import pandas as pd
 from dotenv import dotenv_values
+
+from optimize_engine.blob import upload_json_blob
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 WEB_DIR = REPO_ROOT / 'web'
@@ -37,36 +40,14 @@ def _env() -> dict:
     return env
 
 
-def _upload_blob(pathname: str, payload: dict, rw_token: str) -> str:
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
-        json.dump(payload, f)
-        tmp_path = f.name
-
-    try:
-        result = subprocess.run(
-            [
-                'vercel', 'blob', 'put', tmp_path,
-                '--access', 'private',
-                '--pathname', pathname,
-                '--allow-overwrite', 'true',
-                '--rw-token', rw_token,
-            ],
-            cwd=WEB_DIR,
-            capture_output=True,
-            text=True,
-            timeout=60,
-        )
-    finally:
-        Path(tmp_path).unlink(missing_ok=True)
-
-    if result.returncode != 0:
-        raise RuntimeError(f'vercel blob put failed for {pathname}:\n{result.stdout}\n{result.stderr}')
-
-    for line in (result.stdout + result.stderr).splitlines():
-        if line.strip().startswith('> Success!'):
-            return line.split('Success!', 1)[1].strip()
-
-    raise RuntimeError(f'Could not parse blob URL for {pathname}:\n{result.stdout}\n{result.stderr}')
+# Uploads go through optimize_engine.blob, which is the module that exists so
+# this logic lives in one place. This script used to shell out to the `vercel`
+# CLI instead, write the payload to a temp file, and then recover the resulting
+# URL by scanning stdout for a line starting "> Success!". That is three failure
+# modes the REST path doesn't have: the CLI must be installed and linked, the
+# temp file must survive, and the human-readable output format must never
+# change. blob.py was written precisely to avoid the CLI (the worker runs on a
+# non-Vercel host where it isn't available); this file was simply missed.
 
 
 def main() -> None:
@@ -110,7 +91,7 @@ def main() -> None:
             'yearly_max_mw': region_max,
         }
 
-        url = _upload_blob(f'eia-explorer/{region}.json', payload, env['BLOB_READ_WRITE_TOKEN'])
+        url = upload_json_blob(f'eia-explorer/{region}.json', payload, env['BLOB_READ_WRITE_TOKEN'])
         blob_urls[region] = url
         print(f'{region}: typical_day={len(typical_day)} weekly={len(weekly)} '
               f'yearly_max={len(region_max)} -> {url}')
@@ -122,7 +103,7 @@ def main() -> None:
         'date_range': meta['date_range'],
         'blob_urls': blob_urls,
     }
-    index_url = _upload_blob('eia-explorer/index.json', index_payload, env['BLOB_READ_WRITE_TOKEN'])
+    index_url = upload_json_blob('eia-explorer/index.json', index_payload, env['BLOB_READ_WRITE_TOKEN'])
     print(f'index -> {index_url}')
 
 

@@ -27,7 +27,7 @@ from pathlib import Path
 import psycopg
 from dotenv import dotenv_values
 
-from optimize_engine import ScenarioConfig, SourceTweaks, TweakPair, run_scenario
+from optimize_engine import ScenarioConfig, SourceTweaks, TweakPair, mortality, run_scenario
 from optimize_engine.demand import region_demand_multiplier
 from optimize_engine.blob import upload_json_blob
 from optimize_engine.schemas import SOURCES
@@ -198,10 +198,12 @@ def _upload_blob(case_id: str, records: list, rw_token: str) -> str:
 UPSERT_SQL = """
 INSERT INTO library_cases (
     case_id, group_name, variant, co2_regime, co2_initial, co2_yearly,
-    region, years, config, result_blob_url, engine_version, specs_version, eia_version
+    region, years, config, result_blob_url, engine_version, specs_version, eia_version,
+    mortality_version
 ) VALUES (
     %(case_id)s, %(group_name)s, %(variant)s, %(co2_regime)s, %(co2_initial)s, %(co2_yearly)s,
-    %(region)s, %(years)s, %(config)s, %(result_blob_url)s, %(engine_version)s, %(specs_version)s, %(eia_version)s
+    %(region)s, %(years)s, %(config)s, %(result_blob_url)s, %(engine_version)s, %(specs_version)s, %(eia_version)s,
+    %(mortality_version)s
 )
 ON CONFLICT (case_id) DO UPDATE SET
     years = EXCLUDED.years,
@@ -210,6 +212,7 @@ ON CONFLICT (case_id) DO UPDATE SET
     engine_version = EXCLUDED.engine_version,
     specs_version = EXCLUDED.specs_version,
     eia_version = EXCLUDED.eia_version,
+    mortality_version = EXCLUDED.mortality_version,
     created_at = now();
 """
 
@@ -246,6 +249,19 @@ def main() -> None:
     engine_version = importlib.metadata.version('optimize-engine')
     specs_version = _specs_version()
     eia_version = _eia_version()
+    mortality_version = mortality.mortality_version()
+
+    # The workflows invoke this script directly and never run
+    # setup_library_schema.py, so ensure the column this script now writes
+    # actually exists. Idempotent and additive; mirrors the schema script.
+    with psycopg.connect(env['DATABASE_URL']) as conn:
+        conn.execute(
+            'ALTER TABLE library_cases ADD COLUMN IF NOT EXISTS mortality_version TEXT')
+        conn.execute(
+            "UPDATE library_cases SET mortality_version = 'unpriced' "
+            "WHERE mortality_version IS NULL "
+            "AND COALESCE((config->'mortality_price'->>'initial')::numeric, 0) = 0")
+        conn.commit()
 
     groups = [g for g in GROUPS if wanted_regions is None or g.region in wanted_regions]
 
@@ -258,13 +274,21 @@ def main() -> None:
     # changed, its stored result is stale (wrong first_year/baseline or wrong
     # horizon) and must be regenerated, not skipped. Only skip cases whose
     # recorded versions AND horizon still match what we'd generate right now.
+    #
+    # The mortality coefficients belong in that list and were missing from it.
+    # For a case that prices mortality they enter the objective, so its optimized
+    # mix is a function of them -- change a coefficient and the stored mix is
+    # answering a question nobody asked any more. Compared per case rather than
+    # in the WHERE clause because the right expectation differs by case: a case
+    # with a zero mortality price is stamped 'unpriced' and stays valid across
+    # every coefficient revision, since the term contributes exactly 0.0.
     with psycopg.connect(env['DATABASE_URL']) as conn:
         with conn.cursor() as cur:
             cur.execute(
-                'SELECT case_id FROM library_cases '
+                'SELECT case_id, mortality_version FROM library_cases '
                 'WHERE eia_version = %s AND specs_version = %s AND years = %s',
                 (eia_version, specs_version, YEARS))
-            existing_case_ids = {row[0] for row in cur.fetchall()}
+            existing_stamps = dict(cur.fetchall())
 
     for g in groups:
         if reached_limit:
@@ -276,10 +300,15 @@ def main() -> None:
             case_id = (f'{group_slug}/{variant_slug}/{regime_slug}/'
                        f'co2_{co2_initial}_{co2_yearly}/{g.region}')
 
-            if case_id in existing_case_ids:
+            expected_stamp = (
+                mortality_version if g.mortality[0] else 'unpriced')
+            if existing_stamps.get(case_id) == expected_stamp:
                 print(f'--- {case_id} (skip, already exists) ---')
                 skipped += 1
                 continue
+            if case_id in existing_stamps:
+                print(f'--- {case_id} (regenerate: mortality coefficients '
+                      f'changed since it was built) ---')
 
             if args.max_cases is not None and total >= args.max_cases:
                 print(f'Reached --max-cases={args.max_cases}; stopping early '
@@ -329,6 +358,7 @@ def main() -> None:
                         'engine_version': engine_version,
                         'specs_version': specs_version,
                         'eia_version': eia_version,
+                        'mortality_version': expected_stamp,
                     })
                 conn.commit()
             print('  catalog row upserted')

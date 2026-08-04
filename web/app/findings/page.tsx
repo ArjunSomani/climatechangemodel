@@ -5,6 +5,8 @@ import { Term } from "@/components/Term";
 import { formatVsl } from "@/lib/mortality";
 import latticeData from "@/data/playground_lattice.json";
 import type { Lattice } from "@/lib/playground";
+import { KeyPoint } from "@/components/KeyPoint";
+import { ChartCaption } from "@/components/ChartCaption";
 
 export const metadata = {
   title: "What we found — Optimize",
@@ -55,9 +57,6 @@ const gasFactor = (gasMort / Math.max(1, gasCarbon)).toFixed(1);
 export default function FindingsPage() {
   return (
     <div className="mx-auto max-w-3xl px-6 py-16">
-      <p className="text-xs font-semibold tracking-[0.2em] text-accent uppercase">
-        What we found
-      </p>
       <h1 className="font-display mt-3 text-4xl font-semibold tracking-tight text-balance">
         Pricing a harm collapses coal. <em>Which</em> harm changes the rest.
       </h1>
@@ -69,28 +68,21 @@ export default function FindingsPage() {
         robust, one subtle, one genuinely counterintuitive.
       </p>
 
-      <div className="mt-6 rounded-xl border-l-2 border-[var(--mortality)] bg-zinc-50/60 px-4 py-3 dark:bg-zinc-900/40">
-        <p className="text-sm text-zinc-700 dark:text-zinc-300">
-          <span className="font-medium">The payoff:</span> putting a price on{" "}
-          <em>either</em> harm cleans up the grid — but the two prices disagree
-          about gas, and that disagreement means the externality you choose to
-          price quietly changes the final death toll. It is not a wash.
-        </p>
-      </div>
+      <KeyPoint label="The payoff:">
+        putting a price on <em>either</em> harm cleans up the grid — but the two
+        prices disagree about gas, and that disagreement means the externality
+        you choose to price quietly changes the final death toll. It is not a
+        wash.
+      </KeyPoint>
 
       {/* ---- Finding 1 -------------------------------------------------- */}
       <section className="mt-14">
-        <div className="flex items-baseline gap-3">
-          <span className="font-display text-3xl font-semibold text-zinc-300 tabular-nums dark:text-zinc-700">
-            01
-          </span>
-          <h2 className="text-xl font-medium">
-            Price <em>either</em> harm, and coal collapses
-          </h2>
-        </div>
+        <FindingHeading n={1}>
+          Price <em>either</em> harm, and coal collapses
+        </FindingHeading>
         <p className="mt-3 text-zinc-700 dark:text-zinc-300">
           With no price on either externality, the cheapest grid keeps burning{" "}
-          <span style={{ color: "var(--series-coal)" }} className="font-medium">
+          <span style={{ color: "var(--series-coal-text)" }} className="font-medium">
             coal
           </span>{" "}
           — about {coalNone} TWh of it in the final year — and kills roughly{" "}
@@ -115,9 +107,9 @@ export default function FindingsPage() {
         </div>
 
         <div className="mt-4 rounded-xl border border-zinc-200 p-5 dark:border-zinc-800">
-          <div className="mb-3 text-xs font-medium tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
+          <ChartCaption className="mb-3">
             Coal in the final-year mix
-          </div>
+          </ChartCaption>
           <GenBar label="No pricing" value={coalNone} max={coalNone} />
           <GenBar label={`Carbon $${carbonPrice}`} value={twh(carbon.finalMixMWh.Coal ?? 0)} max={coalNone} />
           <GenBar
@@ -136,19 +128,14 @@ export default function FindingsPage() {
 
       {/* ---- Finding 2 -------------------------------------------------- */}
       <section className="mt-14">
-        <div className="flex items-baseline gap-3">
-          <span className="font-display text-3xl font-semibold text-zinc-300 tabular-nums dark:text-zinc-700">
-            02
-          </span>
-          <h2 className="text-xl font-medium">
-            But the two prices diverge on{" "}
-            <span style={{ color: "var(--series-gas)" }}>gas</span>
-          </h2>
-        </div>
+        <FindingHeading n={2}>
+          But the two prices diverge on{" "}
+          <span style={{ color: "var(--series-gas-text)" }}>gas</span>
+        </FindingHeading>
         <p className="mt-3 text-zinc-700 dark:text-zinc-300">
           Coal exits under either price — that part is agreement. The interesting
           part is where they disagree. A carbon price drives{" "}
-          <span style={{ color: "var(--series-gas)" }} className="font-medium">
+          <span style={{ color: "var(--series-gas-text)" }} className="font-medium">
             gas
           </span>{" "}
           down to about {gasCarbon} TWh; a mortality price leaves roughly{" "}
@@ -162,23 +149,18 @@ export default function FindingsPage() {
         </p>
 
         <div className="mt-5 rounded-xl border border-zinc-200 p-5 dark:border-zinc-800">
-          <div className="mb-3 text-xs font-medium tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
+          <ChartCaption className="mb-3">
             Coal exits under either price — but gas is where they diverge
-          </div>
+          </ChartCaption>
           <DivergenceComparison />
         </div>
       </section>
 
       {/* ---- Finding 3 -------------------------------------------------- */}
       <section className="mt-14">
-        <div className="flex items-baseline gap-3">
-          <span className="font-display text-3xl font-semibold text-zinc-300 tabular-nums dark:text-zinc-700">
-            03
-          </span>
-          <h2 className="text-xl font-medium">
-            Carbon pricing reaches <em>fewer</em> deaths here
-          </h2>
-        </div>
+        <FindingHeading n={3}>
+          Carbon pricing reaches <em>fewer</em> deaths here
+        </FindingHeading>
         <p className="mt-3 text-zinc-700 dark:text-zinc-300">
           Here is the counterintuitive one. You&apos;d expect the{" "}
           <em>mortality</em> price — the one built to save lives — to reach the
@@ -194,9 +176,9 @@ export default function FindingsPage() {
         </p>
 
         <div className="mt-5 rounded-xl border border-zinc-200 p-5 dark:border-zinc-800">
-          <div className="mb-3 text-xs font-medium tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
+          <ChartCaption className="mb-3">
             Annual grid deaths, carbon price vs. mortality price
-          </div>
+          </ChartCaption>
           <FindingsDeathBars
             rows={[
               {
@@ -224,9 +206,11 @@ export default function FindingsPage() {
       {/* ---- Payoff ----------------------------------------------------- */}
       <section className="mt-14">
         <div className="rounded-2xl border border-zinc-200 bg-zinc-50/60 p-6 dark:border-zinc-800 dark:bg-zinc-900/40">
-          <p className="text-xs font-semibold tracking-[0.15em] text-[var(--mortality)] uppercase">
+          {/* Real heading, so the page's closing argument appears in the
+              document outline instead of only reading as a styled label. */}
+          <h2 className="text-xl font-medium text-[var(--mortality)]">
             The thesis
-          </p>
+          </h2>
           <p className="mt-2 text-lg text-zinc-800 dark:text-zinc-200">
             Which externality you price is not a cosmetic choice. Any price cleans
             up coal — but carbon and mortality are different instruments that reach
@@ -256,6 +240,30 @@ export default function FindingsPage() {
   );
 }
 
+// The three findings genuinely are a sequence -- the deck promises "one robust,
+// one subtle, one genuinely counterintuitive" and each builds on the last -- so
+// an ordinal is information, not decoration. Two things were wrong with how it
+// was shown:
+//
+//   1. `01 / 02 / 03` is the zero-padded landing-page convention, which reads as
+//      template scaffolding rather than as a numbered argument.
+//   2. It was a decorative <span> *outside* the <h2>, at text-zinc-300 on
+//      near-white -- 1.44:1, effectively invisible. So the sequence was announced
+//      to nobody: sighted readers couldn't see it, and screen readers never got
+//      it because it wasn't part of the heading.
+//
+// Now the ordinal lives inside the heading as real, legible text.
+function FindingHeading({ n, children }: { n: number; children: React.ReactNode }) {
+  return (
+    <h2 className="flex items-baseline gap-3 text-xl font-medium">
+      <span className="text-2xl text-zinc-500 tabular-nums dark:text-zinc-400">
+        {n}
+      </span>
+      <span>{children}</span>
+    </h2>
+  );
+}
+
 function DeathStat({
   label,
   value,
@@ -268,7 +276,7 @@ function DeathStat({
   return (
     <div className="rounded-xl border border-zinc-200 py-3 dark:border-zinc-800">
       <div
-        className="font-display text-2xl font-semibold tabular-nums"
+        className="font-sans text-2xl font-semibold tabular-nums"
         style={tone === "bad" ? { color: "var(--mortality)" } : undefined}
       >
         {value.toLocaleString()}
@@ -276,7 +284,7 @@ function DeathStat({
       <div className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
         {label}
       </div>
-      <div className="text-[10px] tracking-wide text-zinc-400 uppercase">
+      <div className="text-[10px] tracking-wide text-zinc-500 dark:text-zinc-400 uppercase">
         deaths / yr
       </div>
     </div>
@@ -306,7 +314,7 @@ function GenBar({
         />
       </div>
       <span className="w-20 shrink-0 text-right text-sm tabular-nums">
-        {value} <span className="text-zinc-400">TWh</span>
+        {value} <span className="text-zinc-500 dark:text-zinc-400">TWh</span>
       </span>
     </div>
   );

@@ -1,4 +1,4 @@
-import { get } from "@vercel/blob";
+import { readBlobText } from "@/lib/blobRead";
 import { pool, type LibraryCaseRow } from "@/lib/db";
 
 export type LibraryCaseSummary = Omit<
@@ -41,12 +41,53 @@ export async function getLibraryCase(
   const caseRow = rows[0];
   if (!caseRow) return null;
 
-  const blobResult = await get(caseRow.result_blob_url, { access: "private" });
-  if (!blobResult || blobResult.statusCode !== 200) return null;
+  return hydrateCase(caseRow);
+}
 
-  const result: YearRecord[] = JSON.parse(
-    await new Response(blobResult.stream).text()
+// Batch fetch. Calling getLibraryCase() per id issued one Neon round-trip per
+// case on top of the unavoidable per-case Blob fetch -- 13 queries + 13 blob
+// reads for /us, which measured ~1.6s to first paint. The rows all come from one
+// table by primary key, so a single `= ANY($1)` collapses the SQL side to one
+// round-trip; the blob reads stay parallel because each result body is a separate
+// object in storage.
+//
+// Returned in the caller's requested id order, not the database's, so callers can
+// rely on the ordering they asked for. Missing ids are dropped, matching
+// getLibraryCase()'s null-for-absent contract.
+export async function getLibraryCases(
+  caseIds: string[]
+): Promise<LibraryCaseDetail[]> {
+  if (caseIds.length === 0) return [];
+
+  const { rows } = await pool.query<LibraryCaseRow>(
+    `SELECT * FROM library_cases WHERE case_id = ANY($1)`,
+    [caseIds]
   );
+  const byId = new Map(rows.map((r) => [r.case_id, r]));
+
+  const details = await Promise.all(
+    caseIds.map(async (id) => {
+      const caseRow = byId.get(id);
+      if (!caseRow) return null;
+      return hydrateCase(caseRow);
+    })
+  );
+  return details.filter((d): d is LibraryCaseDetail => d !== null);
+}
+
+// Shared by getLibraryCase and getLibraryCases: turn a row plus its blob into a
+// full detail record. Kept in one place so the two entry points can never drift
+// on which fields they project.
+async function hydrateCase(
+  caseRow: LibraryCaseRow
+): Promise<LibraryCaseDetail | null> {
+  // Throws (rather than degrading to null) on a transport failure after its
+  // retry: a missing case silently vanishing from /compare would make the
+  // comparison quietly wrong, which is worse than an error page you can retry.
+  const body = await readBlobText(caseRow.result_blob_url);
+  if (body === null) return null;
+
+  const result: YearRecord[] = JSON.parse(body);
 
   return {
     case_id: caseRow.case_id,
@@ -64,11 +105,4 @@ export async function getLibraryCase(
     config: caseRow.config,
     result,
   };
-}
-
-export async function getLibraryCases(
-  caseIds: string[]
-): Promise<LibraryCaseDetail[]> {
-  const details = await Promise.all(caseIds.map((id) => getLibraryCase(id)));
-  return details.filter((d): d is LibraryCaseDetail => d !== null);
 }

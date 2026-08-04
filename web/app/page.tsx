@@ -1,35 +1,40 @@
 import Link from "next/link";
+import { Standfirst } from "@/components/Standfirst";
 
 // Static landing page: the intro and four ways in, no charts. (Dropping the
 // live teaser also makes this page static/prerendered rather than fetching the
 // library on every request.)
 
-const ENTRIES: {
-  href: string;
-  title: string;
-  body: string;
-  primary?: boolean;
-}[] = [
+type Entry = { href: string; title: string; body: string };
+
+// The one action the page is for.
+const PRIMARY: Entry = {
+  href: "/custom-run",
+  title: "Run your own scenario",
+  body: "Pick a carbon and mortality price and watch the cheapest grid change.",
+};
+
+// Everything else: reading and browsing, ordered easiest-first.
+const SECONDARY: Entry[] = [
   {
     href: "/how-it-works",
     title: "How it works",
     body: "The model in plain terms — data, knobs, and what happens each year.",
   },
   {
+    href: "/findings",
+    title: "What we found",
+    body: "Three results, including one that is genuinely counterintuitive.",
+  },
+  {
     href: "/compare",
     title: "Sample comparisons",
-    body: "See carbon pricing vs. mortality pricing side by side.",
+    body: "Carbon pricing vs. mortality pricing, side by side.",
   },
   {
     href: "/library",
     title: "Browse scenarios",
     body: "Pre-run results across 13 US regions and a range of policies.",
-  },
-  {
-    href: "/custom-run",
-    title: "Create your own scenario",
-    body: "Pick a carbon and mortality price and watch the cheapest grid change.",
-    primary: true,
   },
 ];
 
@@ -45,9 +50,7 @@ export default function Home() {
         }}
       />
       <div className="mx-auto max-w-3xl px-6 pt-20 pb-24 text-center">
-        <p className="text-xs font-semibold tracking-[0.2em] text-accent uppercase">
-          Hourly grid optimization · 25-year horizon
-        </p>
+        <Standfirst>Hourly grid optimization · 25-year horizon</Standfirst>
         <h1 className="font-display mt-4 text-4xl leading-[1.1] font-semibold tracking-tight text-balance sm:text-5xl">
           The cheapest way to decarbonize the US electricity grid
         </h1>
@@ -67,32 +70,60 @@ export default function Home() {
           .
         </p>
 
-        <div className="mt-10 grid gap-4 text-left sm:grid-cols-2">
-          {ENTRIES.map((e) => (
-            <Link
-              key={e.href}
-              href={e.href}
-              className={
-                "group flex flex-col rounded-xl border p-5 transition-colors " +
-                (e.primary
-                  ? "border-accent bg-accent/5 hover:bg-accent/10"
-                  : "border-zinc-200 hover:border-accent/50 dark:border-zinc-800")
-              }
+        {/* Four routes in, but they were never four peers: one is the thing we
+            want you to do, one explains the model, two are ways to browse
+            pre-computed output. Rendering them as a 2x2 of identically sized
+            bordered cards flattened that into "pick any of four," which is both
+            the most template-looking layout available and a worse answer to
+            "where do I start?" -- so the hierarchy is now the layout. */}
+        <div className="mt-10">
+          <Link
+            href={PRIMARY.href}
+            className="group inline-flex min-h-11 items-center gap-2 rounded-full bg-accent px-6 py-3 text-base font-medium text-accent-foreground"
+          >
+            {PRIMARY.title}
+            <span
+              aria-hidden
+              className="transition-transform group-hover:translate-x-0.5"
             >
-              <span className="font-display flex items-center gap-1.5 text-lg font-medium text-black dark:text-zinc-50">
-                {e.title}
-                <span
-                  aria-hidden
-                  className="text-accent transition-transform group-hover:translate-x-0.5"
+              →
+            </span>
+          </Link>
+          <p className="mx-auto mt-3 max-w-sm text-sm text-zinc-600 dark:text-zinc-400">
+            {PRIMARY.body}
+          </p>
+        </div>
+
+        <div className="mx-auto mt-14 max-w-xl border-t border-zinc-200 text-left dark:border-zinc-800">
+          <h2 className="mt-6 text-center text-base font-medium text-zinc-600 dark:text-zinc-400">
+            Or start from what&apos;s already been run
+          </h2>
+          <ul className="mt-2">
+            {SECONDARY.map((e) => (
+              <li
+                key={e.href}
+                className="border-b border-zinc-200 last:border-b-0 dark:border-zinc-800"
+              >
+                <Link
+                  href={e.href}
+                  className="group flex items-baseline gap-3 py-4 hover:bg-zinc-50 dark:hover:bg-zinc-900/40"
                 >
-                  →
-                </span>
-              </span>
-              <span className="mt-1.5 text-sm text-zinc-600 dark:text-zinc-400">
-                {e.body}
-              </span>
-            </Link>
-          ))}
+                  <span className="font-display w-40 shrink-0 text-base font-medium text-black dark:text-zinc-50">
+                    {e.title}
+                  </span>
+                  <span className="min-w-0 flex-1 text-sm text-zinc-600 dark:text-zinc-400">
+                    {e.body}
+                  </span>
+                  <span
+                    aria-hidden
+                    className="shrink-0 text-accent transition-transform group-hover:translate-x-0.5"
+                  >
+                    →
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </div>

@@ -240,7 +240,7 @@ export default function HowItWorksPage() {
           </div>
         ))}
       </div>
-      <p className="mt-3 text-center text-sm text-zinc-500 dark:text-zinc-500">
+      <p className="mt-3 text-center text-sm text-zinc-500 dark:text-zinc-400">
         These six sources compete every year — the model picks how much of
         each to build.
       </p>
@@ -277,7 +277,7 @@ export default function HowItWorksPage() {
             </div>
           ))}
         </div>
-        <p className="text-sm text-zinc-500 dark:text-zinc-500">
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">
           The carbon and mortality prices work the same way — two harms the
           market ignores, each given a dollar figure.{" "}
           <Link href="/safety" className="underline">
@@ -309,7 +309,7 @@ export default function HowItWorksPage() {
                 style={{ background: `var(${r.colorVar})` }}
                 aria-hidden
               />
-              <div className="font-display text-2xl font-semibold text-black tabular-nums dark:text-zinc-50">
+              <div className="font-sans text-2xl font-semibold text-black tabular-nums dark:text-zinc-50">
                 {r.value}
               </div>
               <div className="text-xs text-zinc-500 dark:text-zinc-400">
@@ -318,10 +318,10 @@ export default function HowItWorksPage() {
             </div>
           ))}
         </div>
-        <p className="text-center text-xs text-zinc-500 dark:text-zinc-500">
+        <p className="text-center text-xs text-zinc-500 dark:text-zinc-400">
           deaths per TWh — central estimate
         </p>
-        <p className="text-sm text-zinc-500 dark:text-zinc-500">
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">
           That gap is why a mortality price hits coal hardest while barely
           touching solar or wind.{" "}
           <Link href="/safety" className="underline">
@@ -353,7 +353,7 @@ export default function HowItWorksPage() {
             </div>
           ))}
         </div>
-        <p className="text-sm text-zinc-500 dark:text-zinc-500">
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">
           Want the math behind each step?{" "}
           <Link href="/methodology" className="underline">
             See the methodology page
@@ -391,7 +391,7 @@ export default function HowItWorksPage() {
             </div>
           ))}
         </div>
-        <p className="text-center text-xs text-zinc-500 dark:text-zinc-500">
+        <p className="text-center text-xs text-zinc-500 dark:text-zinc-400">
           max new capacity added per year, as a share of the fleet — based on
           historical build rates
         </p>
@@ -435,7 +435,7 @@ function Stat({ value, label }: { value: string; label: string }) {
       <div className="text-xl font-semibold text-black dark:text-zinc-50">
         {value}
       </div>
-      <div className="text-xs text-zinc-500 dark:text-zinc-500">{label}</div>
+      <div className="text-xs text-zinc-500 dark:text-zinc-400">{label}</div>
     </div>
   );
 }

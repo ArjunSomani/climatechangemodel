@@ -22,7 +22,10 @@ export function pickEnergyUnit(maxMwh: number): EnergyUnit {
 
 export function formatEnergyIn(mwh: number, { unit, divisor }: EnergyUnit): string {
   const scaled = mwh / divisor;
-  return `${scaled.toFixed(scaled < 10 ? 1 : 0)} ${unit}`;
+  // Math.abs for the precision decision, matching formatEnergy above: without it
+  // any negative value took the < 10 branch, so -50 TWh printed as "-50.0 TWh"
+  // while +50 printed as "50 TWh".
+  return `${scaled.toFixed(Math.abs(scaled) < 10 ? 1 : 0)} ${unit}`;
 }
 
 export interface PowerUnit {
@@ -40,7 +43,7 @@ export function pickPowerUnit(maxMw: number): PowerUnit {
 
 export function formatPowerIn(mw: number, { unit, divisor }: PowerUnit): string {
   const scaled = mw / divisor;
-  return `${scaled.toFixed(scaled < 10 ? 1 : 0)} ${unit}`;
+  return `${scaled.toFixed(Math.abs(scaled) < 10 ? 1 : 0)} ${unit}`;
 }
 
 export function formatMoney(millions: number): string {

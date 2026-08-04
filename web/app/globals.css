@@ -35,6 +35,20 @@
   --series-coal: #9085e9;
   --series-battery: #e66767;
 
+  /* Text-safe variants of the series hues, for the places prose names a source
+     inline ("...they part ways on <gas>"). A fill only owes 3:1; the same hue as
+     *text* owes 4.5:1, and gas at #008300 measured 3.90:1 against the dark page.
+     Rather than distort the chart color to satisfy a text rule, the text gets its
+     own token. Every other source already clears 4.5:1 as text, so only the ones
+     that need lifting are redefined -- the rest alias the series color, which
+     keeps a single source of truth per hue.
+     Solved against the *tinted panel* (dark:bg-zinc-900/40 over the page =
+     #131211), not the page itself: that's the lighter of the two surfaces this
+     text lands on, so it's the binding constraint. 4.62:1 there, 4.77:1 on the
+     page. */
+  --series-gas-text: #009300;
+  --series-coal-text: var(--series-coal);
+
   /* full 8-slot categorical palette for charts whose series are something
      other than energy sources (e.g. Compare's per-case lines) */
   --compare-1: #3987e5;
@@ -58,6 +72,17 @@
      tone stays grave, never celebratory. */
   --mortality: #d76b64;
   --mortality-strong: #e88a83;
+
+  /* Texture overlay for the "modeled" half of a RiskLadder bar. Dark theme bars
+     are the lighter palette, so a dark hatch reads against them. */
+  --hatch: rgba(0, 0, 0, 0.34);
+
+  /* Semantic stacking order, so nothing ever needs a guessed 999. Theme-
+     independent, hence declared once here rather than per palette. */
+  --z-behind: -1;
+  --z-sticky: 20;
+  --z-tooltip: 30;
+  --z-skip-link: 40;
 }
 
 :root[data-theme="light"] {
@@ -67,10 +92,16 @@
   --background: #fcfcfb;
   --foreground: #17140f;
 
-  /* lighter, brighter orange than the dark burnt-rust so highlights read as
-     genuinely orange on the near-white surface; ~4.35:1 on --background, so
-     accent link/label text stays legible */
-  --accent: #c9520f;
+  /* Bright orange rather than the dark theme's burnt-rust, so highlights read
+     as genuinely orange on the near-white surface -- but dark enough to clear
+     WCAG AA as *small* text, which the accent has to do: it colors 12px
+     eyebrows, 14px active nav links, and inline links. Two constraints, both
+     measured against the light palette:
+       --accent on --background        4.93:1  (accent-colored label/link text)
+       --accent-foreground on --accent 4.81:1  (button labels on a filled CTA)
+     Both need >=4.5:1, and both pull the same direction (darker), so one value
+     satisfies them. Don't lighten past ~#c04e0e without re-checking both. */
+  --accent: #bb4c0e;
   --accent-foreground: #fff8f2;
 
   /* dataviz tokens (light) -- see references/palette.md in the dataviz skill */
@@ -78,27 +109,44 @@
   --chart-page: #f9f9f7;
   --ink-primary: #0b0b0b;
   --ink-secondary: #52514e;
-  --ink-muted: #898781;
+  /* Axis tick labels and tooltip captions ride on --ink-muted, so it carries
+     real 12px text and owes the full 4.5:1 -- not the 3:1 a decorative gray
+     would. 4.87:1 on --background, 4.75:1 on --chart-page. (The dark theme's
+     #898781 clears it at 5.37:1; the light surface is where it fell short.) */
+  --ink-muted: #726f6a;
   --chart-gridline: #e1e0d9;
   --chart-baseline: #c3c2b7;
 
+  /* Series colors are fills, so the bar they must clear is WCAG 1.4.11's 3:1
+     for graphical objects -- not 4.5:1, which is a text threshold and which no
+     light-surface yellow can meet while still reading as yellow. Four slots were
+     under 3:1 against the near-white surface (wind 2.74, nuclear 2.11,
+     compare-7 2.62, eia-hydro 2.37) and are nudged down in lightness only; hue
+     and saturation are untouched, so every source keeps its identity across
+     charts. The dark palette already cleared 3:1 everywhere and is unchanged.
+     Legend *text* no longer takes the series color at all -- see chartLegend.tsx. */
   --series-solar: #2a78d6;
-  --series-wind: #1baf7a;
-  --series-nuclear: #eda100;
+  --series-wind: #19a371;
+  --series-nuclear: #c28400;
   --series-gas: #008300;
   --series-coal: #4a3aa7;
   --series-battery: #e34948;
 
   --compare-1: #2a78d6;
-  --compare-2: #1baf7a;
-  --compare-3: #eda100;
+  --compare-2: #19a371;
+  --compare-3: #c28400;
   --compare-4: #008300;
   --compare-5: #4a3aa7;
   --compare-6: #e34948;
-  --compare-7: #e87ba4;
+  --compare-7: #e46494;
   --compare-8: #eb6834;
 
-  --eia-hydro: #a8a6a0;
+  /* Light-theme series hues all clear 4.5:1 as text already (gas 4.82, coal
+     8.33), so both text tokens simply alias the fill. */
+  --series-gas-text: var(--series-gas);
+  --series-coal-text: var(--series-coal);
+
+  --eia-hydro: #939089;
   --eia-oil: #78766f;
   --eia-other: #4a4944;
 
@@ -106,6 +154,27 @@
      surface (~4.5:1 on --background). */
   --mortality: #b23c39;
   --mortality-strong: #8f2f2d;
+
+  /* Light theme bars are darker (tuned for 3:1 on near-white), so the hatch has
+     to go the other way to stay visible. */
+  --hatch: rgba(255, 255, 255, 0.42);
+}
+
+/* An em-based breakpoint for the main nav, in place of Tailwind's px `lg`.
+
+   The nine desktop links collapse to a hamburger below `lg` (1024px) because
+   that's roughly where they stop fitting -- at the default text size. But a
+   viewport-px breakpoint can't see text size, so a visitor who scales text to
+   200% (WCAG 1.4.4, which requires no loss of content or functionality at 2x)
+   still got the desktop row: the links needed twice the width, the breakpoint
+   said "desktop anyway", and the header overflowed the page by ~330px.
+
+   64em is the same 1024px at default text size, but it tracks the user's font
+   size, so at 200% it becomes 2048px and the hamburger appears on its own. The
+   breakpoint now answers the question it was always meant to ("do the links
+   fit?") rather than a proxy for it. */
+@theme {
+  --breakpoint-navwide: 64em;
 }
 
 @theme inline {
@@ -114,7 +183,6 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
   --font-display: var(--font-fraunces);
 }
 
@@ -137,25 +205,31 @@
 /* Cross-fade the whole page when the theme flips. The transition is scoped to
    a .theme-transition class that ThemeToggle adds only for the duration of the
    switch, so it animates the light<->dark change without slowing down every
-   hover/focus color change. 2s per the requested fade length. */
+   hover/focus color change. 2s per the requested fade length.
+
+   `*` deliberately EXCLUDES svg subtrees. A results page carries several
+   Recharts charts, each a few hundred <path>/<rect>/<text> nodes, and animating
+   fill+stroke on every one of them for two seconds is a large amount of
+   compositing for something nobody is looking at during the flip -- the chart
+   colors are already redrawn from the CSS variables. The page chrome (surfaces,
+   borders, body text) is what reads as "the site faded", so that's what fades;
+   charts cut over instantly under the same 2s. */
 :root.theme-transition,
-:root.theme-transition *,
-:root.theme-transition *::before,
-:root.theme-transition *::after {
+:root.theme-transition *:not(svg, svg *),
+:root.theme-transition *:not(svg, svg *)::before,
+:root.theme-transition *:not(svg, svg *)::after {
   transition:
     background-color 2s ease,
     border-color 2s ease,
     color 2s ease,
-    fill 2s ease,
-    stroke 2s ease,
     outline-color 2s ease;
 }
 
 @media (prefers-reduced-motion: reduce) {
   :root.theme-transition,
-  :root.theme-transition *,
-  :root.theme-transition *::before,
-  :root.theme-transition *::after {
+  :root.theme-transition *:not(svg, svg *),
+  :root.theme-transition *:not(svg, svg *)::before,
+  :root.theme-transition *:not(svg, svg *)::after {
     transition: none;
   }
 }
@@ -179,16 +253,88 @@
   transform-origin: left;
 }
 
+/* The two indefinite loaders (this bar and Tailwind's animate-spin) run for the
+   whole queue wait, which can be minutes -- exactly the kind of sustained
+   motion prefers-reduced-motion exists to stop. Swap the travel for a gentle
+   opacity pulse: still legibly "working", no movement. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-indeterminate,
+  .animate-spin {
+    animation: reduced-pulse 1.6s ease-in-out infinite;
+    transform: none;
+  }
+}
+
+@keyframes reduced-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
 a {
   text-underline-offset: 3px;
 }
 
-/* A single, consistent keyboard-focus ring in the accent color for every
-   interactive element -- the UA default is inconsistent across the many
-   rounded-full buttons and pill links. :focus-visible keeps it keyboard-only
-   so mouse/touch taps don't show a ring. */
+/* Skip-to-content: nine nav links and the theme toggle sit ahead of <main> on
+   every page, so a keyboard user needs a way past them. Off-screen until
+   focused rather than display:none, which would take it out of the tab order
+   entirely and defeat the point. */
+.skip-link {
+  position: absolute;
+  left: 0.75rem;
+  top: 0.75rem;
+  z-index: var(--z-skip-link);
+  transform: translateY(-200%);
+  background: var(--accent);
+  color: var(--accent-foreground);
+  padding: 0.5rem 0.875rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .skip-link {
+    transition: transform 150ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+/* A single, consistent keyboard-focus ring for every interactive element -- the
+   UA default is inconsistent across the many rounded-full buttons and pill links.
+   :focus-visible keeps it keyboard-only so mouse/touch taps don't show a ring.
+   No border-radius here: forcing 4px squared off the rounded-full pills, and the
+   ring follows the element's own radius on its own.
+
+   Two rings, not one. A plain `outline: 2px solid var(--accent)` is invisible on
+   any control whose background IS --accent -- the primary CTA, the active region
+   pill, the skip link -- where it measured 1:1. The inner --background ring is a
+   spacer: against the page it disappears (same colour), and against an accent
+   fill it separates the control from the accent ring so the ring reads. One rule
+   that works on every surface, instead of a per-component exception each time a
+   new accent-filled control appears.
+
+   box-shadow rather than outline+outline-offset because two concentric rings need
+   two layers, and box-shadow already follows border-radius exactly. */
 :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-  border-radius: 4px;
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--background),
+    0 0 0 4px var(--accent);
+}
+
+/* Forced-colors mode discards box-shadow entirely, so restore a real outline
+   there -- otherwise Windows High Contrast users get no focus indicator at all. */
+@media (forced-colors: active) {
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 3px solid CanvasText;
+    outline-offset: 2px;
+  }
 }

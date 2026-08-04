@@ -96,7 +96,7 @@ export function DivergenceComparison() {
         Final-year mix for {lattice.region} over {lattice.years} years, from the
         pre-computed grid. Coal collapses and grid deaths fall ~95%+ under{" "}
         <em>either</em> price — that&apos;s the robust result. Now look at{" "}
-        <span style={{ color: "var(--series-gas)" }} className="font-medium">
+        <span style={{ color: "var(--series-gas-text)" }} className="font-medium">
           gas
         </span>
         : the carbon price pushes it far lower than the mortality price does. The

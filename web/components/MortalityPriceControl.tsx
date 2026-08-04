@@ -48,11 +48,15 @@ export function MortalityPriceControl({
           <label htmlFor="mortality-price" className="text-sm font-medium">
             Price per death
           </label>
-          <span className="font-mono text-lg tabular-nums">
+          <span className="text-lg tabular-nums">
             {formatVsl(price)}
           </span>
         </div>
 
+        {/* aria-valuetext so the announced value is "$14.1M per death" rather
+            than the raw "14100000" -- the same abbreviation the visible readout
+            uses. min-h-6 raises the native 16px track to a >=24px pointer
+            target (WCAG 2.5.8). */}
         <input
           id="mortality-price"
           type="range"
@@ -60,8 +64,9 @@ export function MortalityPriceControl({
           max={VSL_MAX}
           step={VSL_STEP}
           value={price}
+          aria-valuetext={`${formatVsl(price)} per death`}
           onChange={(e) => setPrice(Number(e.target.value))}
-          className="mt-3 w-full accent-[var(--accent)]"
+          className="mt-3 min-h-6 w-full accent-[var(--accent)]"
         />
 
         <div className="mt-3 flex flex-wrap gap-2">
@@ -89,12 +94,16 @@ export function MortalityPriceControl({
           range (constant 2025 dollars): a range, not a recommended figure.
         </p>
 
+        {/* The 16px box stays 16px visually; p-1 -m-1 grows only the hit area to
+            24px so the pointer target clears WCAG 2.5.8 without a chunky
+            checkbox. The whole label is clickable too, but the box itself is
+            what a precise tap aims at. */}
         <label className="mt-4 flex items-start gap-2 text-sm">
           <input
             type="checkbox"
             checked={escalating}
             onChange={(e) => setEscalating(e.target.checked)}
-            className="mt-0.5 h-4 w-4 accent-[var(--accent)]"
+            className="mt-0.5 -m-1 box-content h-4 w-4 p-1 accent-[var(--accent)]"
           />
           <span>
             Escalate VSL in real terms (~1.1%/yr) over the horizon.{" "}
@@ -137,7 +146,7 @@ function PresetButton({
       }
     >
       <span className="text-sm font-semibold tabular-nums">{value}</span>
-      <span className="text-[10px] uppercase tracking-wide text-zinc-400">
+      <span className="text-[10px] uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
         {tier}
       </span>
     </button>

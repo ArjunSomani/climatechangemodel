@@ -30,6 +30,27 @@ CREATE TABLE IF NOT EXISTS library_cases (
 
 CREATE INDEX IF NOT EXISTS idx_library_cases_facets
     ON library_cases (group_name, variant, co2_regime, region);
+
+-- mortality_version stamps which death coefficients a case was OPTIMIZED
+-- against. mortality.mortality_version() has always existed and its docstring
+-- promises exactly this ("so that changing any coefficient invalidates cases
+-- generated under the old numbers rather than silently serving a stale death
+-- figure"), but nothing in the library ever recorded it -- so a coefficient
+-- change left every case looking current and generate_library.py skipped them.
+--
+-- Added rather than baked into CREATE TABLE so an existing table migrates in
+-- place; both statements are idempotent and safe to re-run.
+ALTER TABLE library_cases ADD COLUMN IF NOT EXISTS mortality_version TEXT;
+
+-- Backfill. A case whose mortality price is zero contributes exactly 0.0 from
+-- the mortality term in core.fig_cost, so its optimized mix cannot depend on
+-- the coefficients at any version -- 'unpriced' records that, and those cases
+-- stay valid forever. Cases that DO price mortality are left NULL, which never
+-- matches a real version, so they regenerate once and pick up a true stamp.
+UPDATE library_cases
+   SET mortality_version = 'unpriced'
+ WHERE mortality_version IS NULL
+   AND COALESCE((config->'mortality_price'->>'initial')::numeric, 0) = 0;
 """
 
 

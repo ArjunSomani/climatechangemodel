@@ -73,9 +73,13 @@ def convert() -> None:
     hourly_all.to_parquet(OUT_DIR / 'hourly_capacity.parquet', index=False)
     max_all.to_parquet(OUT_DIR / 'max_mwh_yearly.parquet', index=False)
 
+    # One clock reading for both fields. Two separate now() calls can straddle a
+    # second boundary, and `version` is what stamps every generated library case
+    # -- so it should name the same instant `generated_at` reports, always.
+    generated_at = datetime.now(timezone.utc)
     meta = {
-        'version': datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ'),
-        'generated_at': datetime.now(timezone.utc).isoformat(),
+        'version': generated_at.strftime('%Y%m%dT%H%M%SZ'),
+        'generated_at': generated_at.isoformat(),
         'regions': regions,
         'date_range': [
             hourly_all['date'].min().isoformat(),

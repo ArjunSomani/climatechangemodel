@@ -7,11 +7,15 @@ import { regionDemandGrowth, regionDemandMultiplier } from "@/lib/regionDemand";
 import { SOURCES, type SourceKey } from "@/lib/sources";
 import { ConfigSaveLoad } from "@/components/ConfigSaveLoad";
 import { MortalityPriceControl } from "@/components/MortalityPriceControl";
+import { NumberField } from "@/components/NumberField";
 import {
-  defaultScenarioConfig,
-  type ScenarioConfigInput,
+  defaultScenarioDraft,
+  draftIssues,
+  draftToConfig,
+  type ScenarioDraft,
+  type SourceTweaksDraft,
   type SourceTweaksInput,
-  type TweakPairInput,
+  type TweakPairDraft,
 } from "@/lib/scenarioConfig";
 
 // text-base (16px) on mobile prevents iOS Safari from zooming the page when a
@@ -66,11 +70,7 @@ const ICON_MAP = Object.freeze({
   ),
 });
 
-const PRESETS: {
-  label: string;
-  blurb: string;
-  apply: (c: ScenarioConfigInput) => ScenarioConfigInput;
-}[] = [
+const PRESETS: Preset[] = [
   {
     label: "No carbon price",
     blurb: "Today's rules — CO₂ pollution is free.",
@@ -82,9 +82,15 @@ const PRESETS: {
     apply: (c) => ({ ...c, co2_price: { initial: 100, yearly: 0 } }),
   },
   {
+    // The engine reads these two numbers as (year-1 price AND annual increment)
+    // and (ceiling) -- NOT as (start) and (increment). This preset used to be
+    // {initial: 50, yearly: 10}, which made the ramp condition
+    // `if price < yearly: price += initial` read `if 50 < 10`, false on every
+    // year: the price sat flat at $50 for the whole horizon while the label
+    // promised it climbed. Verified against core.fig_tweakxs directly.
     label: "Rising carbon price",
-    blurb: "Starts at $50/ton, climbs $10 every year.",
-    apply: (c) => ({ ...c, co2_price: { initial: 50, yearly: 10 } }),
+    blurb: "Starts at $50/ton and adds another $50 each year, up to $500.",
+    apply: (c) => ({ ...c, co2_price: { initial: 50, yearly: 500 } }),
   },
 ];
 
@@ -92,11 +98,7 @@ const PRESETS: {
 // they disagree. A mortality-only price tolerates gas (gas is ~9x cleaner than
 // coal on deaths); a carbon-only price at comparable stringency pushes past it
 // (gas is only ~1.7x cleaner on CO2). Flip between these to see it move.
-const COMPARISON_PRESETS: {
-  label: string;
-  blurb: string;
-  apply: (c: ScenarioConfigInput) => ScenarioConfigInput;
-}[] = [
+const COMPARISON_PRESETS: Preset[] = [
   {
     label: "Carbon price only",
     blurb: "$400/ton CO₂, no mortality price.",
@@ -130,8 +132,8 @@ export default function CustomRunPage() {
   const router = useRouter();
   // Demand growth defaults to the selected region's own historical rate rather
   // than one US-wide number; changing region re-applies its default (overridable).
-  const [config, setConfig] = useState<ScenarioConfigInput>(() => {
-    const c = defaultScenarioConfig();
+  const [config, setConfig] = useState<ScenarioDraft>(() => {
+    const c = defaultScenarioDraft();
     return {
       ...c,
       demand: { ...c.demand, initial: regionDemandMultiplier(c.region) },
@@ -142,24 +144,42 @@ export default function CustomRunPage() {
 
   function updateTweakPair(
     field: "co2_price" | "interest" | "demand",
-    patch: Partial<TweakPairInput>
+    patch: Partial<TweakPairDraft>
   ) {
     setConfig((c) => ({ ...c, [field]: { ...c[field], ...patch } }));
   }
 
-  function updateSourceTweaks(source: SourceKey, next: SourceTweaksInput) {
+  function updateSourceTweaks(source: SourceKey, next: SourceTweaksDraft) {
     setConfig((c) => ({ ...c, sources: { ...c.sources, [source]: next } }));
   }
 
+  // Every empty field, not just the first, so one submit produces the whole list.
+  const issues = draftIssues(config);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    // The bug this guards: a cleared field used to arrive as 0. For the
+    // per-source multipliers 0 passes validation, so the run was queued and
+    // computed with that technology free to build -- no error, no warning,
+    // meaningless output that looked exactly like real output.
+    const valid = draftToConfig(config);
+    if (!valid) {
+      setError(
+        issues.length === 1
+          ? `${issues[0]} needs a number before this can run.`
+          : `${issues.length} fields need a number before this can run: ${issues.join(", ")}.`
+      );
+      return;
+    }
+
     setSubmitting(true);
     setError(null);
     try {
       const res = await fetch("/api/runs", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ config }),
+        body: JSON.stringify({ config: valid }),
       });
       const body = await res.json();
       if (!res.ok) {
@@ -183,62 +203,29 @@ export default function CustomRunPage() {
         a minute; you&apos;ll be redirected to a live status page to watch it.
       </p>
 
-      <div className="mt-6 rounded-xl border border-zinc-200 p-4 dark:border-zinc-800">
-        <p className="text-sm font-medium text-black dark:text-zinc-50">
-          Not sure where to start? Try a preset:
-        </p>
-        <div className="mt-3 grid gap-2 sm:grid-cols-3">
-          {PRESETS.map((p) => (
-            <button
-              key={p.label}
-              type="button"
-              onClick={() => setConfig((c) => p.apply(c))}
-              className="rounded-lg border border-zinc-200 p-3 text-left text-sm hover:border-accent dark:border-zinc-800"
-            >
-              <div className="font-medium text-black dark:text-zinc-50">
-                {p.label}
-              </div>
-              <div className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
-                {p.blurb}
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
+      {/* Both preset groups used to sit inside their own bordered box, so every
+          preset was a bordered card nested in a bordered card. The buttons need
+          the border -- it's the affordance -- so the outer box is what goes; a
+          heading and space do its grouping job without the second frame. */}
+      <PresetGroup
+        heading="Not sure where to start? Try a preset:"
+        presets={PRESETS}
+        onPick={(apply) => setConfig(apply)}
+      />
 
-      <div className="mt-4 rounded-xl border border-zinc-200 p-4 dark:border-zinc-800">
-        <p className="text-sm font-medium text-black dark:text-zinc-50">
-          Or compare pricing carbon vs. mortality:
-        </p>
-        <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
-          Coal exits under either. Gas is where they disagree — flip between
-          these and watch the gas build move.
-        </p>
-        <div className="mt-3 grid gap-2 sm:grid-cols-3">
-          {COMPARISON_PRESETS.map((p) => (
-            <button
-              key={p.label}
-              type="button"
-              onClick={() => setConfig((c) => p.apply(c))}
-              className="rounded-lg border border-zinc-200 p-3 text-left text-sm hover:border-accent dark:border-zinc-800"
-            >
-              <div className="font-medium text-black dark:text-zinc-50">
-                {p.label}
-              </div>
-              <div className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
-                {p.blurb}
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
+      <PresetGroup
+        heading="Or compare pricing carbon vs. mortality:"
+        note="Coal exits under either. Gas is where they disagree — flip between these and watch the gas build move."
+        presets={COMPARISON_PRESETS}
+        onPick={(apply) => setConfig(apply)}
+      />
 
       <div className="mt-6 flex flex-col gap-2 border-t border-zinc-200 pt-6 dark:border-zinc-800 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-zinc-500 dark:text-zinc-400">
           Save this scenario to reuse or share it — or load one you saved
           earlier.
         </p>
-        <ConfigSaveLoad config={config} onLoad={setConfig} />
+        <ConfigSaveLoad config={draftToConfig(config)} onLoad={setConfig} />
       </div>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-10">
@@ -269,25 +256,45 @@ export default function CustomRunPage() {
             </Field>
 
             <Field label="Years">
-              <input
-                type="number"
+              <NumberField
+                label="Years to simulate"
                 min={1}
                 max={50}
+                step={1}
                 className={inputClass}
                 value={config.years}
-                onChange={(e) =>
-                  setConfig((c) => ({ ...c, years: Number(e.target.value) }))
-                }
+                invalidMessage="Enter a whole number of years from 1 to 50"
+                onChange={(n) => setConfig((c) => ({ ...c, years: n }))}
               />
             </Field>
           </div>
         </Section>
 
         <Section title="CO₂ price, interest, and demand" icon="sliders">
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            Each knob has an <strong>initial</strong> value (year 0) and a{" "}
-            <strong>yearly</strong> change applied every year after that.
-          </p>
+          {/* "Yearly" does two different things depending on the knob, and this
+              paragraph used to describe it as one thing ("a yearly change
+              applied every year after that"), which is wrong for all three.
+              For CO2 it is a ceiling and the *initial* value doubles as the
+              annual step; for interest and demand it is a multiplier. */}
+          <div className="space-y-1 text-sm text-zinc-500 dark:text-zinc-400">
+            <p>
+              <strong>Initial</strong> is the year-one value.{" "}
+              <strong>Yearly</strong> means something different per knob:
+            </p>
+            <ul className="ml-4 list-disc space-y-0.5">
+              <li>
+                <strong>CO₂ price</strong> — the ceiling the price climbs to. It
+                rises by the <em>initial</em> amount each year until it gets
+                there. So $50 initial with a $500 yearly reaches $500 in year 10
+                and stays there; a yearly below the initial never rises at all.
+              </li>
+              <li>
+                <strong>Interest</strong> and <strong>demand</strong> — a
+                multiplier applied each year. 1.02 compounds at 2%/yr; 1.0 holds
+                flat.
+              </li>
+            </ul>
+          </div>
           <div className="mt-4 grid gap-4 sm:grid-cols-3">
             <TweakPairFields
               label="CO₂ price ($/MT)"
@@ -351,57 +358,144 @@ export default function CustomRunPage() {
           </div>
         </details>
 
-        {error && (
-          <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-        )}
+        {/* Submitting is an async POST with no page change on failure, so the
+            error has to be announced, not just rendered. role=alert on a
+            container that's always present (rather than mounting the <p>
+            itself) is what makes assistive tech read it -- a live region added
+            to the DOM at the same moment as its content is often missed. */}
+        <div role="alert" aria-atomic="true">
+          {error && (
+            <p className="text-sm font-medium text-red-700 dark:text-red-400">
+              {error}
+            </p>
+          )}
+        </div>
 
-        <button
-          type="submit"
-          disabled={submitting}
-          className="min-h-11 rounded-md bg-accent px-5 py-2.5 text-sm font-medium text-white disabled:opacity-50"
-        >
-          {submitting ? "Starting run…" : "Run scenario"}
-        </button>
+        {/* text-accent-foreground, not text-white: the shared token is the one
+            measured against --accent in both themes (4.81:1 light). Plain white
+            on the light accent was 4.47:1 and on the dark accent 2.79:1.
+            No opacity in the disabled state -- the disabled label IS the status
+            message ("Starting run…"), and any opacity below 1 composites it
+            toward the page background: 0.8 measured 3.45:1 in light. The
+            pending state reads instead from the text swap, aria-busy, and the
+            cursor. */}
+        <div>
+          <button
+            type="submit"
+            disabled={submitting || issues.length > 0}
+            aria-busy={submitting}
+            className="min-h-11 rounded-md bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-600 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-300"
+          >
+            {submitting ? "Starting run…" : "Run scenario"}
+          </button>
+          {issues.length > 0 && (
+            <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+              {issues.length === 1
+                ? `Waiting on one field: ${issues[0]}.`
+                : `Waiting on ${issues.length} empty fields: ${issues.slice(0, 3).join(", ")}${issues.length > 3 ? `, and ${issues.length - 3} more` : ""}.`}
+            </p>
+          )}
+        </div>
       </form>
     </div>
   );
 }
 
+// Every knob on this page is an initial/yearly pair, and this form renders 33
+// of them (3 top-level + 6 sources x 5 fields). Naming the inputs from their
+// visible "Initial"/"Yearly" captions alone left 33 spinbuttons called
+// "Initial" and 33 called "Yearly" -- a screen-reader user could hear the whole
+// form and never learn which knob they were editing. The group's own label
+// (e.g. "CO2 price ($/MT)") has to reach the input, so:
+//   - fieldset/legend puts it in the accessibility tree as a real grouping, and
+//   - aria-label composes the full name on each input, because a legend alone
+//     is announced on entering the group, not re-announced per field.
+// `group` is the caller's disambiguator when the same field label repeats
+// across sources ("Capital cost" under Solar vs under Coal).
+type Preset = {
+  label: string;
+  blurb: string;
+  apply: (c: ScenarioDraft) => ScenarioDraft;
+};
+
+function PresetGroup({
+  heading,
+  note,
+  presets,
+  onPick,
+}: {
+  heading: string;
+  note?: string;
+  presets: Preset[];
+  onPick: (apply: (c: ScenarioDraft) => ScenarioDraft) => void;
+}) {
+  return (
+    <section className="mt-6">
+      <h2 className="text-sm font-medium text-black dark:text-zinc-50">
+        {heading}
+      </h2>
+      {note && (
+        <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">{note}</p>
+      )}
+      <div className="mt-3 grid gap-2 sm:grid-cols-3">
+        {presets.map((p) => (
+          <button
+            key={p.label}
+            type="button"
+            onClick={() => onPick(p.apply)}
+            className="rounded-lg border border-zinc-200 p-3 text-left text-sm hover:border-accent dark:border-zinc-800"
+          >
+            <span className="block font-medium text-black dark:text-zinc-50">
+              {p.label}
+            </span>
+            <span className="mt-0.5 block text-xs text-zinc-500 dark:text-zinc-400">
+              {p.blurb}
+            </span>
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function TweakPairFields({
   label,
+  group,
   value,
   onChange,
 }: {
   label: string;
-  value: TweakPairInput;
-  onChange: (patch: Partial<TweakPairInput>) => void;
+  group?: string;
+  value: TweakPairDraft;
+  // null means "the box is empty or not a number" -- deliberately distinct from
+  // 0, which is a legitimate value for every one of these knobs.
+  onChange: (patch: Partial<TweakPairDraft>) => void;
 }) {
+  const qualified = group ? `${group} — ${label}` : label;
   return (
-    <div>
-      <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+    <fieldset className="min-w-0 border-0 p-0">
+      <legend className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
         {label}
-      </span>
+      </legend>
       <div className="mt-1 grid grid-cols-2 gap-2">
         <Field label="Initial">
-          <input
-            type="number"
-            step="any"
+          <NumberField
+            label={`${qualified}, initial value`}
             className={inputClass}
             value={value.initial}
-            onChange={(e) => onChange({ initial: Number(e.target.value) })}
+            onChange={(n) => onChange({ initial: n })}
           />
         </Field>
         <Field label="Yearly">
-          <input
-            type="number"
-            step="any"
+          <NumberField
+            label={`${qualified}, yearly change`}
             className={inputClass}
             value={value.yearly}
-            onChange={(e) => onChange({ yearly: Number(e.target.value) })}
+            onChange={(n) => onChange({ yearly: n })}
           />
         </Field>
       </div>
-    </div>
+    </fieldset>
   );
 }
 
@@ -413,23 +507,27 @@ const SOURCE_TWEAK_FIELDS: { key: keyof SourceTweaksInput; label: string }[] = [
   { key: "max_pct", label: "Max %" },
 ];
 
+// No border on the wrapper: this sits inside the already-bordered <details>
+// panel, so a bordered card per source was a card inside a card. A hairline rule
+// between sources and the source name carry the grouping instead.
 function SourceTweaksFields({
   label,
   value,
   onChange,
 }: {
   label: string;
-  value: SourceTweaksInput;
-  onChange: (next: SourceTweaksInput) => void;
+  value: SourceTweaksDraft;
+  onChange: (next: SourceTweaksDraft) => void;
 }) {
   return (
-    <div className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
+    <div className="border-t border-zinc-200 pt-5 first:border-t-0 first:pt-0 dark:border-zinc-800">
       <h3 className="font-medium">{label}</h3>
       <div className="mt-3 grid min-w-0 gap-4 sm:grid-cols-3 lg:grid-cols-5">
         {SOURCE_TWEAK_FIELDS.map(({ key, label: fieldLabel }) => (
           <TweakPairFields
             key={key}
             label={fieldLabel}
+            group={label}
             value={value[key]}
             onChange={(patch) =>
               onChange({ ...value, [key]: { ...value[key], ...patch } })

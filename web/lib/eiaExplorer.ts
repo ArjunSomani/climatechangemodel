@@ -1,4 +1,4 @@
-import { get } from "@vercel/blob";
+import { readBlobText } from "@/lib/blobRead";
 
 export interface EiaIndex {
   regions: string[];
@@ -32,10 +32,15 @@ export interface EiaRegionData {
 
 const INDEX_URL_PATHNAME = "eia-explorer/index.json";
 
+// Goes through readBlobText for the same reason library.ts and runs.ts do: these
+// are server-render-path HTTPS round-trips to blob storage and they fail
+// transiently (ConnectTimeoutError / ECONNRESET both observed). This file was
+// missed when the retry was introduced, so /data-explorer kept the old
+// one-attempt-then-500 behaviour the others no longer had.
 async function fetchBlobJson<T>(pathnameOrUrl: string): Promise<T | null> {
-  const result = await get(pathnameOrUrl, { access: "private" });
-  if (!result || result.statusCode !== 200) return null;
-  return JSON.parse(await new Response(result.stream).text());
+  const body = await readBlobText(pathnameOrUrl);
+  if (body === null) return null;
+  return JSON.parse(body) as T;
 }
 
 export async function getEiaIndex(): Promise<EiaIndex | null> {

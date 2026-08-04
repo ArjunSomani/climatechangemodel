@@ -9,5 +9,9 @@ export function triggerDownload(filename: string, content: string, mime: string)
   document.body.appendChild(a);
   a.click();
   a.remove();
-  URL.revokeObjectURL(url);
+  // Revoke on a later task, not synchronously. Chrome tolerates an immediate
+  // revoke; Firefox and Safari may not have started reading the blob yet when
+  // the synthetic click returns, and revoking first cancels the download with no
+  // error anywhere. The URL is still released -- one tick later.
+  setTimeout(() => URL.revokeObjectURL(url), 0);
 }

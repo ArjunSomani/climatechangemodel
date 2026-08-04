@@ -12,6 +12,7 @@ import {
   ENGINE_SOURCE_TO_MORTALITY_KEY,
   formatVsl,
 } from "@/lib/mortality";
+import { ChartCaption } from "@/components/ChartCaption";
 
 function fmt(n: number): string {
   if (n === 0) return "0";
@@ -63,9 +64,9 @@ export function MortalityResults({
 
       {/* Cumulative deaths as a band */}
       <div className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
-        <div className="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+        <ChartCaption>
           Cumulative deaths over the horizon
-        </div>
+        </ChartCaption>
         <div className="mt-1 flex items-baseline gap-2">
           <span className="text-3xl font-semibold tabular-nums">
             {fmt(deaths.cumulativeCentral)}
@@ -118,17 +119,17 @@ export function MortalityResults({
 
       {/* Annual deaths over time, as a band */}
       <div className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
-        <div className="mb-2 text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+        <ChartCaption className="mb-2">
           Deaths per year (uncertainty band)
-        </div>
+        </ChartCaption>
         <DeathsTrajectoryChart result={result} />
       </div>
 
       {/* Deaths per TWh, comparable to Level's risk rule */}
       <div className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
-        <div className="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+        <ChartCaption>
           Deaths per TWh of the resulting mix
-        </div>
+        </ChartCaption>
         <div className="mt-1 text-2xl font-semibold tabular-nums">
           {fmt(deaths.deathsPerTwhCentral)}
           <span className="ml-2 text-sm font-normal text-zinc-500 dark:text-zinc-400">
@@ -176,7 +177,7 @@ export function MortalityResults({
                   >
                     <td className="px-3 py-2">{s.label}</td>
                     <td
-                      className="px-3 py-2 text-right text-zinc-400"
+                      className="px-3 py-2 text-right text-zinc-500 dark:text-zinc-400"
                       colSpan={3}
                     >
                       no direct coefficient — harm embodied in stored electricity
@@ -193,7 +194,7 @@ export function MortalityResults({
                   <td className="px-3 py-2">{s.label}</td>
                   <td className="px-3 py-2 text-right tabular-nums">
                     {coeff.central}
-                    <span className="hidden text-zinc-400 sm:inline">
+                    <span className="hidden text-zinc-500 dark:text-zinc-400 sm:inline">
                       {" "}
                       ({coeff.low}–{coeff.high})
                     </span>
