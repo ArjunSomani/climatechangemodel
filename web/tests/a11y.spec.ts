@@ -352,12 +352,23 @@ test("the 404 page passes contrast in both themes", async ({ page }) => {
 test("a malformed run id 404s instead of erroring", async ({ page }) => {
   // runs.id is a uuid column, so Postgres threw `invalid input syntax for type
   // uuid` on any hand-typed id -- a 500 plus a database error per poll, where the
-  // honest answer is "no such run".
+  // honest answer is "no such run". getRunStatus rejects the bad format BEFORE
+  // querying (UUID_RE guard), so this needs no database and runs in the DB-free
+  // CI job.
   const res = await page.request.get("/api/runs/not-a-uuid");
   expect(res.status()).toBe(404);
   expect((await res.json()).error).toBeTruthy();
+});
 
-  // A well-formed but absent uuid is also just not found.
+test("an absent but well-formed run id is 404, not 500", async ({ page }) => {
+  // A well-formed uuid passes the format guard and reaches the DB query, so this
+  // one needs a live database -- gate it like the DB-backed smoke pages so it
+  // self-activates with SMOKE_DB_PAGES=1 and skips (rather than 500s on an
+  // unreachable pool) in the DB-free CI job.
+  test.skip(
+    process.env.SMOKE_DB_PAGES !== "1",
+    "set SMOKE_DB_PAGES=1 with a seeded DATABASE_URL to run",
+  );
   const absent = await page.request.get(
     "/api/runs/00000000-0000-4000-8000-000000000000"
   );

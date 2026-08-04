@@ -18,23 +18,47 @@ const STATIC_PAGES: Array<{ path: string; heading?: string }> = [
   { path: "/findings" },
 ];
 
-// DB-backed pages depend on Neon/Postgres + Vercel Blob env and will error
-// without it, so they are intentionally NOT smoke-tested here:
-//   /library        (reads case data from the DB)
-//   /compare        (reads runs from the DB)
-//   /us             (aggregates all 13 regions from the DB)
-//   /data-explorer  (reads the EIA snapshot)
-// Re-enable these once a test DB/Blob fixture is available.
+// DB-backed pages depend on Neon/Postgres + Vercel Blob env and error without
+// it, so they can't run in the secret-less CI job. They are NOT permanently
+// disabled, though: the bodies below are real, and they self-activate whenever
+// a seeded database + blob store is wired up. Opt in by setting SMOKE_DB_PAGES=1
+// (locally against a dev/staging DB, or in a future CI job that has the
+// DATABASE_URL + BLOB_READ_WRITE_TOKEN secrets); otherwise each one skips with a
+// visible reason rather than silently not existing.
+//
+//   /library        (reads case summaries from the DB)
+//   /compare        (reads runs from the DB + their blobs)
+//   /us             (aggregates the 13 regions from the DB + their blobs)
+//   /data-explorer  (reads the EIA snapshot from blob storage)
 //
 // `/` and `/custom-run` used to be on this list. They are not DB-backed any
 // more -- the landing page dropped its live library teaser and both now
 // prerender as static (confirmed by `next build` marking them ○) -- so they
 // moved up into STATIC_PAGES.
 const DB_BACKED_PAGES = ["/library", "/compare", "/us", "/data-explorer"];
+const DB_PAGES_ENABLED = process.env.SMOKE_DB_PAGES === "1";
 
 for (const path of DB_BACKED_PAGES) {
-  test.skip(`DB-backed page ${path} (needs Neon/Blob env)`, () => {
-    // Intentionally skipped: requires database + blob storage environment.
+  test(`DB-backed page ${path} loads without errors`, async ({ page }) => {
+    test.skip(
+      !DB_PAGES_ENABLED,
+      "set SMOKE_DB_PAGES=1 with a seeded DATABASE_URL + BLOB_READ_WRITE_TOKEN to run",
+    );
+
+    const errors = collectConsoleErrors(page);
+
+    const response = await page.goto(path, { waitUntil: "load" });
+    expect(response, `no response for ${path}`).not.toBeNull();
+    expect(response!.status(), `unexpected status for ${path}`).toBe(200);
+
+    // Copy varies across these pages; require a visible top-level heading rather
+    // than coupling the smoke test to exact wording.
+    await expect(page.locator("h1").first()).toBeVisible();
+
+    expect(
+      errors,
+      `console/page errors on ${path}:\n${errors.join("\n")}`,
+    ).toEqual([]);
   });
 }
 
