@@ -63,10 +63,10 @@ export function EiaExplorerClient({
 
       <section className="mt-8">
         <h2 className="flex items-center gap-2 text-lg font-medium"><span className="h-3 w-1 rounded-full bg-accent" aria-hidden />
-          Typical day
+          Typical day — capacity factor
         </h2>
         <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-          Average capacity used, by hour of day, across {endYear - startYear + 1} years.
+          Average capacity used (capacity factor), by hour of day, across {endYear - startYear + 1} years.
         </p>
         <div className="mt-4 rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
           <EiaTypicalDayChart data={data.typical_day} visibleSources={visibleList} />

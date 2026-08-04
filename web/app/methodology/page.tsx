@@ -83,14 +83,14 @@ export default function MethodologyPage() {
             Presented as published values, never as endorsement.
           </li>
           <li>
-            <strong>Production == consumption here, by construction.</strong>{" "}
-            Deaths are assigned to the region that generated the power. Because
-            regions are optimized independently with no transmission between
-            them, each consumes exactly what it generates, so production- and
-            consumption-based mortality are identical. A meaningful
-            consumption-based account would require adding inter-regional
-            transmission to the optimizer — which would change every result on
-            the site, not just the mortality ones.
+            <strong>Deaths are production-based.</strong>{" "}They&rsquo;re
+            attributed to the region that generated the power. The model holds
+            inter-regional transmission at its historical level rather than
+            modeling the flows, so it reports a single figure. A distinct
+            consumption-based account — reallocating deaths along inter-regional
+            flows to the regions that actually used the power — would require an
+            explicit flow dataset (EIA-930), and re-optimizing those flows would
+            change every result on the site, not just the mortality ones.
           </li>
           <li>
             <strong>Mortality only.</strong>{" "}Morbidity, water, land, minerals,
@@ -117,14 +117,22 @@ export default function MethodologyPage() {
           <li>
             <strong>Historical supply is treated as demand.</strong>{" "}The EIA
             data records what was generated, not what was needed; the model
-            assumes those were equal (the grid didn&rsquo;t experience
-            unrecorded shortfalls in 2020&ndash;2025).
+            assumes those were equal. That holds in normal operation but breaks
+            during a forced outage: in Winter Storm Uri (February 2021), the
+            Texas grid failed and over 4.5 million people lost power for days, so
+            recorded supply fell far below the demand people actually had. The
+            model treats that suppressed supply as demand and can&rsquo;t see the
+            shortfall.
           </li>
           <li>
-            <strong>No transmission between regions.</strong>{" "}Each of the 13
-            regions is optimized independently. A region can&rsquo;t import
-            cheap wind from its neighbor at 3am — every region has to solve
-            its own supply problem in isolation.
+            <strong>Transmission held at historical levels.</strong>{" "}Each of
+            the 13 regions is optimized on its own — the model treats each
+            region&rsquo;s historical generation as its demand and doesn&rsquo;t
+            re-optimize power flows between regions, so whatever net transfers
+            happened in 2020&ndash;2025 are frozen in. A region can&rsquo;t{" "}
+            <em>newly</em> import cheap wind from its neighbor at 3am, but it
+            isn&rsquo;t cut off from the transfers it historically relied on
+            either.
           </li>
           <li>
             <strong>Hydro, oil, and &ldquo;other&rdquo; aren&rsquo;t

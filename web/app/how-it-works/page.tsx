@@ -392,7 +392,8 @@ export default function HowItWorksPage() {
           ))}
         </div>
         <p className="text-center text-xs text-zinc-500 dark:text-zinc-500">
-          max new capacity added per year, as a share of the fleet
+          max new capacity added per year, as a share of the fleet — based on
+          historical build rates
         </p>
       </Section>
 

@@ -376,10 +376,11 @@ export default function SafetyPage() {
         <p className="mt-3 text-zinc-700 dark:text-zinc-300">
           CO₂ is global; air-pollution deaths are local. Optimize reports{" "}
           <span className="font-medium">production-based</span> deaths, attributed
-          to the region that generated the power. Because each region is
-          optimized in isolation with no transmission between regions, every
-          region consumes exactly what it generates — so production- and
-          consumption-based mortality are the same number here, by construction.{" "}
+          to the region that generated the power. The model optimizes each region
+          on its own and holds transmission between regions at its historical
+          level, so it doesn&apos;t track where power ends up — a consumption-based
+          view (deaths where the power is <em>used</em>) would need an explicit
+          inter-regional flow model.{" "}
           <Link href="/methodology" className="underline hover:text-accent">
             Why, and what would change it →
           </Link>

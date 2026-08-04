@@ -1,5 +1,6 @@
 "use client";
 
+import { Term } from "@/components/Term";
 import type { TweakPairInput } from "@/lib/scenarioConfig";
 import {
   VSL_ESCALATION_YEARLY,
@@ -81,8 +82,11 @@ export function MortalityPriceControl({
           ))}
         </div>
         <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
-          Presets are HHS&apos;s 2026 published VSL range (constant 2025
-          dollars): a range, not a recommended figure.
+          Presets are HHS&apos;s 2026 published{" "}
+          <Term definition="Value of a Statistical Life: the dollar figure at which a large population's willingness to pay to reduce risk implies one avoided death. It is a statistical aggregate, not a valuation of any specific person.">
+            VSL
+          </Term>{" "}
+          range (constant 2025 dollars): a range, not a recommended figure.
         </p>
 
         <label className="mt-4 flex items-start gap-2 text-sm">
