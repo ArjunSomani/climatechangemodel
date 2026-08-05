@@ -2,6 +2,7 @@ import Link from "next/link";
 import { RiskLadder } from "@/components/RiskLadder";
 import { DivergenceComparison } from "@/components/DivergenceComparison";
 import { SafetyFaq } from "@/components/SafetyFaq";
+import { MorbidityUplift } from "@/components/MorbidityUplift";
 import { Term } from "@/components/Term";
 import {
   MoralChoiceNote,
@@ -266,6 +267,22 @@ export default function SafetyPage() {
             How the bands are built →
           </Link>
         </p>
+      </section>
+
+      <section className="mt-12">
+        <h2 className="text-xl font-medium">Deaths are only part of the harm</h2>
+        <p className="mt-3 text-zinc-700 dark:text-zinc-300">
+          The health toll of burning fossil fuels isn&apos;t only fatal. For every
+          death there are far more non-fatal harms — asthma attacks, heart and
+          lung hospitalizations, lost workdays — that this model doesn&apos;t
+          price. Counting deaths alone therefore <em>understates</em> the burden.
+          The control below makes that explicit: it doesn&apos;t change the
+          model, it shows how much larger the monetized health cost would be if
+          morbidity were added on top.
+        </p>
+        <div className="mt-4">
+          <MorbidityUplift />
+        </div>
       </section>
 
       <section id="divergence" className="mt-12 scroll-mt-20">
