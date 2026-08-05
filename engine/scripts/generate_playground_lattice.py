@@ -32,7 +32,7 @@ from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
 from optimize_engine import ScenarioConfig, TweakPair, mortality, run_scenario
-from optimize_engine.constants import nrgs, CO2_MT_MWh, nrg2nrgx_lu
+from optimize_engine.constants import nrgs, CO2_MT_MWh, Variable_M_MWh, nrg2nrgx_lu
 from optimize_engine.core import get_specxs_nrgxs
 
 REGION = 'MIDW'  # coal and gas both large -> the carbon-vs-mortality story shows
@@ -56,6 +56,10 @@ MORTALITY_PRICES = [0.0, 6_600_000.0, 12_000_000.0, 14_100_000.0, 21_500_000.0, 
 # generation x intensity. web/lib/co2.ts mirrors these values.
 _SPECS = get_specxs_nrgxs()
 CO2_INTENSITY = {nrg: float(_SPECS[CO2_MT_MWh, nrg2nrgx_lu[nrg]]) for nrg in nrgs}
+# Variable O&M ($M per MWh), same row the web mirror uses. The engine's per-year
+# `{s}_Variable_M$` output is sample_years-inflated like `{s}_CO2_MT`, so busbar
+# cost is recomputed from generation x this, matching web/lib/costs.ts exactly.
+VARIABLE_COST = {nrg: float(_SPECS[Variable_M_MWh, nrg2nrgx_lu[nrg]]) for nrg in nrgs}
 
 OUT = Path(__file__).resolve().parent.parent.parent / 'web' / 'data' / 'playground_lattice.json'
 
@@ -80,6 +84,17 @@ def _cell(result) -> dict:
     co2_final = round(sum(last.get(f'{s}_MWh', 0.0) * CO2_INTENSITY[s] for s in nrgs), 4)
     deaths_final = region.deaths[-1]
     cumulative = sum(row['deaths_central'] for row in region.deaths)
+    # Cumulative over the whole horizon, so the playground can show marginal
+    # abatement cost: $/ton and $/death AVOIDED = Δcost / Δ(quantity) vs the
+    # no-pricing baseline cell. CO2 and cost are recomputed from generation the
+    # same corrected way the web does (never the sample_years-inflated fields).
+    cum_co2 = sum(
+        y.get(f'{s}_MWh', 0.0) * CO2_INTENSITY[s]
+        for y in region.years for s in nrgs)
+    cum_cost = sum(
+        y.get(f'{s}_Capital_M$', 0.0) + y.get(f'{s}_Fixed_M$', 0.0)
+        + y.get(f'{s}_MWh', 0.0) * VARIABLE_COST[s]
+        for y in region.years for s in nrgs)
     return {
         'finalMixMWh': final_mix,
         'co2FinalMT': co2_final,
@@ -87,6 +102,8 @@ def _cell(result) -> dict:
         'deathsLow': round(deaths_final['deaths_low'], 3),
         'deathsHigh': round(deaths_final['deaths_high'], 3),
         'cumulativeDeathsCentral': round(cumulative, 3),
+        'cumulativeCO2MT': round(cum_co2, 4),
+        'cumulativeCostMDollar': round(cum_cost, 3),
     }
 
 

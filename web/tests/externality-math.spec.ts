@@ -2,16 +2,19 @@ import { test, expect } from "playwright/test";
 import { co2MtFromGeneration, CO2_INTENSITY } from "@/lib/co2";
 import { operatingCosts, VARIABLE_COST } from "@/lib/costs";
 import {
+  buildLimitSummary,
   carbonIntensityGPerKwh,
   cumulativeTotals,
   deathsPerTWh,
+  isBuildLimited,
   lcoePerMWh,
   PLAUSIBLE_G_PER_KWH,
   totalGenerationMWh,
 } from "@/lib/metrics";
 import { computeYearDeaths } from "@/lib/mortality";
+import { abatementVsBaseline } from "@/lib/playground";
 import latticeData from "@/data/playground_lattice.json";
-import type { Lattice } from "@/lib/playground";
+import type { Lattice, LatticeCell } from "@/lib/playground";
 import type { YearRecord } from "@/lib/library";
 
 // Golden lock on the web-side externality math -- the code that fixes the
@@ -189,6 +192,69 @@ test("carbonIntensityGPerKwh agrees with the lattice's own CO2", () => {
   const mwh = totalGenerationMWh(record);
   const expected = (cell.co2FinalMT / mwh) * 1e9;
   expect(carbonIntensityGPerKwh(record)).toBeCloseTo(expected, 1);
+});
+
+test.describe("marginal abatement cost", () => {
+  function makeCell(
+    cumulativeCostMDollar: number,
+    cumulativeCO2MT: number,
+    cumulativeDeathsCentral: number,
+  ): LatticeCell {
+    return {
+      finalMixMWh: {},
+      co2FinalMT: 0,
+      deathsCentral: 0,
+      deathsLow: 0,
+      deathsHigh: 0,
+      cumulativeDeathsCentral,
+      cumulativeCO2MT,
+      cumulativeCostMDollar,
+    };
+  }
+
+  test("$/ton and $/death are Δcost over the quantity avoided", () => {
+    const baseline = makeCell(1000, 100, 50); // M$, Mt, deaths
+    const cell = makeCell(1200, 60, 30);
+    const mac = abatementVsBaseline(cell, baseline);
+
+    expect(mac.deltaCostMDollar).toBeCloseTo(200, 6);
+    expect(mac.co2AvoidedMT).toBeCloseTo(40, 6);
+    expect(mac.deathsAvoided).toBeCloseTo(20, 6);
+    // 200 M$ / 40 Mt = $5/ton; 200 M$ / 20 deaths = $10M/death.
+    expect(mac.dollarsPerTonCO2).toBeCloseTo(5, 6);
+    expect(mac.dollarsPerDeath).toBeCloseTo(10_000_000, 3);
+  });
+
+  test("a price that avoids nothing has no unit cost (null, not Infinity)", () => {
+    // Baseline vs itself: zero avoided on both axes -> both ratios undefined.
+    const c = makeCell(1000, 100, 50);
+    const mac = abatementVsBaseline(c, c);
+    expect(mac.dollarsPerTonCO2).toBeNull();
+    expect(mac.dollarsPerDeath).toBeNull();
+  });
+});
+
+test.describe("build-rate binding diagnostic", () => {
+  test("a source at ~1.0 of its max add is build-limited; below is not", () => {
+    const pinned = baseRecord({ Solar_PCT_Max_Add: 1.0, Gas_PCT_Max_Add: 0.4 });
+    expect(isBuildLimited(pinned, "Solar")).toBe(true);
+    expect(isBuildLimited(pinned, "Gas")).toBe(false);
+    // A missing field is not "at the limit" (absence != pinned).
+    expect(isBuildLimited(baseRecord(), "Nuclear")).toBe(false);
+  });
+
+  test("summary reports the pinned years per source, dropping the never-pinned", () => {
+    const records = [
+      baseRecord({ Year: 2030, Solar_PCT_Max_Add: 1.0, Coal_PCT_Max_Add: 0.2 }),
+      baseRecord({ Year: 2031, Solar_PCT_Max_Add: 0.999, Coal_PCT_Max_Add: 0.0 }),
+      baseRecord({ Year: 2032, Solar_PCT_Max_Add: 0.5, Coal_PCT_Max_Add: 0.0 }),
+    ];
+    const summary = buildLimitSummary(records);
+    const solar = summary.find((s) => s.source === "Solar");
+    expect(solar?.years).toEqual([2030, 2031]);
+    // Coal never hit the cap, so it isn't in the summary at all.
+    expect(summary.find((s) => s.source === "Coal")).toBeUndefined();
+  });
 });
 
 test("the cost/CO2 constants cover exactly the six engine sources", () => {

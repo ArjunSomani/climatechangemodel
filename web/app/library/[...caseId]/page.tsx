@@ -5,6 +5,7 @@ import { ResultCharts } from "@/components/ResultCharts";
 import { YearTable } from "@/components/YearTable";
 import { MortalityResults } from "@/components/MortalityResults";
 import { ScenarioStats } from "@/components/ScenarioStats";
+import { BuildLimits } from "@/components/BuildLimits";
 
 // Reflects live Neon/Blob data -- must not be prerendered/cached at build time.
 export const dynamic = "force-dynamic";
@@ -57,6 +58,10 @@ export default async function LibraryCasePage({
 
       <Section title="Mortality">
         <MortalityResults result={detail.result} config={null} />
+      </Section>
+
+      <Section title="Where build-rate caps bind">
+        <BuildLimits records={detail.result} />
       </Section>
 
       <Section title="Year-by-year data">

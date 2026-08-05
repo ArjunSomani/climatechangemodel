@@ -4,7 +4,7 @@
 import { co2MtFromGeneration } from "@/lib/co2";
 import { operatingCosts } from "@/lib/costs";
 import { computeYearDeaths } from "@/lib/mortality";
-import { SOURCES } from "@/lib/sources";
+import { SOURCES, type SourceKey } from "@/lib/sources";
 import type { LibraryCaseSummary, YearRecord } from "@/lib/library";
 
 function humanize(s: string): string {
@@ -109,4 +109,46 @@ export function cumulativeTotals(records: YearRecord[]): CumulativeTotals {
     generationMWh += totalGenerationMWh(r);
   }
   return { co2Mt, deathsCentral, generationMWh };
+}
+
+// --- Binding-constraint (build-rate) diagnostic ----------------------------
+// A source is build-rate-limited in a year when it used ~all of that year's
+// maximum allowed capacity addition. The engine emits {s}_PCT_Max_Add =
+// chosen_growth / max_allowed_growth (core.py), so a value at ~1 means the
+// build-rate CAP -- not economics -- set how much got built.
+//
+// This is the diagnostic behind the site's null result: when a cap binds under
+// BOTH the carbon-only and mortality-only price, the two produce the same mix no
+// matter how differently the economics would push. Showing which source is
+// pinned, and when, turns that from an assertion into something a reader can see.
+export const BUILD_LIMIT_THRESHOLD = 0.999;
+
+export function isBuildLimited(record: YearRecord, source: SourceKey): boolean {
+  const pct = Number(record[`${source}_PCT_Max_Add`]);
+  return Number.isFinite(pct) && pct >= BUILD_LIMIT_THRESHOLD;
+}
+
+// The years (as Year values) in which a source was pinned against its build-rate
+// cap, in horizon order. Empty when the source was never build-limited.
+export function buildLimitedYears(
+  records: YearRecord[],
+  source: SourceKey
+): number[] {
+  return records
+    .filter((r) => isBuildLimited(r, source))
+    .map((r) => Number(r.Year));
+}
+
+export interface SourceBuildLimit {
+  source: SourceKey;
+  years: number[]; // years the source was at its build-rate cap
+}
+
+// Per-source build-limit spans across the horizon, in the canonical source order,
+// dropping sources that were never limited (nothing to show for them).
+export function buildLimitSummary(records: YearRecord[]): SourceBuildLimit[] {
+  return SOURCES.map((s) => ({
+    source: s.key,
+    years: buildLimitedYears(records, s.key),
+  })).filter((r) => r.years.length > 0);
 }

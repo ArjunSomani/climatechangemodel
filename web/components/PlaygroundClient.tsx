@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { SOURCES } from "@/lib/sources";
 import { formatVsl } from "@/lib/mortality";
-import { cellAt, type Lattice } from "@/lib/playground";
+import { abatementVsBaseline, cellAt, type Lattice } from "@/lib/playground";
 import { ChartCaption } from "@/components/ChartCaption";
 
 function fmt(n: number): string {
@@ -42,6 +42,10 @@ export function PlaygroundClient({ lattice }: { lattice: Lattice }) {
   );
   const deathsAvoided = baseline.deathsCentral - cell.deathsCentral;
   const co2Avoided = baseline.co2FinalMT - cell.co2FinalMT;
+
+  // Marginal abatement cost vs the no-pricing baseline, over the full horizon.
+  const mac = abatementVsBaseline(cell, baseline);
+  const priced = ci > 0 || mi > 0;
 
   return (
     <div className="space-y-8">
@@ -184,11 +188,112 @@ export function PlaygroundClient({ lattice }: { lattice: Lattice }) {
         />
       </div>
 
+      {/* Marginal abatement cost: not what the grid costs, but what buying the
+          reduction costs -- and whether the death reductions came in under the
+          price the user set. */}
+      <MacPanel
+        priced={priced}
+        dollarsPerTonCO2={mac.dollarsPerTonCO2}
+        dollarsPerDeath={mac.dollarsPerDeath}
+        vsl={mort}
+      />
+
       <p className="text-xs text-zinc-500 dark:text-zinc-400">
         A pre-computed grid for {lattice.region} over {lattice.years}{" "}
         years — the sliders snap to grid points. Watch where coal leaves under
         either price, and where the <strong>gas</strong> share diverges: a
         mortality price keeps more gas than a carbon price of comparable bite.
+      </p>
+    </div>
+  );
+}
+
+function dollarsPerTon(v: number): string {
+  return `$${Math.round(v).toLocaleString()}/ton`;
+}
+
+function MacPanel({
+  priced,
+  dollarsPerTonCO2,
+  dollarsPerDeath,
+  vsl,
+}: {
+  priced: boolean;
+  dollarsPerTonCO2: number | null;
+  dollarsPerDeath: number | null;
+  vsl: number;
+}) {
+  if (!priced) {
+    return (
+      <div className="rounded-lg border border-dashed border-zinc-200 p-4 text-sm text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
+        Move a slider off zero to see the{" "}
+        <span className="font-medium">marginal abatement cost</span> — what the
+        reduction costs per ton of CO₂ and per death avoided, over the whole
+        horizon.
+      </div>
+    );
+  }
+
+  // The consistency check: is the implied cost of an avoided death above or below
+  // the VSL the user set? Only meaningful when a mortality price is actually on
+  // (vsl > 0) and deaths were avoided.
+  let verdict: React.ReactNode = null;
+  if (vsl > 0 && dollarsPerDeath != null) {
+    const under = dollarsPerDeath < vsl;
+    verdict = (
+      <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-300">
+        You priced a death at{" "}
+        <span className="font-medium" style={{ color: "var(--mortality)" }}>
+          {formatVsl(vsl)}
+        </span>
+        . The grid avoided them at an implied{" "}
+        <span className="font-medium">{formatVsl(dollarsPerDeath)}</span> each —{" "}
+        {under ? (
+          <>
+            <span className="font-medium">less</span> than your price, so the
+            reduction cost less than you said a life is worth.
+          </>
+        ) : (
+          <>
+            <span className="font-medium">more</span> than your price, so it&apos;s
+            buying reductions above your own stated value.
+          </>
+        )}
+      </p>
+    );
+  }
+
+  return (
+    <div className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
+      <div className="text-xs font-medium tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
+        What the reduction costs (vs no pricing, whole horizon)
+      </div>
+      <div className="mt-2 grid grid-cols-2 gap-4">
+        <div>
+          <div className="text-xs text-zinc-500 dark:text-zinc-400">
+            Per ton CO₂ avoided
+          </div>
+          <div className="mt-0.5 text-2xl font-semibold tabular-nums">
+            {dollarsPerTonCO2 != null ? dollarsPerTon(dollarsPerTonCO2) : "—"}
+          </div>
+        </div>
+        <div>
+          <div className="text-xs text-zinc-500 dark:text-zinc-400">
+            Per death avoided
+          </div>
+          <div
+            className="mt-0.5 text-2xl font-semibold tabular-nums"
+            style={{ color: "var(--mortality)" }}
+          >
+            {dollarsPerDeath != null ? `${formatVsl(dollarsPerDeath)}` : "—"}
+          </div>
+        </div>
+      </div>
+      {verdict}
+      <p className="mt-3 text-xs text-zinc-400 dark:text-zinc-500">
+        Each figure attributes the full extra system cost to that one axis, so
+        read them one slider at a time: the per-ton number is cleanest with only
+        the carbon price on, the per-death number with only the mortality price on.
       </p>
     </div>
   );
