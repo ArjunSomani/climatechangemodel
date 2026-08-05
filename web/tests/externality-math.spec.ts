@@ -19,6 +19,7 @@ import {
   waterUseForYear,
 } from "@/lib/water";
 import { abatementVsBaseline } from "@/lib/playground";
+import { harmCostStreams, presentValue } from "@/lib/discount";
 import latticeData from "@/data/playground_lattice.json";
 import type { Lattice, LatticeCell } from "@/lib/playground";
 import type { YearRecord } from "@/lib/library";
@@ -303,6 +304,38 @@ test.describe("water use (Macknick 2012)", () => {
     }
     // Solar and wind are near-dry -> last two.
     expect(ladder.map((r) => r.key).slice(-2).sort()).toEqual(["Solar", "Wind"]);
+  });
+});
+
+test.describe("harm discounting", () => {
+  test("present value: first year undiscounted, later years shrink by (1+r)^-t", () => {
+    // rate 0 is a plain sum.
+    expect(presentValue([100, 100, 100], 0)).toBeCloseTo(300, 9);
+    // 100 + 100/1.1 + 100/1.21 = 100 + 90.909... + 82.644... = 273.5537...
+    expect(presentValue([100, 100, 100], 0.1)).toBeCloseTo(273.5537, 3);
+    // A single present-year cost is never discounted.
+    expect(presentValue([500], 0.07)).toBe(500);
+  });
+
+  test("harmCostStreams: mortality = deaths x VSL, CO2 from the carbon price", () => {
+    // baseRecord has a $50/ton carbon price; give it a $10M VSL.
+    const streams = harmCostStreams([baseRecord(), baseRecord()], 10_000_000);
+    expect(streams.hasMortalityPrice).toBe(true);
+    expect(streams.hasCarbonPrice).toBe(true); // $50/ton on a gas+coal grid
+    // Each year's mortality cost is that year's central deaths x VSL.
+    const perYearDeaths = computeYearDeaths(baseRecord()).central;
+    expect(streams.mortalityCostPerYear[0]).toBeCloseTo(perYearDeaths * 10_000_000, 2);
+    expect(streams.mortalityCostPerYear).toHaveLength(2);
+    // CO2 cost stream is the carbon component in dollars (656.5 M$ -> $).
+    expect(streams.co2CostPerYear[0]).toBeCloseTo(656.5 * 1_000_000, 0);
+  });
+
+  test("an unpriced scenario has nothing to discount", () => {
+    // VSL 0 and no carbon price -> both flags false, streams are zeros.
+    const streams = harmCostStreams([baseRecord({ "CO2_M$_MT": 0 })], 0);
+    expect(streams.hasMortalityPrice).toBe(false);
+    expect(streams.hasCarbonPrice).toBe(false);
+    expect(streams.mortalityCostPerYear[0]).toBe(0);
   });
 });
 

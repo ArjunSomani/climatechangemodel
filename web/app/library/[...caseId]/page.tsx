@@ -7,6 +7,8 @@ import { MortalityResults } from "@/components/MortalityResults";
 import { ScenarioStats } from "@/components/ScenarioStats";
 import { BuildLimits } from "@/components/BuildLimits";
 import { WaterResults } from "@/components/WaterResults";
+import { HarmDiscount } from "@/components/HarmDiscount";
+import { harmCostStreams } from "@/lib/discount";
 
 // Reflects live Neon/Blob data -- must not be prerendered/cached at build time.
 export const dynamic = "force-dynamic";
@@ -59,6 +61,10 @@ export default async function LibraryCasePage({
 
       <Section title="Mortality">
         <MortalityResults result={detail.result} config={null} />
+      </Section>
+
+      <Section title="Discounting future harm">
+        <HarmDiscount streams={harmCostStreams(detail.result, mortalityInitial)} />
       </Section>
 
       <Section title="Water use">
