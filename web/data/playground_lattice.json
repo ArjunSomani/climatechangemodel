@@ -46,7 +46,9 @@
       "deathsCentral": 2232.245,
       "deathsLow": 2232.245,
       "deathsHigh": 18764.768,
-      "cumulativeDeathsCentral": 107586.084
+      "cumulativeDeathsCentral": 107586.084,
+      "cumulativeCO2MT": 5124.28,
+      "cumulativeCostMDollar": 2369066.974
     },
     "0_1": {
       "finalMixMWh": {
@@ -61,7 +63,9 @@
       "deathsCentral": 234.663,
       "deathsLow": 234.663,
       "deathsHigh": 937.474,
-      "cumulativeDeathsCentral": 23514.924
+      "cumulativeDeathsCentral": 23514.924,
+      "cumulativeCO2MT": 2414.0891,
+      "cumulativeCostMDollar": 2960430.581
     },
     "0_2": {
       "finalMixMWh": {
@@ -76,7 +80,9 @@
       "deathsCentral": 164.911,
       "deathsLow": 164.911,
       "deathsHigh": 600.732,
-      "cumulativeDeathsCentral": 22293.99
+      "cumulativeDeathsCentral": 22293.99,
+      "cumulativeCO2MT": 2246.3214,
+      "cumulativeCostMDollar": 3086520.864
     },
     "0_3": {
       "finalMixMWh": {
@@ -91,7 +97,9 @@
       "deathsCentral": 146.598,
       "deathsLow": 146.598,
       "deathsHigh": 527.542,
-      "cumulativeDeathsCentral": 21963.63
+      "cumulativeDeathsCentral": 21963.63,
+      "cumulativeCO2MT": 2196.8799,
+      "cumulativeCostMDollar": 3129337.853
     },
     "0_4": {
       "finalMixMWh": {
@@ -106,7 +114,9 @@
       "deathsCentral": 109.89,
       "deathsLow": 109.89,
       "deathsHigh": 371.546,
-      "cumulativeDeathsCentral": 21356.553
+      "cumulativeDeathsCentral": 21356.553,
+      "cumulativeCO2MT": 2106.5949,
+      "cumulativeCostMDollar": 3227785.24
     },
     "0_5": {
       "finalMixMWh": {
@@ -121,7 +131,9 @@
       "deathsCentral": 100.158,
       "deathsLow": 100.158,
       "deathsHigh": 329.328,
-      "cumulativeDeathsCentral": 21203.957
+      "cumulativeDeathsCentral": 21203.957,
+      "cumulativeCO2MT": 2083.105,
+      "cumulativeCostMDollar": 3258253.333
     },
     "1_0": {
       "finalMixMWh": {
@@ -136,7 +148,9 @@
       "deathsCentral": 320.966,
       "deathsLow": 320.966,
       "deathsHigh": 1347.695,
-      "cumulativeDeathsCentral": 42598.794
+      "cumulativeDeathsCentral": 42598.794,
+      "cumulativeCO2MT": 3017.4862,
+      "cumulativeCostMDollar": 2740836.417
     },
     "1_1": {
       "finalMixMWh": {
@@ -151,7 +165,9 @@
       "deathsCentral": 191.367,
       "deathsLow": 191.367,
       "deathsHigh": 778.211,
-      "cumulativeDeathsCentral": 22538.047
+      "cumulativeDeathsCentral": 22538.047,
+      "cumulativeCO2MT": 2264.75,
+      "cumulativeCostMDollar": 3057277.552
     },
     "1_2": {
       "finalMixMWh": {
@@ -166,7 +182,9 @@
       "deathsCentral": 138.754,
       "deathsLow": 138.754,
       "deathsHigh": 506.129,
-      "cumulativeDeathsCentral": 21771.823
+      "cumulativeDeathsCentral": 21771.823,
+      "cumulativeCO2MT": 2153.954,
+      "cumulativeCostMDollar": 3155598.236
     },
     "1_3": {
       "finalMixMWh": {
@@ -181,7 +199,9 @@
       "deathsCentral": 129.03,
       "deathsLow": 129.03,
       "deathsHigh": 461.001,
-      "cumulativeDeathsCentral": 21634.644
+      "cumulativeDeathsCentral": 21634.644,
+      "cumulativeCO2MT": 2134.3272,
+      "cumulativeCostMDollar": 3177249.02
     },
     "1_4": {
       "finalMixMWh": {
@@ -196,7 +216,9 @@
       "deathsCentral": 97.599,
       "deathsLow": 97.599,
       "deathsHigh": 318.821,
-      "cumulativeDeathsCentral": 21158.168
+      "cumulativeDeathsCentral": 21158.168,
+      "cumulativeCO2MT": 2061.6982,
+      "cumulativeCostMDollar": 3265800.965
     },
     "1_5": {
       "finalMixMWh": {
@@ -211,7 +233,9 @@
       "deathsCentral": 91.743,
       "deathsLow": 91.743,
       "deathsHigh": 295.765,
-      "cumulativeDeathsCentral": 21064.474
+      "cumulativeDeathsCentral": 21064.474,
+      "cumulativeCO2MT": 2047.6653,
+      "cumulativeCostMDollar": 3287257.587
     },
     "2_0": {
       "finalMixMWh": {
@@ -226,7 +250,9 @@
       "deathsCentral": 250.073,
       "deathsLow": 250.073,
       "deathsHigh": 1105.178,
-      "cumulativeDeathsCentral": 24344.846
+      "cumulativeDeathsCentral": 24344.846,
+      "cumulativeCO2MT": 2394.1496,
+      "cumulativeCostMDollar": 2944122.964
     },
     "2_1": {
       "finalMixMWh": {
@@ -241,7 +267,9 @@
       "deathsCentral": 151.987,
       "deathsLow": 151.987,
       "deathsHigh": 566.568,
-      "cumulativeDeathsCentral": 21962.264
+      "cumulativeDeathsCentral": 21962.264,
+      "cumulativeCO2MT": 2179.757,
+      "cumulativeCostMDollar": 3127213.901
     },
     "2_2": {
       "finalMixMWh": {
@@ -256,7 +284,9 @@
       "deathsCentral": 120.835,
       "deathsLow": 120.835,
       "deathsHigh": 419.073,
-      "cumulativeDeathsCentral": 21509.612
+      "cumulativeDeathsCentral": 21509.612,
+      "cumulativeCO2MT": 2113.2637,
+      "cumulativeCostMDollar": 3196649.678
     },
     "2_3": {
       "finalMixMWh": {
@@ -271,7 +301,9 @@
       "deathsCentral": 111.759,
       "deathsLow": 111.759,
       "deathsHigh": 379.071,
-      "cumulativeDeathsCentral": 21375.079
+      "cumulativeDeathsCentral": 21375.079,
+      "cumulativeCO2MT": 2092.671,
+      "cumulativeCostMDollar": 3220379.617
     },
     "2_4": {
       "finalMixMWh": {
@@ -286,7 +318,9 @@
       "deathsCentral": 89.66,
       "deathsLow": 89.66,
       "deathsHigh": 288.388,
-      "cumulativeDeathsCentral": 21036.113
+      "cumulativeDeathsCentral": 21036.113,
+      "cumulativeCO2MT": 2041.2601,
+      "cumulativeCostMDollar": 3291927.075
     },
     "2_5": {
       "finalMixMWh": {
@@ -301,7 +335,9 @@
       "deathsCentral": 84.7,
       "deathsLow": 84.7,
       "deathsHigh": 269.941,
-      "cumulativeDeathsCentral": 20957.546
+      "cumulativeDeathsCentral": 20957.546,
+      "cumulativeCO2MT": 2029.3455,
+      "cumulativeCostMDollar": 3311632.873
     },
     "3_0": {
       "finalMixMWh": {
@@ -316,7 +352,9 @@
       "deathsCentral": 207.514,
       "deathsLow": 207.514,
       "deathsHigh": 946.597,
-      "cumulativeDeathsCentral": 22992.711
+      "cumulativeDeathsCentral": 22992.711,
+      "cumulativeCO2MT": 2272.2367,
+      "cumulativeCostMDollar": 3029152.946
     },
     "3_1": {
       "finalMixMWh": {
@@ -331,7 +369,9 @@
       "deathsCentral": 128.491,
       "deathsLow": 128.491,
       "deathsHigh": 449.604,
-      "cumulativeDeathsCentral": 21620.955
+      "cumulativeDeathsCentral": 21620.955,
+      "cumulativeCO2MT": 2127.1025,
+      "cumulativeCostMDollar": 3177137.424
     },
     "3_2": {
       "finalMixMWh": {
@@ -346,7 +386,9 @@
       "deathsCentral": 107.126,
       "deathsLow": 107.126,
       "deathsHigh": 357.871,
-      "cumulativeDeathsCentral": 21298.813
+      "cumulativeDeathsCentral": 21298.813,
+      "cumulativeCO2MT": 2079.4581,
+      "cumulativeCostMDollar": 3234087.702
     },
     "3_3": {
       "finalMixMWh": {
@@ -361,7 +403,9 @@
       "deathsCentral": 100.259,
       "deathsLow": 100.259,
       "deathsHigh": 330.53,
-      "cumulativeDeathsCentral": 21197.132
+      "cumulativeDeathsCentral": 21197.132,
+      "cumulativeCO2MT": 2063.9111,
+      "cumulativeCostMDollar": 3254276.394
     },
     "3_4": {
       "finalMixMWh": {
@@ -376,7 +420,9 @@
       "deathsCentral": 83.187,
       "deathsLow": 83.187,
       "deathsHigh": 264.839,
-      "cumulativeDeathsCentral": 20938.358
+      "cumulativeDeathsCentral": 20938.358,
+      "cumulativeCO2MT": 2024.6928,
+      "cumulativeCostMDollar": 3315005.704
     },
     "3_5": {
       "finalMixMWh": {
@@ -391,7 +437,9 @@
       "deathsCentral": 79.05,
       "deathsLow": 79.05,
       "deathsHigh": 250.387,
-      "cumulativeDeathsCentral": 20868.922
+      "cumulativeDeathsCentral": 20868.922,
+      "cumulativeCO2MT": 2014.0482,
+      "cumulativeCostMDollar": 3333714.58
     },
     "4_0": {
       "finalMixMWh": {
@@ -406,7 +454,9 @@
       "deathsCentral": 174.365,
       "deathsLow": 174.365,
       "deathsHigh": 784.311,
-      "cumulativeDeathsCentral": 22339.02
+      "cumulativeDeathsCentral": 22339.02,
+      "cumulativeCO2MT": 2193.1811,
+      "cumulativeCostMDollar": 3094968.466
     },
     "4_1": {
       "finalMixMWh": {
@@ -421,7 +471,9 @@
       "deathsCentral": 113.672,
       "deathsLow": 113.672,
       "deathsHigh": 382.537,
-      "cumulativeDeathsCentral": 21393.311
+      "cumulativeDeathsCentral": 21393.311,
+      "cumulativeCO2MT": 2091.7194,
+      "cumulativeCostMDollar": 3215803.698
     },
     "4_2": {
       "finalMixMWh": {
@@ -436,7 +488,9 @@
       "deathsCentral": 96.965,
       "deathsLow": 96.965,
       "deathsHigh": 316.462,
-      "cumulativeDeathsCentral": 21145.948
+      "cumulativeDeathsCentral": 21145.948,
+      "cumulativeCO2MT": 2054.6849,
+      "cumulativeCostMDollar": 3264637.669
     },
     "4_3": {
       "finalMixMWh": {
@@ -451,7 +505,9 @@
       "deathsCentral": 91.538,
       "deathsLow": 91.538,
       "deathsHigh": 296.146,
-      "cumulativeDeathsCentral": 21070.75
+      "cumulativeDeathsCentral": 21070.75,
+      "cumulativeCO2MT": 2043.0996,
+      "cumulativeCostMDollar": 3281188.361
     },
     "4_4": {
       "finalMixMWh": {
@@ -466,7 +522,9 @@
       "deathsCentral": 77.566,
       "deathsLow": 77.566,
       "deathsHigh": 245.503,
-      "cumulativeDeathsCentral": 20850.735
+      "cumulativeDeathsCentral": 20850.735,
+      "cumulativeCO2MT": 2009.605,
+      "cumulativeCostMDollar": 3337494.247
     },
     "4_5": {
       "finalMixMWh": {
@@ -481,7 +539,9 @@
       "deathsCentral": 74.157,
       "deathsLow": 74.157,
       "deathsHigh": 234.089,
-      "cumulativeDeathsCentral": 20792.55
+      "cumulativeDeathsCentral": 20792.55,
+      "cumulativeCO2MT": 2000.8407,
+      "cumulativeCostMDollar": 3354358.061
     },
     "5_0": {
       "finalMixMWh": {
@@ -496,7 +556,9 @@
       "deathsCentral": 140.178,
       "deathsLow": 140.178,
       "deathsHigh": 560.95,
-      "cumulativeDeathsCentral": 21872.284
+      "cumulativeDeathsCentral": 21872.284,
+      "cumulativeCO2MT": 2139.3197,
+      "cumulativeCostMDollar": 3149325.682
     },
     "5_1": {
       "finalMixMWh": {
@@ -511,7 +573,9 @@
       "deathsCentral": 102.452,
       "deathsLow": 102.452,
       "deathsHigh": 336.424,
-      "cumulativeDeathsCentral": 21220.685
+      "cumulativeDeathsCentral": 21220.685,
+      "cumulativeCO2MT": 2064.6725,
+      "cumulativeCostMDollar": 3248814.971
     },
     "5_2": {
       "finalMixMWh": {
@@ -526,7 +590,9 @@
       "deathsCentral": 88.365,
       "deathsLow": 88.365,
       "deathsHigh": 283.606,
-      "cumulativeDeathsCentral": 21021.584
+      "cumulativeDeathsCentral": 21021.584,
+      "cumulativeCO2MT": 2034.0803,
+      "cumulativeCostMDollar": 3292328.89
     },
     "5_3": {
       "finalMixMWh": {
@@ -541,7 +607,9 @@
       "deathsCentral": 84.26,
       "deathsLow": 84.26,
       "deathsHigh": 269.012,
-      "cumulativeDeathsCentral": 20961.093
+      "cumulativeDeathsCentral": 20961.093,
+      "cumulativeCO2MT": 2024.7222,
+      "cumulativeCostMDollar": 3306951.414
     },
     "5_4": {
       "finalMixMWh": {
@@ -556,7 +624,9 @@
       "deathsCentral": 72.672,
       "deathsLow": 72.672,
       "deathsHigh": 229.195,
-      "cumulativeDeathsCentral": 20774.043
+      "cumulativeDeathsCentral": 20774.043,
+      "cumulativeCO2MT": 1996.2536,
+      "cumulativeCostMDollar": 3358876.186
     },
     "5_5": {
       "finalMixMWh": {
@@ -571,7 +641,9 @@
       "deathsCentral": 69.518,
       "deathsLow": 69.518,
       "deathsHigh": 218.994,
-      "cumulativeDeathsCentral": 20721.484
+      "cumulativeDeathsCentral": 20721.484,
+      "cumulativeCO2MT": 1988.4684,
+      "cumulativeCostMDollar": 3375174.563
     },
     "6_0": {
       "finalMixMWh": {
@@ -586,7 +658,9 @@
       "deathsCentral": 119.685,
       "deathsLow": 119.685,
       "deathsHigh": 441.092,
-      "cumulativeDeathsCentral": 21575.238
+      "cumulativeDeathsCentral": 21575.238,
+      "cumulativeCO2MT": 2101.4512,
+      "cumulativeCostMDollar": 3192652.183
     },
     "6_1": {
       "finalMixMWh": {
@@ -601,7 +675,9 @@
       "deathsCentral": 93.009,
       "deathsLow": 93.009,
       "deathsHigh": 299.483,
-      "cumulativeDeathsCentral": 21081.727
+      "cumulativeDeathsCentral": 21081.727,
+      "cumulativeCO2MT": 2042.2295,
+      "cumulativeCostMDollar": 3278466.625
     },
     "6_2": {
       "finalMixMWh": {
@@ -616,7 +692,9 @@
       "deathsCentral": 81.687,
       "deathsLow": 81.687,
       "deathsHigh": 259.538,
-      "cumulativeDeathsCentral": 20921.598
+      "cumulativeDeathsCentral": 20921.598,
+      "cumulativeCO2MT": 2017.3684,
+      "cumulativeCostMDollar": 3316877.057
     },
     "6_3": {
       "finalMixMWh": {
@@ -631,7 +709,9 @@
       "deathsCentral": 78.14,
       "deathsLow": 78.14,
       "deathsHigh": 247.603,
-      "cumulativeDeathsCentral": 20870.738
+      "cumulativeDeathsCentral": 20870.738,
+      "cumulativeCO2MT": 2009.4427,
+      "cumulativeCostMDollar": 3330250.566
     },
     "6_4": {
       "finalMixMWh": {
@@ -646,7 +726,9 @@
       "deathsCentral": 68.174,
       "deathsLow": 68.174,
       "deathsHigh": 214.661,
-      "cumulativeDeathsCentral": 20706.884
+      "cumulativeDeathsCentral": 20706.884,
+      "cumulativeCO2MT": 1984.5508,
+      "cumulativeCostMDollar": 3379124.395
     },
     "6_5": {
       "finalMixMWh": {
@@ -661,7 +743,9 @@
       "deathsCentral": 65.421,
       "deathsLow": 65.421,
       "deathsHigh": 205.931,
-      "cumulativeDeathsCentral": 20660.148
+      "cumulativeDeathsCentral": 20660.148,
+      "cumulativeCO2MT": 1977.7231,
+      "cumulativeCostMDollar": 3394603.526
     },
     "7_0": {
       "finalMixMWh": {
@@ -676,7 +760,9 @@
       "deathsCentral": 104.297,
       "deathsLow": 104.297,
       "deathsHigh": 359.413,
-      "cumulativeDeathsCentral": 21348.809
+      "cumulativeDeathsCentral": 21348.809,
+      "cumulativeCO2MT": 2070.602,
+      "cumulativeCostMDollar": 3231510.552
     },
     "7_1": {
       "finalMixMWh": {
@@ -691,7 +777,9 @@
       "deathsCentral": 85.269,
       "deathsLow": 85.269,
       "deathsHigh": 271.173,
-      "cumulativeDeathsCentral": 20967.969
+      "cumulativeDeathsCentral": 20967.969,
+      "cumulativeCO2MT": 2023.4643,
+      "cumulativeCostMDollar": 3305317.544
     },
     "7_2": {
       "finalMixMWh": {
@@ -706,7 +794,9 @@
       "deathsCentral": 75.759,
       "deathsLow": 75.759,
       "deathsHigh": 239.293,
-      "cumulativeDeathsCentral": 20834.38
+      "cumulativeDeathsCentral": 20834.38,
+      "cumulativeCO2MT": 2002.5702,
+      "cumulativeCostMDollar": 3340317.52
     },
     "7_3": {
       "finalMixMWh": {
@@ -721,7 +811,9 @@
       "deathsCentral": 72.56,
       "deathsLow": 72.56,
       "deathsHigh": 228.951,
-      "cumulativeDeathsCentral": 20790.983
+      "cumulativeDeathsCentral": 20790.983,
+      "cumulativeCO2MT": 1995.7284,
+      "cumulativeCostMDollar": 3352688.13
     },
     "7_4": {
       "finalMixMWh": {
@@ -736,7 +828,9 @@
       "deathsCentral": 64.114,
       "deathsLow": 64.114,
       "deathsHigh": 201.747,
-      "cumulativeDeathsCentral": 20647.894
+      "cumulativeDeathsCentral": 20647.894,
+      "cumulativeCO2MT": 1974.2672,
+      "cumulativeCostMDollar": 3398412.341
     },
     "7_5": {
       "finalMixMWh": {
@@ -751,7 +845,9 @@
       "deathsCentral": 61.681,
       "deathsLow": 61.681,
       "deathsHigh": 194.224,
-      "cumulativeDeathsCentral": 20608.13
+      "cumulativeDeathsCentral": 20608.13,
+      "cumulativeCO2MT": 1968.561,
+      "cumulativeCostMDollar": 3412352.13
     },
     "8_0": {
       "finalMixMWh": {
@@ -766,7 +862,9 @@
       "deathsCentral": 93.278,
       "deathsLow": 93.278,
       "deathsHigh": 308.354,
-      "cumulativeDeathsCentral": 21179.463
+      "cumulativeDeathsCentral": 21179.463,
+      "cumulativeCO2MT": 2046.3305,
+      "cumulativeCostMDollar": 3265011.597
     },
     "8_1": {
       "finalMixMWh": {
@@ -781,7 +879,9 @@
       "deathsCentral": 78.659,
       "deathsLow": 78.659,
       "deathsHigh": 248.374,
-      "cumulativeDeathsCentral": 20871.756
+      "cumulativeDeathsCentral": 20871.756,
+      "cumulativeCO2MT": 2007.3867,
+      "cumulativeCostMDollar": 3330319.476
     },
     "8_2": {
       "finalMixMWh": {
@@ -796,7 +896,9 @@
       "deathsCentral": 70.65,
       "deathsLow": 70.65,
       "deathsHigh": 222.522,
-      "cumulativeDeathsCentral": 20762.811
+      "cumulativeDeathsCentral": 20762.811,
+      "cumulativeCO2MT": 1990.3297,
+      "cumulativeCostMDollar": 3361229.193
     },
     "8_3": {
       "finalMixMWh": {
@@ -811,7 +913,9 @@
       "deathsCentral": 68.022,
       "deathsLow": 68.022,
       "deathsHigh": 214.125,
-      "cumulativeDeathsCentral": 20727.085
+      "cumulativeDeathsCentral": 20727.085,
+      "cumulativeCO2MT": 1984.6442,
+      "cumulativeCostMDollar": 3372232.465
     },
     "8_4": {
       "finalMixMWh": {
@@ -826,7 +930,9 @@
       "deathsCentral": 60.569,
       "deathsLow": 60.569,
       "deathsHigh": 190.689,
-      "cumulativeDeathsCentral": 20598.876
+      "cumulativeDeathsCentral": 20598.876,
+      "cumulativeCO2MT": 1965.6998,
+      "cumulativeCostMDollar": 3415645.747
     },
     "8_5": {
       "finalMixMWh": {
@@ -841,7 +947,9 @@
       "deathsCentral": 58.536,
       "deathsLow": 58.536,
       "deathsHigh": 184.488,
-      "cumulativeDeathsCentral": 20564.682
+      "cumulativeDeathsCentral": 20564.682,
+      "cumulativeCO2MT": 1960.9699,
+      "cumulativeCostMDollar": 3428249.962
     },
     "9_0": {
       "finalMixMWh": {
@@ -856,7 +964,9 @@
       "deathsCentral": 77.354,
       "deathsLow": 77.354,
       "deathsHigh": 242.947,
-      "cumulativeDeathsCentral": 20927.854
+      "cumulativeDeathsCentral": 20927.854,
+      "cumulativeCO2MT": 1956.7551,
+      "cumulativeCostMDollar": 3338574.808
     },
     "9_1": {
       "finalMixMWh": {
@@ -871,7 +981,9 @@
       "deathsCentral": 67.995,
       "deathsLow": 67.995,
       "deathsHigh": 211.249,
-      "cumulativeDeathsCentral": 20733.515
+      "cumulativeDeathsCentral": 20733.515,
+      "cumulativeCO2MT": 1928.7711,
+      "cumulativeCostMDollar": 3388181.564
     },
     "9_2": {
       "finalMixMWh": {
@@ -886,7 +998,9 @@
       "deathsCentral": 62.621,
       "deathsLow": 62.621,
       "deathsHigh": 194.415,
-      "cumulativeDeathsCentral": 20663.829
+      "cumulativeDeathsCentral": 20663.829,
+      "cumulativeCO2MT": 1916.5647,
+      "cumulativeCostMDollar": 3411874.781
     },
     "9_3": {
       "finalMixMWh": {
@@ -901,7 +1015,9 @@
       "deathsCentral": 60.844,
       "deathsLow": 60.844,
       "deathsHigh": 188.888,
-      "cumulativeDeathsCentral": 20636.129
+      "cumulativeDeathsCentral": 20636.129,
+      "cumulativeCO2MT": 1911.9528,
+      "cumulativeCostMDollar": 3421994.47
     },
     "9_4": {
       "finalMixMWh": {
@@ -916,7 +1032,9 @@
       "deathsCentral": 54.99,
       "deathsLow": 54.99,
       "deathsHigh": 170.889,
-      "cumulativeDeathsCentral": 20532.608
+      "cumulativeDeathsCentral": 20532.608,
+      "cumulativeCO2MT": 1894.9765,
+      "cumulativeCostMDollar": 3462031.789
     },
     "9_5": {
       "finalMixMWh": {
@@ -931,7 +1049,9 @@
       "deathsCentral": 53.246,
       "deathsLow": 53.246,
       "deathsHigh": 165.543,
-      "cumulativeDeathsCentral": 20503.366
+      "cumulativeDeathsCentral": 20503.366,
+      "cumulativeCO2MT": 1890.0852,
+      "cumulativeCostMDollar": 3474179.949
     },
     "10_0": {
       "finalMixMWh": {
@@ -946,7 +1066,9 @@
       "deathsCentral": 65.895,
       "deathsLow": 65.895,
       "deathsHigh": 204.775,
-      "cumulativeDeathsCentral": 20744.038
+      "cumulativeDeathsCentral": 20744.038,
+      "cumulativeCO2MT": 1927.5839,
+      "cumulativeCostMDollar": 3390310.248
     },
     "10_1": {
       "finalMixMWh": {
@@ -961,7 +1083,9 @@
       "deathsCentral": 59.732,
       "deathsLow": 59.732,
       "deathsHigh": 185.41,
-      "cumulativeDeathsCentral": 20625.435
+      "cumulativeDeathsCentral": 20625.435,
+      "cumulativeCO2MT": 1909.6856,
+      "cumulativeCostMDollar": 3426239.845
     },
     "10_2": {
       "finalMixMWh": {
@@ -976,7 +1100,9 @@
       "deathsCentral": 55.453,
       "deathsLow": 55.453,
       "deathsHigh": 172.277,
-      "cumulativeDeathsCentral": 20569.484
+      "cumulativeDeathsCentral": 20569.484,
+      "cumulativeCO2MT": 1900.1053,
+      "cumulativeCostMDollar": 3448878.763
     },
     "10_3": {
       "finalMixMWh": {
@@ -991,7 +1117,9 @@
       "deathsCentral": 53.935,
       "deathsLow": 53.935,
       "deathsHigh": 167.607,
-      "cumulativeDeathsCentral": 20543.023
+      "cumulativeDeathsCentral": 20543.023,
+      "cumulativeCO2MT": 1895.8143,
+      "cumulativeCostMDollar": 3459430.918
     },
     "10_4": {
       "finalMixMWh": {
@@ -1006,7 +1134,9 @@
       "deathsCentral": 49.416,
       "deathsLow": 49.416,
       "deathsHigh": 153.796,
-      "cumulativeDeathsCentral": 20460.435
+      "cumulativeDeathsCentral": 20460.435,
+      "cumulativeCO2MT": 1882.2499,
+      "cumulativeCostMDollar": 3494419.454
     },
     "10_5": {
       "finalMixMWh": {
@@ -1021,7 +1151,9 @@
       "deathsCentral": 48.042,
       "deathsLow": 48.042,
       "deathsHigh": 149.623,
-      "cumulativeDeathsCentral": 20437.072
+      "cumulativeDeathsCentral": 20437.072,
+      "cumulativeCO2MT": 1878.3374,
+      "cumulativeCostMDollar": 3505078.371
     },
     "11_0": {
       "finalMixMWh": {
@@ -1036,7 +1168,9 @@
       "deathsCentral": 51.534,
       "deathsLow": 51.534,
       "deathsHigh": 160.161,
-      "cumulativeDeathsCentral": 20520.942
+      "cumulativeDeathsCentral": 20520.942,
+      "cumulativeCO2MT": 1891.2464,
+      "cumulativeCostMDollar": 3470182.198
     },
     "11_1": {
       "finalMixMWh": {
@@ -1051,7 +1185,9 @@
       "deathsCentral": 47.541,
       "deathsLow": 47.541,
       "deathsHigh": 147.927,
-      "cumulativeDeathsCentral": 20474.77
+      "cumulativeDeathsCentral": 20474.77,
+      "cumulativeCO2MT": 1883.2289,
+      "cumulativeCostMDollar": 3492434.677
     },
     "11_2": {
       "finalMixMWh": {
@@ -1066,7 +1202,9 @@
       "deathsCentral": 45.059,
       "deathsLow": 45.059,
       "deathsHigh": 140.373,
-      "cumulativeDeathsCentral": 20437.885
+      "cumulativeDeathsCentral": 20437.885,
+      "cumulativeCO2MT": 1877.1071,
+      "cumulativeCostMDollar": 3510576.491
     },
     "11_3": {
       "finalMixMWh": {
@@ -1081,7 +1219,9 @@
       "deathsCentral": 44.017,
       "deathsLow": 44.017,
       "deathsHigh": 137.219,
-      "cumulativeDeathsCentral": 20417.403
+      "cumulativeDeathsCentral": 20417.403,
+      "cumulativeCO2MT": 1873.8482,
+      "cumulativeCostMDollar": 3519852.686
     },
     "11_4": {
       "finalMixMWh": {
@@ -1096,7 +1236,9 @@
       "deathsCentral": 41.254,
       "deathsLow": 41.254,
       "deathsHigh": 128.856,
-      "cumulativeDeathsCentral": 20359.452
+      "cumulativeDeathsCentral": 20359.452,
+      "cumulativeCO2MT": 1864.4272,
+      "cumulativeCostMDollar": 3548370.466
     },
     "11_5": {
       "finalMixMWh": {
@@ -1111,7 +1253,9 @@
       "deathsCentral": 40.375,
       "deathsLow": 40.375,
       "deathsHigh": 126.189,
-      "cumulativeDeathsCentral": 20343.809
+      "cumulativeDeathsCentral": 20343.809,
+      "cumulativeCO2MT": 1861.821,
+      "cumulativeCostMDollar": 3556736.088
     }
   }
 }

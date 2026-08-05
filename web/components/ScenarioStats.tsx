@@ -29,7 +29,7 @@ function Stat({ label, value, sub }: { label: string; value: string; sub?: strin
       <div className="text-xs text-zinc-500 dark:text-zinc-400">{label}</div>
       <div className="mt-1 font-sans text-2xl font-medium tabular-nums">{value}</div>
       {sub ? (
-        <div className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-500">{sub}</div>
+        <div className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">{sub}</div>
       ) : null}
     </div>
   );

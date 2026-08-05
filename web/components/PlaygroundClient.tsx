@@ -290,7 +290,7 @@ function MacPanel({
         </div>
       </div>
       {verdict}
-      <p className="mt-3 text-xs text-zinc-400 dark:text-zinc-500">
+      <p className="mt-3 text-xs text-zinc-500 dark:text-zinc-400">
         Each figure attributes the full extra system cost to that one axis, so
         read them one slider at a time: the per-ton number is cleanest with only
         the carbon price on, the per-death number with only the mortality price on.
