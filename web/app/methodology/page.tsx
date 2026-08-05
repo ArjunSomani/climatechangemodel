@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { NewHereBanner } from "@/components/NewHereBanner";
+import { LandFootprint } from "@/components/LandFootprint";
 import {
   CountedModeledNote,
   MoralChoiceNote,
@@ -169,6 +170,23 @@ export default function MethodologyPage() {
             though a higher growth rate can stand in for it.
           </li>
         </ul>
+      </Section>
+
+      <Section title="Land use: total area vs. land actually occupied">
+        <p>
+          Land is where the renewables face their real siting constraint — and
+          where a single number misleads. A wind farm <em>spans</em> a large
+          area, but its turbines, pads and roads occupy only a sliver of it; the
+          rest stays farm or rangeland. Reported as total enclosed area, wind
+          looks land-hungry; reported as land actually occupied, it uses far less
+          than solar. Both figures are real; quoting only the first overstates the
+          footprint by roughly 100×.
+        </p>
+        <LandFootprint />
+        <p className="text-sm">
+          This dimension is reported, not priced. Thermal plants are omitted on
+          purpose — see the note above.
+        </p>
       </Section>
 
       <Section title="Cost and data sources">
