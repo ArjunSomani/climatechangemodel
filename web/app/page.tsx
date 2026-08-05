@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Standfirst } from "@/components/Standfirst";
 
-// Static landing page: the intro and four ways in, no charts. (Dropping the
+// Static landing page: the intro and three ways in, no charts. (Dropping the
 // live teaser also makes this page static/prerendered rather than fetching the
 // library on every request.)
 
@@ -20,11 +20,6 @@ const SECONDARY: Entry[] = [
     href: "/how-it-works",
     title: "How it works",
     body: "The model in plain terms — data, knobs, and what happens each year.",
-  },
-  {
-    href: "/findings",
-    title: "What we found",
-    body: "Three results, including one that is genuinely counterintuitive.",
   },
   {
     href: "/compare",

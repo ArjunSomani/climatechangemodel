@@ -4,8 +4,8 @@ import { test, expect, type Page } from "playwright/test";
 // storage env, so they are safe to smoke-test.
 //
 // `heading` is an exact known heading string where we know it. For pages added
-// by other in-flight work (/about, /findings) we don't assert exact copy — we
-// just require that some <h1> is visible.
+// by other in-flight work (/about) we don't assert exact copy — we just require
+// that some <h1> is visible.
 const STATIC_PAGES: Array<{ path: string; heading?: string }> = [
   { path: "/", heading: "The cheapest way to decarbonize" },
   { path: "/how-it-works", heading: "How it works" },
@@ -15,7 +15,6 @@ const STATIC_PAGES: Array<{ path: string; heading?: string }> = [
   { path: "/custom-run", heading: "Custom run" },
   // Added by other work; assert a generic visible <h1> rather than exact copy.
   { path: "/about" },
-  { path: "/findings" },
 ];
 
 // DB-backed pages depend on Neon/Postgres + Vercel Blob env and error without

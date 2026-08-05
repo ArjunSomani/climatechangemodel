@@ -90,7 +90,12 @@ export default function RootLayout({
               <Link href="/about" className={footerLink}>
                 About
               </Link>
-              <a href="https://github.com/cliffgold/Optimize" className={footerLink}>
+              <a
+                href="https://github.com/ArjunSomani/climatechangemodel"
+                className={footerLink}
+                target="_blank"
+                rel="noreferrer"
+              >
                 GitHub
               </a>
               <Link href="/methodology" className={footerLink}>
@@ -109,8 +114,16 @@ export default function RootLayout({
               </a>
             </nav>
             <div>
-              Modeling engine and data from cliffgold/Optimize. No open
-              source license specified.
+              Modeling engine and data from{" "}
+              <a
+                href="https://github.com/cliffgold/Optimize"
+                className="underline hover:text-accent"
+                target="_blank"
+                rel="noreferrer"
+              >
+                cliffgold/Optimize
+              </a>
+              . No open source license specified.
             </div>
           </div>
         </footer>

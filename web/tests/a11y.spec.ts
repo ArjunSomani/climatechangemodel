@@ -12,7 +12,6 @@ const ROUTES = [
   "/",
   "/how-it-works",
   "/safety",
-  "/findings",
   "/playground",
   "/methodology",
   "/about",

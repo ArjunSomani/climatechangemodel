@@ -11,7 +11,6 @@ const LINKS: [string, string][] = [
   ["/compare", "Compare"],
   ["/custom-run", "Custom Run"],
   ["/safety", "Safety"],
-  ["/findings", "Findings"],
   ["/playground", "Playground"],
   ["/data-explorer", "Data Explorer"],
   ["/methodology", "Methodology"],
