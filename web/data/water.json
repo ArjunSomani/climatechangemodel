@@ -1,0 +1,14 @@
+{
+  "_meta": {
+    "source": "macknick-2012",
+    "citation": "Macknick, Newmark, Heath & Hallett (2012), Operational water consumption and withdrawal factors for electricity generating technologies: a review of existing literature, Environ. Res. Lett. 7 045802 (NREL/TP-6A20-50900).",
+    "unit": "gal/MWh",
+    "coolingSystem": "recirculating (wet cooling tower) median",
+    "note": "Withdrawal is water taken from a source; consumption is the portion evaporated and not returned. Both are median operational factors for recirculating (tower) cooling. Factors vary heavily by cooling system -- once-through withdrawal is one to two orders of magnitude higher -- so a single national figure per technology papers over a real spread. Coal has among the highest consumption; nuclear the highest withdrawal. Solar PV and wind use essentially no operational water (panel washing only)."
+  },
+  "coal":    { "withdrawal": 1005, "consumption": 687, "source": "macknick-2012" },
+  "gas":     { "withdrawal": 255,  "consumption": 198, "source": "macknick-2012", "note": "Natural gas combined cycle." },
+  "nuclear": { "withdrawal": 1101, "consumption": 672, "source": "macknick-2012" },
+  "solar":   { "withdrawal": 26,   "consumption": 26,  "source": "macknick-2012", "note": "Utility-scale PV; no cooling loop, so withdrawal equals consumption (panel washing)." },
+  "wind":    { "withdrawal": 0,    "consumption": 0,   "source": "macknick-2012" }
+}

@@ -12,6 +12,12 @@ import {
   totalGenerationMWh,
 } from "@/lib/metrics";
 import { computeYearDeaths } from "@/lib/mortality";
+import {
+  cumulativeWaterUse,
+  waterIntensityGalPerMWh,
+  waterLadder,
+  waterUseForYear,
+} from "@/lib/water";
 import { abatementVsBaseline } from "@/lib/playground";
 import latticeData from "@/data/playground_lattice.json";
 import type { Lattice, LatticeCell } from "@/lib/playground";
@@ -254,6 +260,49 @@ test.describe("build-rate binding diagnostic", () => {
     expect(solar?.years).toEqual([2030, 2031]);
     // Coal never hit the cap, so it isn't in the summary at all.
     expect(summary.find((s) => s.source === "Coal")).toBeUndefined();
+  });
+});
+
+test.describe("water use (Macknick 2012)", () => {
+  test("withdrawal and consumption = generation x factor, summed", () => {
+    // 10 TWh gas (255/198) + 10 TWh coal (1005/687), in million gallons:
+    //   withdrawal = 10e6*(255 + 1005)*1e-6 = 2550 + 10050 = 12600 Mgal
+    //   consumption = 10e6*(198 + 687)*1e-6 = 1980 + 6870 =  8850 Mgal
+    const w = waterUseForYear(baseRecord());
+    expect(w.withdrawalMgal).toBeCloseTo(12600, 6);
+    expect(w.consumptionMgal).toBeCloseTo(8850, 6);
+    expect(w.generationMWh).toBeCloseTo(2 * GEN_MWH, 6);
+  });
+
+  test("intensity is the generation-weighted gal/MWh", () => {
+    const i = waterIntensityGalPerMWh(baseRecord());
+    // 12600 Mgal / 20e6 MWh * 1e6 = 630 gal/MWh withdrawal; 442.5 consumption.
+    expect(i.withdrawal).toBeCloseTo(630, 6);
+    expect(i.consumption).toBeCloseTo(442.5, 6);
+  });
+
+  test("battery uses no operational water (embodied, not direct)", () => {
+    const withBattery = baseRecord({ Battery_MWh: GEN_MWH });
+    // The absolute water is unchanged (battery adds none)...
+    expect(waterUseForYear(withBattery).withdrawalMgal).toBeCloseTo(12600, 6);
+    // ...but more generation over the same water lowers the intensity.
+    expect(waterIntensityGalPerMWh(withBattery).withdrawal).toBeLessThan(630);
+  });
+
+  test("cumulative sums each year", () => {
+    const cum = cumulativeWaterUse([baseRecord(), baseRecord()]);
+    expect(cum.withdrawalMgal).toBeCloseTo(2 * 12600, 6);
+    expect(cum.consumptionMgal).toBeCloseTo(2 * 8850, 6);
+  });
+
+  test("the ladder ranks by withdrawal and never consumes more than it withdraws", () => {
+    const ladder = waterLadder();
+    expect(ladder[0].key).toBe("Nuclear"); // highest withdrawal
+    for (const r of ladder) {
+      expect(r.consumption).toBeLessThanOrEqual(r.withdrawal);
+    }
+    // Solar and wind are near-dry -> last two.
+    expect(ladder.map((r) => r.key).slice(-2).sort()).toEqual(["Solar", "Wind"]);
   });
 });
 
