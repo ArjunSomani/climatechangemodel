@@ -1,6 +1,17 @@
 import { test, expect } from "playwright/test";
 import { co2MtFromGeneration, CO2_INTENSITY } from "@/lib/co2";
 import { operatingCosts, VARIABLE_COST } from "@/lib/costs";
+import {
+  carbonIntensityGPerKwh,
+  cumulativeTotals,
+  deathsPerTWh,
+  lcoePerMWh,
+  PLAUSIBLE_G_PER_KWH,
+  totalGenerationMWh,
+} from "@/lib/metrics";
+import { computeYearDeaths } from "@/lib/mortality";
+import latticeData from "@/data/playground_lattice.json";
+import type { Lattice } from "@/lib/playground";
 import type { YearRecord } from "@/lib/library";
 
 // Golden lock on the web-side externality math -- the code that fixes the
@@ -107,6 +118,77 @@ test.describe("web-side annual cost breakdown", () => {
       6
     );
   });
+});
+
+test.describe("intensity metrics", () => {
+  test("carbon intensity = annual CO2 / generation, in gCO2/kWh", () => {
+    // 13.13 Mt / 20e6 MWh x 1e9 = 656.5 gCO2/kWh (a gas+coal grid, plausible).
+    expect(carbonIntensityGPerKwh(baseRecord())).toBeCloseTo(656.5, 3);
+  });
+
+  test("deaths/TWh is central deaths over generation in TWh", () => {
+    const r = baseRecord();
+    // 20 TWh generated; per-TWh must be the central count divided by 20 -- no
+    // hardcoded coefficients, just the units.
+    expect(deathsPerTWh(r)).toBeCloseTo(computeYearDeaths(r).central / 20, 9);
+  });
+
+  test("busbar LCOE excludes the carbon and mortality price", () => {
+    // (capital 300 + fixed 100 + variable 554.683) M$ x1e6 / 20e6 MWh = 47.734 $/MWh.
+    expect(lcoePerMWh(baseRecord())).toBeCloseTo(47.73415, 4);
+    // Adding a carbon price must NOT move the busbar cost -- it's a policy overlay,
+    // not the cost of building and running the grid (Lazard-comparable).
+    expect(lcoePerMWh(baseRecord({ "CO2_M$_MT": 500 }))).toBeCloseTo(47.73415, 4);
+  });
+
+  test("cumulative sums each year", () => {
+    const cum = cumulativeTotals([baseRecord(), baseRecord()]);
+    expect(cum.co2Mt).toBeCloseTo(2 * 13.13, 6);
+    expect(cum.generationMWh).toBeCloseTo(2 * 2 * GEN_MWH, 6);
+    expect(cum.deathsCentral).toBeCloseTo(2 * computeYearDeaths(baseRecord()).central, 6);
+  });
+});
+
+// The bug-net the review asked for, run over the real (carbon x mortality) price
+// lattice -- every cell is one actual optimizer run. The cumulative-vs-annual CO2
+// mislabel would have surfaced here instantly as an impossible intensity (1,540
+// Mt over 721 TWh is 2,136 gCO2/kWh), so this locks that class of bug out.
+test("every lattice scenario has a physically possible carbon intensity", () => {
+  const lattice = latticeData as Lattice;
+  const cells = Object.entries(lattice.cells);
+  expect(cells.length, "lattice has no cells").toBeGreaterThan(0);
+
+  for (const [key, cell] of cells) {
+    const mwh = Object.values(cell.finalMixMWh).reduce((a, b) => a + (b || 0), 0);
+    if (mwh <= 0) continue;
+    const gPerKwh = (cell.co2FinalMT / mwh) * 1e9;
+    expect(
+      gPerKwh,
+      `cell ${key}: ${gPerKwh.toFixed(0)} gCO₂/kWh is outside 0–${PLAUSIBLE_G_PER_KWH}`,
+    ).toBeGreaterThanOrEqual(0);
+    expect(
+      gPerKwh,
+      `cell ${key}: ${gPerKwh.toFixed(0)} gCO₂/kWh exceeds the coal ceiling — likely an annual-vs-cumulative slip`,
+    ).toBeLessThanOrEqual(PLAUSIBLE_G_PER_KWH);
+  }
+});
+
+// Cross-check the web CO2 recompute against the lattice generator: rebuild a year
+// record from a cell's final mix and assert carbonIntensityGPerKwh matches the
+// intensity implied by the cell's own co2FinalMT. If the two code paths agreed on
+// nothing else, they must agree the mix's CO2.
+test("carbonIntensityGPerKwh agrees with the lattice's own CO2", () => {
+  const lattice = latticeData as Lattice;
+  const cell = lattice.cells["0_0"]; // no-pricing baseline
+  expect(cell, "no 0_0 baseline cell").toBeTruthy();
+
+  const record = { Year: lattice.years } as unknown as YearRecord;
+  for (const [src, mwh] of Object.entries(cell.finalMixMWh)) {
+    (record as Record<string, number>)[`${src}_MWh`] = mwh;
+  }
+  const mwh = totalGenerationMWh(record);
+  const expected = (cell.co2FinalMT / mwh) * 1e9;
+  expect(carbonIntensityGPerKwh(record)).toBeCloseTo(expected, 1);
 });
 
 test("the cost/CO2 constants cover exactly the six engine sources", () => {

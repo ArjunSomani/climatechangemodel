@@ -6,10 +6,8 @@ import {
   mostCompleteConfigCaseIds,
 } from "@/lib/aggregate";
 import { ResultCharts } from "@/components/ResultCharts";
-import { co2MtFromGeneration } from "@/lib/co2";
-import { computeYearDeaths } from "@/lib/mortality";
+import { ScenarioStats } from "@/components/ScenarioStats";
 import { caseLabel } from "@/lib/metrics";
-import { formatCO2, formatEnergy } from "@/lib/format";
 import { KeyPoint } from "@/components/KeyPoint";
 
 export const metadata = {
@@ -56,10 +54,6 @@ export default async function USPage() {
   }
 
   const scenario = caseLabel(cases[0]).replace(/^[A-Z]+ · /, ""); // drop region prefix
-  const last = result[result.length - 1];
-  const totalMwh = last.Target_MWh;
-  const totalCo2 = co2MtFromGeneration(last);
-  const totalDeaths = computeYearDeaths(last).central;
 
   const mortalityPrice = (cases[0].config as {
     mortality_price?: { initial?: number };
@@ -85,16 +79,8 @@ export default async function USPage() {
           : "Every region used the same demand-growth assumption."}
       </KeyPoint>
 
-      {/* One column at 360px, three from sm up. grid-cols-3 unconditionally gave
-          ~95px columns on a phone, narrow enough that "7695.5 TWh" broke across
-          two lines mid-value. */}
-      <div className="mt-8 grid gap-4 sm:grid-cols-3">
-        <Stat label="Final-year demand" value={formatEnergy(totalMwh)} />
-        <Stat label="Final-year CO₂" value={formatCO2(totalCo2)} />
-        <Stat
-          label="Final-year deaths"
-          value={Math.round(totalDeaths).toLocaleString()}
-        />
+      <div className="mt-8">
+        <ScenarioStats result={result} />
       </div>
 
       <section className="mt-10">
@@ -113,22 +99,6 @@ export default async function USPage() {
           Browse individual regions →
         </Link>
       </p>
-    </div>
-  );
-}
-
-// font-sans, not font-display: a serif with optical sizing is the right voice
-// for prose headings and the wrong one for a number a reader has to compare
-// against two others. tabular-nums is the point of a stat tile, and Fraunces
-// was overriding the UI font on data -- the one thing the product register
-// rules out outright.
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
-      <div className="text-xs text-zinc-500 dark:text-zinc-400">{label}</div>
-      <div className="mt-1 font-sans text-2xl font-medium tabular-nums">
-        {value}
-      </div>
     </div>
   );
 }

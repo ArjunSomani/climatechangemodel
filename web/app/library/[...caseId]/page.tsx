@@ -4,8 +4,7 @@ import { getLibraryCase } from "@/lib/library";
 import { ResultCharts } from "@/components/ResultCharts";
 import { YearTable } from "@/components/YearTable";
 import { MortalityResults } from "@/components/MortalityResults";
-import { co2MtFromGeneration } from "@/lib/co2";
-import { formatCO2, formatEnergy } from "@/lib/format";
+import { ScenarioStats } from "@/components/ScenarioStats";
 
 // Reflects live Neon/Blob data -- must not be prerendered/cached at build time.
 export const dynamic = "force-dynamic";
@@ -18,8 +17,6 @@ export default async function LibraryCasePage({
 
   if (!detail) notFound();
 
-  const lastYear = detail.result[detail.result.length - 1];
-  const totalCO2 = co2MtFromGeneration(lastYear);
   const variantPart =
     detail.variant !== "Default" ? ` ${detail.variant.replace(/_/g, " ")}` : "";
 
@@ -50,11 +47,8 @@ export default async function LibraryCasePage({
         {detail.region} · {detail.years} years · {detail.co2_regime.replace("_", " ")}
       </p>
 
-      <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <Stat label="Final-year CO₂" value={formatCO2(totalCO2)} />
-        <Stat label="Final-year demand" value={formatEnergy(lastYear.Target_MWh)} />
-        <Stat label="Final-year outage" value={formatEnergy(lastYear.Outage_MWh)} />
-        <Stat label="Years modeled" value={String(detail.years)} />
+      <div className="mt-8">
+        <ScenarioStats result={detail.result} />
       </div>
 
       <Section title="Generation, capacity & cost over time">
@@ -83,14 +77,5 @@ function Section({ title, children }: { title: string; children: React.ReactNode
         {children}
       </div>
     </section>
-  );
-}
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
-      <div className="text-xs text-zinc-500 dark:text-zinc-400">{label}</div>
-      <div className="mt-1 font-sans text-2xl font-medium tabular-nums">{value}</div>
-    </div>
   );
 }
